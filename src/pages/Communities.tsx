@@ -72,7 +72,7 @@ const Communities = () => {
               </Link>
               );
             })}
-            ))}
+            }
           </div>
         </div>
       </section>
