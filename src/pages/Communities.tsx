@@ -37,8 +37,10 @@ const Communities = () => {
       <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {communities.map((community, index) => (
-              <div key={index} className="group bg-card rounded-2xl overflow-hidden shadow-[var(--shadow-card)] hover-lift">
+            {communities.map((community, index) => {
+              const slug = community.name.toLowerCase().replace(/\s+/g, "-");
+              return (
+              <Link key={index} to={`/community/${slug}`} className="group bg-card rounded-2xl overflow-hidden shadow-[var(--shadow-card)] hover-lift block">
                 <div className="relative aspect-[16/10] overflow-hidden">
                   <img
                     src={community.image}
@@ -62,12 +64,14 @@ const Communities = () => {
                   <p className="text-muted-foreground text-sm leading-relaxed mb-4">
                     {community.description}
                   </p>
-                  <button className="flex items-center gap-2 text-gold text-sm font-medium hover:gap-3 transition-all duration-300">
+                  <span className="flex items-center gap-2 text-gold text-sm font-medium group-hover:gap-3 transition-all duration-300">
                     Explore Community
                     <ArrowRight className="w-4 h-4" />
-                  </button>
+                  </span>
                 </div>
-              </div>
+              </Link>
+              );
+            })}
             ))}
           </div>
         </div>
