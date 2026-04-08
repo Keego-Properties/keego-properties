@@ -9,6 +9,8 @@ import Properties from "./pages/Properties.tsx";
 import Communities from "./pages/Communities.tsx";
 import CommunityDetail from "./pages/CommunityDetail.tsx";
 import PropertyDetail from "./pages/PropertyDetail.tsx";
+import News from "./pages/News.tsx";
+import NewsDetail from "./pages/NewsDetail.tsx";
 import About from "./pages/About.tsx";
 import Contact from "./pages/Contact.tsx";
 import NotFound from "./pages/NotFound.tsx";
@@ -37,6 +39,8 @@ const App = () => (
             <Route path="/communities" element={<Communities />} />
             <Route path="/community/:id" element={<CommunityDetail />} />
             <Route path="/property/:id" element={<PropertyDetail />} />
+            <Route path="/news" element={<News />} />
+            <Route path="/news/:id" element={<NewsDetail />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
 
