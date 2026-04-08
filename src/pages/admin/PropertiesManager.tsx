@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, X, CheckCircle2, XCircle, Upload, Database } from "lucide-react";
+import { Plus, Pencil, Trash2, X, CheckCircle2, XCircle, Upload } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 interface Property {
@@ -50,142 +50,6 @@ const PropertiesManager = () => {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
-
-  const migrateDummyData = async () => {
-    const dummyProperties = [
-      {
-        title: "Luxury Marina Apartment with Sea View",
-        price: "AED 170,200 /yr",
-        location: "Dubai Marina, Dubai",
-        beds: 1,
-        baths: 1,
-        area: "823 sq-ft",
-        type: "rent",
-        status: "available",
-        description: "Stunning luxury apartment with panoramic sea views in the heart of Dubai Marina.",
-        developer: "Emaar",
-        amenities: "Pool, Gym, Parking, Balcony",
-        image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=600&fit=crop"
-      },
-      {
-        title: "Modern Villa with Private Pool",
-        price: "AED 3,000,000",
-        location: "Palm Jumeirah, Dubai",
-        beds: 4,
-        baths: 5,
-        area: "3,548 sq-ft",
-        type: "sale",
-        status: "available",
-        description: "Exclusive modern villa with private pool and stunning Palm Jumeirah views.",
-        developer: "Nakheel",
-        amenities: "Private Pool, Garden, Maid's Room, Parking",
-        image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop"
-      },
-      {
-        title: "Premium Penthouse | Panoramic Views",
-        price: "AED 5,200,000",
-        location: "Downtown Dubai",
-        beds: 3,
-        baths: 4,
-        area: "4,815 sq-ft",
-        type: "sale",
-        status: "available",
-        description: "Luxurious penthouse with breathtaking panoramic views of Dubai's skyline.",
-        developer: "Emaar",
-        amenities: "Terrace, Jacuzzi, Gym, Concierge",
-        image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop"
-      },
-      {
-        title: "Family Townhouse | Garden View",
-        price: "AED 2,042,000",
-        location: "Dubai Hills Estate, Dubai",
-        beds: 3,
-        baths: 3,
-        area: "2,100 sq-ft",
-        type: "sale",
-        status: "available",
-        description: "Spacious family townhouse with beautiful garden views in Dubai Hills Estate.",
-        developer: "Emaar",
-        amenities: "Garden, Parking, Balcony, Storage",
-        image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&h=600&fit=crop"
-      },
-      {
-        title: "Spacious Apartment | Pool View",
-        price: "AED 1,170,000",
-        location: "JVC, Dubai",
-        beds: 1,
-        baths: 2,
-        area: "846 sq-ft",
-        type: "sale",
-        status: "available",
-        description: "Modern apartment with pool views in the vibrant Jumeirah Village Circle.",
-        developer: "Dubai Properties",
-        amenities: "Pool, Gym, Parking, Balcony",
-        image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&h=600&fit=crop"
-      },
-      {
-        title: "Beachfront Studio | Fully Furnished",
-        price: "AED 95,000 /yr",
-        location: "JBR, Dubai",
-        beds: 0,
-        baths: 1,
-        area: "520 sq-ft",
-        type: "rent",
-        status: "available",
-        description: "Fully furnished beachfront studio in the lively Jumeirah Beach Residence.",
-        developer: "Dubai Properties",
-        amenities: "Beach Access, Pool, Gym, Furnished",
-        image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop"
-      },
-      {
-        title: "Executive Villa | Golf Course View",
-        price: "AED 8,500,000",
-        location: "Emirates Hills, Dubai",
-        beds: 5,
-        baths: 6,
-        area: "7,200 sq-ft",
-        type: "sale",
-        status: "available",
-        description: "Executive villa with stunning golf course views in prestigious Emirates Hills.",
-        developer: "Emaar",
-        amenities: "Golf Course View, Private Pool, Maid's Room, Driver's Room",
-        image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop"
-      },
-      {
-        title: "Waterfront Apartment | Maid's Room",
-        price: "AED 250,000 /yr",
-        location: "Dubai Creek Harbour",
-        beds: 2,
-        baths: 3,
-        area: "1,450 sq-ft",
-        type: "rent",
-        status: "available",
-        description: "Luxurious waterfront apartment with maid's room in Dubai Creek Harbour.",
-        developer: "Emaar",
-        amenities: "Waterfront, Maid's Room, Pool, Gym",
-        image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=600&fit=crop"
-      }
-    ];
-
-    setUploading(true);
-    try {
-      for (const property of dummyProperties) {
-        const propertyData = {
-          ...property,
-          createdAt: Timestamp.now(),
-          updatedAt: Timestamp.now()
-        };
-        await addDoc(collection(db, "properties"), propertyData);
-      }
-      toast({ title: "Migration completed! 8 properties added." });
-      fetchProperties();
-    } catch (error) {
-      console.error("Migration error:", error);
-      toast({ title: "Migration failed", variant: "destructive" });
-    } finally {
-      setUploading(false);
-    }
-  };
 
   const fetchProperties = async () => {
     const snap = await getDocs(collection(db, "properties"));
@@ -278,19 +142,9 @@ const PropertiesManager = () => {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-serif font-bold text-foreground">Properties</h1>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={migrateDummyData}
-            disabled={uploading}
-          >
-            <Database className="w-4 h-4 mr-1" />
-            {uploading ? "Migrating..." : "Migrate Dummy Data"}
-          </Button>
-          <Button onClick={() => { setForm(emptyForm); setEditId(null); setShowForm(true); }}>
-            <Plus className="w-4 h-4 mr-1" /> Add Property
-          </Button>
-        </div>
+        <Button onClick={() => { setForm(emptyForm); setEditId(null); setShowForm(true); }}>
+          <Plus className="w-4 h-4 mr-1" /> Add Property
+        </Button>
       </div>
 
       {showForm && (
