@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { collection, getDocs, query, where, Timestamp } from "firebase/firestore";
+import { collection, getDocs, getDoc, doc, Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -33,15 +33,11 @@ const NewsDetail = () => {
       if (!id) return;
 
       try {
-        // Convert slug back to news title for database query
-        const newsTitle = id.replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase());
+        // Fetch specific news post by document ID
+        const newsDoc = await getDoc(doc(db, "news", id));
 
-        // Fetch specific news post
-        const newsQuery = query(collection(db, "news"), where("title", "==", newsTitle));
-        const newsSnap = await getDocs(newsQuery);
-
-        if (!newsSnap.empty) {
-          const newsData = { id: newsSnap.docs[0].id, ...newsSnap.docs[0].data() } as NewsPost;
+        if (newsDoc.exists()) {
+          const newsData = { id: newsDoc.id, ...newsDoc.data() } as NewsPost;
           setNewsPost(newsData);
 
           // Fetch related posts (same category, excluding current post)
@@ -51,6 +47,9 @@ const NewsDetail = () => {
             .filter(post => post.id !== newsData.id && post.category === newsData.category && post.status === "published")
             .slice(0, 3);
           setRelatedPosts(related);
+        } else {
+          // News post not found
+          setNewsPost(null);
         }
       } catch (error) {
         console.error("Error fetching news post:", error);

@@ -42,8 +42,6 @@ const News = () => {
     fetchNews();
   }, []);
 
-  const generateSlug = (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-
   if (loading) {
     return (
       <div className="min-h-screen">
@@ -88,7 +86,6 @@ const News = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {newsPosts.map((post) => {
-                const slug = generateSlug(post.title);
                 return (
                   <article key={post.id} className="group bg-card rounded-2xl overflow-hidden shadow-[var(--shadow-card)] hover-lift block">
                     <div className="relative aspect-[16/10] overflow-hidden">
@@ -125,7 +122,7 @@ const News = () => {
                         {post.excerpt}
                       </p>
                       <Link
-                        to={`/news/${slug}`}
+                        to={`/news/${post.id}`}
                         className="flex items-center gap-2 text-gold text-sm font-medium group-hover:gap-3 transition-all duration-300"
                       >
                         Read More

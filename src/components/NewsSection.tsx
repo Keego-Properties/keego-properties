@@ -40,8 +40,6 @@ const NewsSection = () => {
     fetchNews();
   }, []);
 
-  const generateSlug = (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-
   return (
     <section className="py-20">
       <div className="container mx-auto px-4">
@@ -70,7 +68,6 @@ const NewsSection = () => {
             </div>
           ) : (
             newsPosts.map((post) => {
-              const slug = generateSlug(post.title);
               return (
                 <article key={post.id} className="group bg-card rounded-2xl overflow-hidden shadow-[var(--shadow-card)] hover-lift block">
                   <div className="relative aspect-[16/10] overflow-hidden">
@@ -107,7 +104,7 @@ const NewsSection = () => {
                       {post.excerpt}
                     </p>
                     <Link
-                      to={`/news/${slug}`}
+                      to={`/news/${post.id}`}
                       className="flex items-center gap-2 text-gold text-sm font-medium group-hover:gap-3 transition-all duration-300"
                     >
                       Read More
