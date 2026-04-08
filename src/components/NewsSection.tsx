@@ -14,6 +14,7 @@ interface NewsPost {
   category: string;
   author: string;
   status: "published" | "draft";
+  featured: boolean;
   createdAt: Timestamp;
 }
 
@@ -26,9 +27,10 @@ const NewsSection = () => {
         const snap = await getDocs(collection(db, "news"));
         const newsData = snap.docs
           .map(d => ({ id: d.id, ...d.data() } as NewsPost))
-          .filter(post => post.status === "published") // Only show published posts
-          .sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis()) // Sort by newest first
-          .slice(0, 3); // Show only latest 3 posts
+          .filter(post => post.status === "published" && (post.featured === true))
+          .sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis())
+          .slice(0, 3);
+
         setNewsPosts(newsData);
       } catch (error) {
         console.error("Error fetching news:", error);
@@ -116,16 +118,6 @@ const NewsSection = () => {
               );
             })
           )}
-        </div>
-
-        <div className="md:hidden text-center mt-8">
-          <Link
-            to="/news"
-            className="inline-flex items-center gap-2 text-gold font-medium hover:gap-3 transition-all duration-300"
-          >
-            View All News
-            <ArrowRight className="w-4 h-4" />
-          </Link>
         </div>
       </div>
     </section>

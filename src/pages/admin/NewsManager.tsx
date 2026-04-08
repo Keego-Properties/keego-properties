@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, X, Upload } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -20,17 +21,18 @@ interface NewsPost {
   category: string;
   author: string;
   status: "published" | "draft";
+  featured: boolean;
   createdAt: Timestamp;
 }
 
 type FormState = {
   title: string; excerpt: string; content: string; image: string;
-  category: string; author: string; status: "published" | "draft"; imageFile: File | null;
-};
+  category: string; author: string; status: "published" | "draft"; featured: boolean; imageFile: File | null;
+};;
 
 const emptyForm: FormState = {
   title: "", excerpt: "", content: "", image: "",
-  category: "Market Update", author: "", status: "draft", imageFile: null,
+  category: "Market Update", author: "", status: "draft", featured: false, imageFile: null,
 };
 
 const NewsManager = () => {
@@ -96,7 +98,7 @@ const NewsManager = () => {
     setForm({
       title: n.title, excerpt: n.excerpt || "", content: n.content,
       image: n.image || "", category: n.category || "Market Update",
-      author: n.author || "", status: n.status || "draft", imageFile: null,
+      author: n.author || "", status: n.status || "draft", featured: n.featured || false, imageFile: null,
     });
     setEditId(n.id);
     setShowForm(true);
@@ -113,6 +115,13 @@ const NewsManager = () => {
     const next = n.status === "published" ? "draft" : "published";
     await updateDoc(doc(db, "news", n.id), { status: next, updatedAt: Timestamp.now() });
     toast({ title: `Post ${next}` });
+    fetchItems();
+  };
+
+  const toggleFeatured = async (n: NewsPost) => {
+    const next = !n.featured;
+    await updateDoc(doc(db, "news", n.id), { featured: next, updatedAt: Timestamp.now() });
+    toast({ title: `Post ${next ? "featured" : "unfeatured"}` });
     fetchItems();
   };
 
@@ -189,6 +198,12 @@ const NewsManager = () => {
                 </SelectContent>
               </Select>
             </div>
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2">
+                <Checkbox checked={form.featured} onCheckedChange={v => setForm({...form, featured: !!v})} />
+                Featured
+              </Label>
+            </div>
             <div className="space-y-2 md:col-span-2">
               <Label>Excerpt</Label>
               <Textarea value={form.excerpt} onChange={e => setForm({...form, excerpt: e.target.value})} rows={2} placeholder="Short summary..." />
@@ -227,12 +242,13 @@ const NewsManager = () => {
                 <th className="text-left p-3 font-medium text-muted-foreground">Category</th>
                 <th className="text-left p-3 font-medium text-muted-foreground">Author</th>
                 <th className="text-left p-3 font-medium text-muted-foreground">Status</th>
+                <th className="text-left p-3 font-medium text-muted-foreground">Featured</th>
                 <th className="text-right p-3 font-medium text-muted-foreground">Actions</th>
               </tr>
             </thead>
             <tbody>
               {items.length === 0 && (
-                <tr><td colSpan={5} className="p-8 text-center text-muted-foreground">No posts yet.</td></tr>
+                <tr><td colSpan={6} className="p-8 text-center text-muted-foreground">No posts yet.</td></tr>
               )}
               {items.map(n => (
                 <tr key={n.id} className="border-b border-border last:border-0 hover:bg-muted/30">
@@ -245,12 +261,32 @@ const NewsManager = () => {
                       {n.status}
                     </Badge>
                   </td>
+                  <td className="p-3">
+                    {n.featured ? (
+                      <Badge className="bg-amber-500 text-white">Featured</Badge>
+                    ) : (
+                      <span className="text-muted-foreground">-</span>
+                    )}
+                  </td>
                   <td className="p-3 text-right">
                     <div className="flex items-center justify-end gap-1">
                       <Button variant="ghost" size="sm" onClick={() => togglePublish(n)}>
                         {n.status === "published" ? "Unpublish" : "Publish"}
                       </Button>
-                      <Button variant="ghost" size="icon" onClick={() => handleEdit(n)}><Pencil className="w-4 h-4" /></Button>
+                      <Button variant="ghost" size="sm" onClick={() => toggleFeatured(n)}>
+                        {n.featured ? "Unfeature" : "Feature"}
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleEdit(n);
+                        }}
+                      >
+                        Edit
+                      </Button>
                       <Button variant="ghost" size="icon" onClick={() => handleDelete(n.id)}><Trash2 className="w-4 h-4 text-destructive" /></Button>
                     </div>
                   </td>
