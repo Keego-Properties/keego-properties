@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, X, CheckCircle2, XCircle, Upload } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-
+const generateSlug = (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 interface Property {
   id: string;
   title: string;
@@ -25,6 +25,8 @@ interface Property {
   image: string;
   developer: string;
   amenities: string;
+  assignedStaff: string[];
+  slug: string;
   createdAt: Timestamp;
 }
 
@@ -80,6 +82,7 @@ const PropertiesManager = () => {
         image: imageUrl,
         beds: Number(form.beds),
         baths: Number(form.baths),
+        slug: generateSlug(form.title),
         updatedAt: Timestamp.now()
       };
       delete (data as any).imageFile; // Remove file from data

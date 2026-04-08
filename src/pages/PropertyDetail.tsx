@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { collection, getDocs, query, where, Timestamp } from "firebase/firestore";
+import { collection, getDoc, getDocs, query, where, doc, Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -25,7 +25,9 @@ interface Property {
   parking?: string;
   floors?: string;
   developer?: string;
-  amenities?: string[];
+  amenities?: string | string[];
+  assignedStaff?: string[];
+  slug?: string;
   createdAt: Timestamp;
 }
 
@@ -51,20 +53,43 @@ const PropertyDetail = () => {
   const [loading, setLoading] = useState(true);
   const [currentImage, setCurrentImage] = useState(0);
 
+  const normalizedAmenities = property ? (
+    Array.isArray(property.amenities)
+      ? property.amenities
+      : typeof property.amenities === "string"
+        ? property.amenities.split(",").map((amenity) => amenity.trim()).filter(Boolean)
+        : []
+  ) : [];
+
   useEffect(() => {
     const fetchProperty = async () => {
       if (!id) return;
 
       try {
-        // Convert slug back to property title for database query
-        const propertyTitle = id.replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase());
+        let propertyData: Property | null = null;
 
-        // Fetch specific property
-        const propertyQuery = query(collection(db, "properties"), where("title", "==", propertyTitle));
-        const propertySnap = await getDocs(propertyQuery);
+        // Try direct document ID first
+        const directDoc = await getDoc(doc(db, "properties", id));
+        if (directDoc.exists()) {
+          propertyData = { id: directDoc.id, ...directDoc.data() } as Property;
+        } else {
+          const slugQuery = query(collection(db, "properties"), where("slug", "==", id));
+          const slugSnap = await getDocs(slugQuery);
 
-        if (!propertySnap.empty) {
-          const propertyData = { id: propertySnap.docs[0].id, ...propertySnap.docs[0].data() } as Property;
+          if (!slugSnap.empty) {
+            propertyData = { id: slugSnap.docs[0].id, ...slugSnap.docs[0].data() } as Property;
+          } else {
+            // Fallback for older documents or titles without slug field
+            const propertyTitle = id.replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase());
+            const titleQuery = query(collection(db, "properties"), where("title", "==", propertyTitle));
+            const titleSnap = await getDocs(titleQuery);
+            if (!titleSnap.empty) {
+              propertyData = { id: titleSnap.docs[0].id, ...titleSnap.docs[0].data() } as Property;
+            }
+          }
+        }
+
+        if (propertyData) {
           setProperty(propertyData);
 
           // Fetch other properties
@@ -275,11 +300,11 @@ const PropertyDetail = () => {
               </div>
 
               {/* Amenities */}
-              {property.amenities && property.amenities.length > 0 && (
+              {normalizedAmenities.length > 0 && (
                 <div className="mb-8">
                   <h2 className="font-serif text-2xl font-bold text-foreground mb-4">Amenities</h2>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    {property.amenities.map((amenity, i) => (
+                    {normalizedAmenities.map((amenity, i) => (
                       <div key={i} className="flex items-center gap-2 bg-muted rounded-lg px-4 py-3 text-sm">
                         {amenityIcons[amenity] || <Check className="w-4 h-4 text-gold" />}
                         {amenity}

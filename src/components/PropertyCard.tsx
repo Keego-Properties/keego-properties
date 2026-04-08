@@ -1,7 +1,10 @@
 import { Heart, Bed, Bath, Maximize, MapPin, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
 
+const generateSlug = (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+
 interface PropertyCardProps {
+  id?: string;
   image: string;
   title: string;
   price: string;
@@ -12,10 +15,10 @@ interface PropertyCardProps {
   type: "sale" | "rent";
 }
 
-const PropertyCard = ({ image, title, price, location, beds, baths, area, type }: PropertyCardProps) => {
-  const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+const PropertyCard = ({ id, image, title, price, location, beds, baths, area, type }: PropertyCardProps) => {
+  const propertyPath = id ?? generateSlug(title);
   return (
-    <Link to={`/property/${slug}`} className="block group bg-card rounded-2xl overflow-hidden shadow-[var(--shadow-card)] hover-lift">
+    <Link to={`/property/${propertyPath}`} className="block group bg-card rounded-2xl overflow-hidden shadow-[var(--shadow-card)] hover-lift">
       <div className="relative aspect-[4/3] overflow-hidden">
         <img
           src={image}
