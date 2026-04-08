@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index.tsx";
 import Properties from "./pages/Properties.tsx";
 import Communities from "./pages/Communities.tsx";
@@ -11,27 +12,49 @@ import PropertyDetail from "./pages/PropertyDetail.tsx";
 import About from "./pages/About.tsx";
 import Contact from "./pages/Contact.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import AdminLogin from "./pages/admin/Login.tsx";
+import AdminLayout from "./components/admin/AdminLayout.tsx";
+import AdminDashboard from "./pages/admin/Dashboard.tsx";
+import PropertiesManager from "./pages/admin/PropertiesManager.tsx";
+import CommunitiesManager from "./pages/admin/CommunitiesManager.tsx";
+import SalesStaffManager from "./pages/admin/SalesStaffManager.tsx";
+import NewsManager from "./pages/admin/NewsManager.tsx";
+import ProtectedRoute from "./components/admin/ProtectedRoute.tsx";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/properties" element={<Properties />} />
-          <Route path="/communities" element={<Communities />} />
-          <Route path="/community/:id" element={<CommunityDetail />} />
-          <Route path="/property/:id" element={<PropertyDetail />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            {/* Public routes */}
+            <Route path="/" element={<Index />} />
+            <Route path="/properties" element={<Properties />} />
+            <Route path="/communities" element={<Communities />} />
+            <Route path="/community/:id" element={<CommunityDetail />} />
+            <Route path="/property/:id" element={<PropertyDetail />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+
+            {/* Admin routes */}
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="properties" element={<PropertiesManager />} />
+              <Route path="communities" element={<CommunitiesManager />} />
+              <Route path="staff" element={<SalesStaffManager />} />
+              <Route path="news" element={<NewsManager />} />
+            </Route>
+
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 
