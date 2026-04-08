@@ -1,29 +1,48 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PropertyCard from "@/components/PropertyCard";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import property1 from "@/assets/property-1.jpg";
-import property2 from "@/assets/property-2.jpg";
-import property3 from "@/assets/property-3.jpg";
-import property4 from "@/assets/property-4.jpg";
 
-const allProperties = [
-  { image: property1, title: "Luxury Marina Apartment with Sea View", price: "AED 170,200 /yr", location: "Dubai Marina, Dubai", beds: 1, baths: 1, area: "823 sq-ft", type: "rent" as const },
-  { image: property2, title: "Modern Villa with Private Pool", price: "AED 3,000,000", location: "Palm Jumeirah, Dubai", beds: 4, baths: 5, area: "3,548 sq-ft", type: "sale" as const },
-  { image: property3, title: "Premium Penthouse | Panoramic Views", price: "AED 5,200,000", location: "Downtown Dubai", beds: 3, baths: 4, area: "4,815 sq-ft", type: "sale" as const },
-  { image: property4, title: "Family Townhouse | Garden View", price: "AED 2,042,000", location: "Dubai Hills Estate, Dubai", beds: 3, baths: 3, area: "2,100 sq-ft", type: "sale" as const },
-  { image: property3, title: "Spacious Apartment | Pool View", price: "AED 1,170,000", location: "JVC, Dubai", beds: 1, baths: 2, area: "846 sq-ft", type: "sale" as const },
-  { image: property1, title: "Beachfront Studio | Fully Furnished", price: "AED 95,000 /yr", location: "JBR, Dubai", beds: 0, baths: 1, area: "520 sq-ft", type: "rent" as const },
-  { image: property4, title: "Executive Villa | Golf Course View", price: "AED 8,500,000", location: "Emirates Hills, Dubai", beds: 5, baths: 6, area: "7,200 sq-ft", type: "sale" as const },
-  { image: property2, title: "Waterfront Apartment | Maid's Room", price: "AED 250,000 /yr", location: "Dubai Creek Harbour", beds: 2, baths: 3, area: "1,450 sq-ft", type: "rent" as const },
-];
+interface Property {
+  id: string;
+  title: string;
+  price: string;
+  location: string;
+  beds: number;
+  baths: number;
+  area: string;
+  type: "sale" | "rent";
+  status: "available" | "sold" | "rented";
+  image: string;
+}
 
 const Properties = () => {
   const [activeType, setActiveType] = useState("all");
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const filtered = activeType === "all" ? allProperties : allProperties.filter(p => p.type === activeType);
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        const snap = await getDocs(collection(db, "properties"));
+        const fetchedProperties = snap.docs
+          .map(d => ({ id: d.id, ...d.data() } as Property))
+          .filter(p => p.status === "available"); // Only show available properties
+        setProperties(fetchedProperties);
+      } catch (error) {
+        console.error("Error fetching properties:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProperties();
+  }, []);
+
+  const filtered = activeType === "all" ? properties : properties.filter(p => p.type === activeType);
 
   return (
     <div className="min-h-screen">
@@ -72,12 +91,39 @@ const Properties = () => {
 
       <section className="py-12">
         <div className="container mx-auto px-4">
-          <p className="text-muted-foreground text-sm mb-6">{filtered.length} properties found</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {filtered.map((property, index) => (
-              <PropertyCard key={index} {...property} />
-            ))}
-          </div>
+          <p className="text-muted-foreground text-sm mb-6">
+            {loading ? "Loading properties..." : `${filtered.length} properties found`}
+          </p>
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[...Array(8)].map((_, i) => (
+                <div key={i} className="bg-card rounded-2xl overflow-hidden shadow-[var(--shadow-card)] animate-pulse">
+                  <div className="aspect-[4/3] bg-muted"></div>
+                  <div className="p-5 space-y-3">
+                    <div className="h-6 bg-muted rounded"></div>
+                    <div className="h-4 bg-muted rounded w-3/4"></div>
+                    <div className="h-4 bg-muted rounded w-1/2"></div>
+                    <div className="flex gap-4 pt-4">
+                      <div className="h-4 bg-muted rounded w-16"></div>
+                      <div className="h-4 bg-muted rounded w-16"></div>
+                      <div className="h-4 bg-muted rounded w-16"></div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {filtered.map((property) => (
+                <PropertyCard key={property.id} {...property} />
+              ))}
+            </div>
+          )}
+          {!loading && filtered.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">No properties found matching your criteria.</p>
+            </div>
+          )}
         </div>
       </section>
       <Footer />

@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, Timestamp } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { db, storage } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, X } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Upload } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 interface NewsPost {
@@ -24,12 +25,12 @@ interface NewsPost {
 
 type FormState = {
   title: string; excerpt: string; content: string; image: string;
-  category: string; author: string; status: "published" | "draft";
+  category: string; author: string; status: "published" | "draft"; imageFile: File | null;
 };
 
 const emptyForm: FormState = {
   title: "", excerpt: "", content: "", image: "",
-  category: "Market Update", author: "", status: "draft",
+  category: "Market Update", author: "", status: "draft", imageFile: null,
 };
 
 const NewsManager = () => {
@@ -38,6 +39,7 @@ const NewsManager = () => {
   const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState(emptyForm);
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
 
   const fetchItems = async () => {
@@ -52,7 +54,24 @@ const NewsManager = () => {
     if (!form.title.trim()) return;
     setLoading(true);
     try {
-      const data = { ...form, updatedAt: Timestamp.now() };
+      let imageUrl = form.image;
+
+      if (form.imageFile) {
+        setUploading(true);
+        const fileName = `news/${Date.now()}_${form.imageFile.name}`;
+        const storageRef = ref(storage, fileName);
+        await uploadBytes(storageRef, form.imageFile);
+        imageUrl = await getDownloadURL(storageRef);
+        setUploading(false);
+      }
+
+      const data = {
+        ...form,
+        image: imageUrl,
+        updatedAt: Timestamp.now()
+      };
+      delete (data as any).imageFile;
+
       if (editId) {
         await updateDoc(doc(db, "news", editId), data);
         toast({ title: "Post updated" });
@@ -64,10 +83,12 @@ const NewsManager = () => {
       setShowForm(false);
       setEditId(null);
       fetchItems();
-    } catch {
+    } catch (error) {
+      console.error("Error saving:", error);
       toast({ title: "Error saving", variant: "destructive" });
     } finally {
       setLoading(false);
+      setUploading(false);
     }
   };
 
@@ -75,7 +96,7 @@ const NewsManager = () => {
     setForm({
       title: n.title, excerpt: n.excerpt || "", content: n.content,
       image: n.image || "", category: n.category || "Market Update",
-      author: n.author || "", status: n.status || "draft",
+      author: n.author || "", status: n.status || "draft", imageFile: null,
     });
     setEditId(n.id);
     setShowForm(true);
@@ -120,8 +141,30 @@ const NewsManager = () => {
               <Input value={form.author} onChange={e => setForm({...form, author: e.target.value})} />
             </div>
             <div className="space-y-2">
-              <Label>Image URL</Label>
-              <Input value={form.image} onChange={e => setForm({...form, image: e.target.value})} placeholder="https://..." />
+              <Label>Image Upload</Label>
+              <div className="space-y-2">
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0] || null;
+                    setForm({...form, imageFile: file});
+                  }}
+                  className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                />
+                {form.image && !form.imageFile && (
+                  <div className="flex items-center gap-2 p-2 bg-muted rounded-md">
+                    <img src={form.image} alt="Current" className="w-16 h-16 object-cover rounded" />
+                    <span className="text-sm text-muted-foreground">Current image</span>
+                  </div>
+                )}
+                {form.imageFile && (
+                  <div className="flex items-center gap-2 p-2 bg-muted rounded-md">
+                    <img src={URL.createObjectURL(form.imageFile)} alt="Preview" className="w-16 h-16 object-cover rounded" />
+                    <span className="text-sm text-muted-foreground">New image selected</span>
+                  </div>
+                )}
+              </div>
             </div>
             <div className="space-y-2">
               <Label>Category</Label>
@@ -155,7 +198,20 @@ const NewsManager = () => {
               <Textarea value={form.content} onChange={e => setForm({...form, content: e.target.value})} rows={6} />
             </div>
             <div className="md:col-span-2 flex gap-2">
-              <Button type="submit" disabled={loading}>{loading ? "Saving..." : editId ? "Update" : "Add"} Post</Button>
+              <Button type="submit" disabled={loading || uploading}>
+                {uploading ? (
+                  <>
+                    <Upload className="w-4 h-4 mr-1 animate-spin" />
+                    Uploading...
+                  </>
+                ) : loading ? (
+                  "Saving..."
+                ) : editId ? (
+                  "Update Post"
+                ) : (
+                  "Add Post"
+                )}
+              </Button>
               <Button type="button" variant="outline" onClick={() => { setShowForm(false); setEditId(null); }}>Cancel</Button>
             </div>
           </form>

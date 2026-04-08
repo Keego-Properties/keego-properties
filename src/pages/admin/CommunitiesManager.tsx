@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, Timestamp } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { db, storage } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, X } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Upload } from "lucide-react";
 
 interface Community {
   id: string;
@@ -20,9 +21,14 @@ interface Community {
   createdAt: Timestamp;
 }
 
-const emptyForm = {
+type FormState = {
+  name: string; description: string; image: string; location: string;
+  highlights: string; propertiesCount: number; avgPrice: string; imageFile: File | null;
+};
+
+const emptyForm: FormState = {
   name: "", description: "", image: "", location: "",
-  highlights: "", propertiesCount: 0, avgPrice: "",
+  highlights: "", propertiesCount: 0, avgPrice: "", imageFile: null,
 };
 
 const CommunitiesManager = () => {
@@ -31,6 +37,7 @@ const CommunitiesManager = () => {
   const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState(emptyForm);
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
 
   const fetchItems = async () => {
@@ -45,7 +52,25 @@ const CommunitiesManager = () => {
     if (!form.name.trim()) return;
     setLoading(true);
     try {
-      const data = { ...form, propertiesCount: Number(form.propertiesCount), updatedAt: Timestamp.now() };
+      let imageUrl = form.image;
+
+      if (form.imageFile) {
+        setUploading(true);
+        const fileName = `communities/${Date.now()}_${form.imageFile.name}`;
+        const storageRef = ref(storage, fileName);
+        await uploadBytes(storageRef, form.imageFile);
+        imageUrl = await getDownloadURL(storageRef);
+        setUploading(false);
+      }
+
+      const data = {
+        ...form,
+        image: imageUrl,
+        propertiesCount: Number(form.propertiesCount),
+        updatedAt: Timestamp.now()
+      };
+      delete (data as any).imageFile;
+
       if (editId) {
         await updateDoc(doc(db, "communities", editId), data);
         toast({ title: "Community updated" });
@@ -57,10 +82,12 @@ const CommunitiesManager = () => {
       setShowForm(false);
       setEditId(null);
       fetchItems();
-    } catch {
+    } catch (error) {
+      console.error("Error saving:", error);
       toast({ title: "Error saving", variant: "destructive" });
     } finally {
       setLoading(false);
+      setUploading(false);
     }
   };
 
@@ -69,6 +96,7 @@ const CommunitiesManager = () => {
       name: c.name, description: c.description, image: c.image,
       location: c.location || "", highlights: c.highlights || "",
       propertiesCount: c.propertiesCount || 0, avgPrice: c.avgPrice || "",
+      imageFile: null,
     });
     setEditId(c.id);
     setShowForm(true);
@@ -106,8 +134,30 @@ const CommunitiesManager = () => {
               <Input value={form.location} onChange={e => setForm({...form, location: e.target.value})} />
             </div>
             <div className="space-y-2">
-              <Label>Image URL</Label>
-              <Input value={form.image} onChange={e => setForm({...form, image: e.target.value})} placeholder="https://..." />
+              <Label>Image Upload</Label>
+              <div className="space-y-2">
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0] || null;
+                    setForm({...form, imageFile: file});
+                  }}
+                  className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                />
+                {form.image && !form.imageFile && (
+                  <div className="flex items-center gap-2 p-2 bg-muted rounded-md">
+                    <img src={form.image} alt="Current" className="w-16 h-16 object-cover rounded" />
+                    <span className="text-sm text-muted-foreground">Current image</span>
+                  </div>
+                )}
+                {form.imageFile && (
+                  <div className="flex items-center gap-2 p-2 bg-muted rounded-md">
+                    <img src={URL.createObjectURL(form.imageFile)} alt="Preview" className="w-16 h-16 object-cover rounded" />
+                    <span className="text-sm text-muted-foreground">New image selected</span>
+                  </div>
+                )}
+              </div>
             </div>
             <div className="space-y-2">
               <Label>Avg. Price</Label>
@@ -126,7 +176,20 @@ const CommunitiesManager = () => {
               <Textarea value={form.description} onChange={e => setForm({...form, description: e.target.value})} rows={3} />
             </div>
             <div className="md:col-span-2 flex gap-2">
-              <Button type="submit" disabled={loading}>{loading ? "Saving..." : editId ? "Update" : "Add"} Community</Button>
+              <Button type="submit" disabled={loading || uploading}>
+                {uploading ? (
+                  <>
+                    <Upload className="w-4 h-4 mr-1 animate-spin" />
+                    Uploading...
+                  </>
+                ) : loading ? (
+                  "Saving..."
+                ) : editId ? (
+                  "Update Community"
+                ) : (
+                  "Add Community"
+                )}
+              </Button>
               <Button type="button" variant="outline" onClick={() => { setShowForm(false); setEditId(null); }}>Cancel</Button>
             </div>
           </form>

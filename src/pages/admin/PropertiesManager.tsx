@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, Timestamp } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
+import { db, storage } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, X, CheckCircle2, XCircle } from "lucide-react";
+import { Plus, Pencil, Trash2, X, CheckCircle2, XCircle, Upload, Database } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 interface Property {
@@ -31,12 +32,14 @@ type FormState = {
   title: string; price: string; location: string; beds: number; baths: number;
   area: string; type: "sale" | "rent"; status: "available" | "sold" | "rented";
   description: string; image: string; developer: string; amenities: string;
+  imageFile: File | null;
 };
 
 const emptyForm: FormState = {
   title: "", price: "", location: "", beds: 1, baths: 1,
   area: "", type: "sale", status: "available",
   description: "", image: "", developer: "", amenities: "",
+  imageFile: null,
 };
 
 const PropertiesManager = () => {
@@ -45,7 +48,144 @@ const PropertiesManager = () => {
   const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState(emptyForm);
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
+
+  const migrateDummyData = async () => {
+    const dummyProperties = [
+      {
+        title: "Luxury Marina Apartment with Sea View",
+        price: "AED 170,200 /yr",
+        location: "Dubai Marina, Dubai",
+        beds: 1,
+        baths: 1,
+        area: "823 sq-ft",
+        type: "rent",
+        status: "available",
+        description: "Stunning luxury apartment with panoramic sea views in the heart of Dubai Marina.",
+        developer: "Emaar",
+        amenities: "Pool, Gym, Parking, Balcony",
+        image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=600&fit=crop"
+      },
+      {
+        title: "Modern Villa with Private Pool",
+        price: "AED 3,000,000",
+        location: "Palm Jumeirah, Dubai",
+        beds: 4,
+        baths: 5,
+        area: "3,548 sq-ft",
+        type: "sale",
+        status: "available",
+        description: "Exclusive modern villa with private pool and stunning Palm Jumeirah views.",
+        developer: "Nakheel",
+        amenities: "Private Pool, Garden, Maid's Room, Parking",
+        image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop"
+      },
+      {
+        title: "Premium Penthouse | Panoramic Views",
+        price: "AED 5,200,000",
+        location: "Downtown Dubai",
+        beds: 3,
+        baths: 4,
+        area: "4,815 sq-ft",
+        type: "sale",
+        status: "available",
+        description: "Luxurious penthouse with breathtaking panoramic views of Dubai's skyline.",
+        developer: "Emaar",
+        amenities: "Terrace, Jacuzzi, Gym, Concierge",
+        image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop"
+      },
+      {
+        title: "Family Townhouse | Garden View",
+        price: "AED 2,042,000",
+        location: "Dubai Hills Estate, Dubai",
+        beds: 3,
+        baths: 3,
+        area: "2,100 sq-ft",
+        type: "sale",
+        status: "available",
+        description: "Spacious family townhouse with beautiful garden views in Dubai Hills Estate.",
+        developer: "Emaar",
+        amenities: "Garden, Parking, Balcony, Storage",
+        image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&h=600&fit=crop"
+      },
+      {
+        title: "Spacious Apartment | Pool View",
+        price: "AED 1,170,000",
+        location: "JVC, Dubai",
+        beds: 1,
+        baths: 2,
+        area: "846 sq-ft",
+        type: "sale",
+        status: "available",
+        description: "Modern apartment with pool views in the vibrant Jumeirah Village Circle.",
+        developer: "Dubai Properties",
+        amenities: "Pool, Gym, Parking, Balcony",
+        image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&h=600&fit=crop"
+      },
+      {
+        title: "Beachfront Studio | Fully Furnished",
+        price: "AED 95,000 /yr",
+        location: "JBR, Dubai",
+        beds: 0,
+        baths: 1,
+        area: "520 sq-ft",
+        type: "rent",
+        status: "available",
+        description: "Fully furnished beachfront studio in the lively Jumeirah Beach Residence.",
+        developer: "Dubai Properties",
+        amenities: "Beach Access, Pool, Gym, Furnished",
+        image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop"
+      },
+      {
+        title: "Executive Villa | Golf Course View",
+        price: "AED 8,500,000",
+        location: "Emirates Hills, Dubai",
+        beds: 5,
+        baths: 6,
+        area: "7,200 sq-ft",
+        type: "sale",
+        status: "available",
+        description: "Executive villa with stunning golf course views in prestigious Emirates Hills.",
+        developer: "Emaar",
+        amenities: "Golf Course View, Private Pool, Maid's Room, Driver's Room",
+        image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop"
+      },
+      {
+        title: "Waterfront Apartment | Maid's Room",
+        price: "AED 250,000 /yr",
+        location: "Dubai Creek Harbour",
+        beds: 2,
+        baths: 3,
+        area: "1,450 sq-ft",
+        type: "rent",
+        status: "available",
+        description: "Luxurious waterfront apartment with maid's room in Dubai Creek Harbour.",
+        developer: "Emaar",
+        amenities: "Waterfront, Maid's Room, Pool, Gym",
+        image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=600&fit=crop"
+      }
+    ];
+
+    setUploading(true);
+    try {
+      for (const property of dummyProperties) {
+        const propertyData = {
+          ...property,
+          createdAt: Timestamp.now(),
+          updatedAt: Timestamp.now()
+        };
+        await addDoc(collection(db, "properties"), propertyData);
+      }
+      toast({ title: "Migration completed! 8 properties added." });
+      fetchProperties();
+    } catch (error) {
+      console.error("Migration error:", error);
+      toast({ title: "Migration failed", variant: "destructive" });
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const fetchProperties = async () => {
     const snap = await getDocs(collection(db, "properties"));
@@ -59,7 +199,27 @@ const PropertiesManager = () => {
     if (!form.title.trim() || !form.price.trim()) return;
     setLoading(true);
     try {
-      const data = { ...form, beds: Number(form.beds), baths: Number(form.baths), updatedAt: Timestamp.now() };
+      let imageUrl = form.image;
+
+      // Upload new image if file is selected
+      if (form.imageFile) {
+        setUploading(true);
+        const fileName = `properties/${Date.now()}_${form.imageFile.name}`;
+        const storageRef = ref(storage, fileName);
+        await uploadBytes(storageRef, form.imageFile);
+        imageUrl = await getDownloadURL(storageRef);
+        setUploading(false);
+      }
+
+      const data = {
+        ...form,
+        image: imageUrl,
+        beds: Number(form.beds),
+        baths: Number(form.baths),
+        updatedAt: Timestamp.now()
+      };
+      delete (data as any).imageFile; // Remove file from data
+
       if (editId) {
         await updateDoc(doc(db, "properties", editId), data);
         toast({ title: "Property updated" });
@@ -71,10 +231,12 @@ const PropertiesManager = () => {
       setShowForm(false);
       setEditId(null);
       fetchProperties();
-    } catch {
+    } catch (error) {
+      console.error("Error saving property:", error);
       toast({ title: "Error saving property", variant: "destructive" });
     } finally {
       setLoading(false);
+      setUploading(false);
     }
   };
 
@@ -84,6 +246,7 @@ const PropertiesManager = () => {
       beds: p.beds, baths: p.baths, area: p.area,
       type: p.type, status: p.status, description: p.description,
       image: p.image, developer: p.developer || "", amenities: p.amenities || "",
+      imageFile: null,
     });
     setEditId(p.id);
     setShowForm(true);
@@ -115,9 +278,19 @@ const PropertiesManager = () => {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-serif font-bold text-foreground">Properties</h1>
-        <Button onClick={() => { setForm(emptyForm); setEditId(null); setShowForm(true); }}>
-          <Plus className="w-4 h-4 mr-1" /> Add Property
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={migrateDummyData}
+            disabled={uploading}
+          >
+            <Database className="w-4 h-4 mr-1" />
+            {uploading ? "Migrating..." : "Migrate Dummy Data"}
+          </Button>
+          <Button onClick={() => { setForm(emptyForm); setEditId(null); setShowForm(true); }}>
+            <Plus className="w-4 h-4 mr-1" /> Add Property
+          </Button>
+        </div>
       </div>
 
       {showForm && (
@@ -140,8 +313,30 @@ const PropertiesManager = () => {
               <Input value={form.location} onChange={e => setForm({...form, location: e.target.value})} />
             </div>
             <div className="space-y-2">
-              <Label>Image URL</Label>
-              <Input value={form.image} onChange={e => setForm({...form, image: e.target.value})} placeholder="https://..." />
+              <Label>Image Upload</Label>
+              <div className="space-y-2">
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0] || null;
+                    setForm({...form, imageFile: file});
+                  }}
+                  className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                />
+                {form.image && !form.imageFile && (
+                  <div className="flex items-center gap-2 p-2 bg-muted rounded-md">
+                    <img src={form.image} alt="Current" className="w-16 h-16 object-cover rounded" />
+                    <span className="text-sm text-muted-foreground">Current image</span>
+                  </div>
+                )}
+                {form.imageFile && (
+                  <div className="flex items-center gap-2 p-2 bg-muted rounded-md">
+                    <img src={URL.createObjectURL(form.imageFile)} alt="Preview" className="w-16 h-16 object-cover rounded" />
+                    <span className="text-sm text-muted-foreground">New image selected</span>
+                  </div>
+                )}
+              </div>
             </div>
             <div className="space-y-2">
               <Label>Beds</Label>
@@ -189,7 +384,20 @@ const PropertiesManager = () => {
               <Textarea value={form.description} onChange={e => setForm({...form, description: e.target.value})} rows={3} />
             </div>
             <div className="md:col-span-2 flex gap-2">
-              <Button type="submit" disabled={loading}>{loading ? "Saving..." : editId ? "Update" : "Add"} Property</Button>
+              <Button type="submit" disabled={loading || uploading}>
+                {uploading ? (
+                  <>
+                    <Upload className="w-4 h-4 mr-1 animate-spin" />
+                    Uploading...
+                  </>
+                ) : loading ? (
+                  "Saving..."
+                ) : editId ? (
+                  "Update Property"
+                ) : (
+                  "Add Property"
+                )}
+              </Button>
               <Button type="button" variant="outline" onClick={() => { setShowForm(false); setEditId(null); }}>Cancel</Button>
             </div>
           </form>

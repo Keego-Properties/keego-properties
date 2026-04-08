@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, Timestamp } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { db, storage } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, X } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Upload } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 interface Staff {
@@ -25,12 +26,12 @@ interface Staff {
 
 type FormState = {
   name: string; email: string; phone: string; role: string;
-  photo: string; bio: string; languages: string; status: "active" | "inactive";
+  photo: string; bio: string; languages: string; status: "active" | "inactive"; photoFile: File | null;
 };
 
 const emptyForm: FormState = {
   name: "", email: "", phone: "", role: "Agent",
-  photo: "", bio: "", languages: "", status: "active",
+  photo: "", bio: "", languages: "", status: "active", photoFile: null,
 };
 
 const SalesStaffManager = () => {
@@ -39,6 +40,7 @@ const SalesStaffManager = () => {
   const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState(emptyForm);
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
 
   const fetchItems = async () => {
@@ -53,7 +55,24 @@ const SalesStaffManager = () => {
     if (!form.name.trim()) return;
     setLoading(true);
     try {
-      const data = { ...form, updatedAt: Timestamp.now() };
+      let photoUrl = form.photo;
+
+      if (form.photoFile) {
+        setUploading(true);
+        const fileName = `staff/${Date.now()}_${form.photoFile.name}`;
+        const storageRef = ref(storage, fileName);
+        await uploadBytes(storageRef, form.photoFile);
+        photoUrl = await getDownloadURL(storageRef);
+        setUploading(false);
+      }
+
+      const data = {
+        ...form,
+        photo: photoUrl,
+        updatedAt: Timestamp.now()
+      };
+      delete (data as any).photoFile;
+
       if (editId) {
         await updateDoc(doc(db, "staff", editId), data);
         toast({ title: "Staff updated" });
@@ -65,10 +84,12 @@ const SalesStaffManager = () => {
       setShowForm(false);
       setEditId(null);
       fetchItems();
-    } catch {
+    } catch (error) {
+      console.error("Error saving:", error);
       toast({ title: "Error saving", variant: "destructive" });
     } finally {
       setLoading(false);
+      setUploading(false);
     }
   };
 
@@ -76,7 +97,7 @@ const SalesStaffManager = () => {
     setForm({
       name: s.name, email: s.email, phone: s.phone,
       role: s.role, photo: s.photo || "", bio: s.bio || "",
-      languages: s.languages || "", status: s.status || "active",
+      languages: s.languages || "", status: s.status || "active", photoFile: null,
     });
     setEditId(s.id);
     setShowForm(true);
@@ -130,8 +151,30 @@ const SalesStaffManager = () => {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Photo URL</Label>
-              <Input value={form.photo} onChange={e => setForm({...form, photo: e.target.value})} placeholder="https://..." />
+              <Label>Photo Upload</Label>
+              <div className="space-y-2">
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0] || null;
+                    setForm({...form, photoFile: file});
+                  }}
+                  className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                />
+                {form.photo && !form.photoFile && (
+                  <div className="flex items-center gap-2 p-2 bg-muted rounded-md">
+                    <img src={form.photo} alt="Current" className="w-16 h-16 object-cover rounded-full" />
+                    <span className="text-sm text-muted-foreground">Current photo</span>
+                  </div>
+                )}
+                {form.photoFile && (
+                  <div className="flex items-center gap-2 p-2 bg-muted rounded-md">
+                    <img src={URL.createObjectURL(form.photoFile)} alt="Preview" className="w-16 h-16 object-cover rounded-full" />
+                    <span className="text-sm text-muted-foreground">New photo selected</span>
+                  </div>
+                )}
+              </div>
             </div>
             <div className="space-y-2">
               <Label>Languages (comma-separated)</Label>
@@ -152,7 +195,20 @@ const SalesStaffManager = () => {
               <Textarea value={form.bio} onChange={e => setForm({...form, bio: e.target.value})} rows={3} />
             </div>
             <div className="md:col-span-2 flex gap-2">
-              <Button type="submit" disabled={loading}>{loading ? "Saving..." : editId ? "Update" : "Add"} Staff</Button>
+              <Button type="submit" disabled={loading || uploading}>
+                {uploading ? (
+                  <>
+                    <Upload className="w-4 h-4 mr-1 animate-spin" />
+                    Uploading...
+                  </>
+                ) : loading ? (
+                  "Saving..."
+                ) : editId ? (
+                  "Update Staff"
+                ) : (
+                  "Add Staff"
+                )}
+              </Button>
               <Button type="button" variant="outline" onClick={() => { setShowForm(false); setEditId(null); }}>Cancel</Button>
             </div>
           </form>
