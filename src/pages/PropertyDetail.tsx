@@ -41,8 +41,8 @@ const PropertyDetail = () => {
   const { toast } = useToast();
   const [currentImage, setCurrentImage] = useState(0);
 
-  const property = allProperties.find(p => p.id === id);
-  const otherProperties = allProperties.filter(p => p.id !== id).slice(0, 3);
+  const property = allProperties.find(p => generateSlug(p.title) === id);
+  const otherProperties = allProperties.filter(p => generateSlug(p.title) !== id).slice(0, 3);
 
   if (!property) {
     return (
