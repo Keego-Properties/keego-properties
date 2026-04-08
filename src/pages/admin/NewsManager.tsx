@@ -22,9 +22,14 @@ interface NewsPost {
   createdAt: Timestamp;
 }
 
-const emptyForm = {
+type FormState = {
+  title: string; excerpt: string; content: string; image: string;
+  category: string; author: string; status: "published" | "draft";
+};
+
+const emptyForm: FormState = {
   title: "", excerpt: "", content: "", image: "",
-  category: "Market Update", author: "", status: "draft" as const,
+  category: "Market Update", author: "", status: "draft",
 };
 
 const NewsManager = () => {

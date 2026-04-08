@@ -23,9 +23,14 @@ interface Staff {
   createdAt: Timestamp;
 }
 
-const emptyForm = {
+type FormState = {
+  name: string; email: string; phone: string; role: string;
+  photo: string; bio: string; languages: string; status: "active" | "inactive";
+};
+
+const emptyForm: FormState = {
   name: "", email: "", phone: "", role: "Agent",
-  photo: "", bio: "", languages: "", status: "active" as const,
+  photo: "", bio: "", languages: "", status: "active",
 };
 
 const SalesStaffManager = () => {

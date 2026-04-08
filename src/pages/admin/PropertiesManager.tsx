@@ -27,9 +27,15 @@ interface Property {
   createdAt: Timestamp;
 }
 
-const emptyForm = {
+type FormState = {
+  title: string; price: string; location: string; beds: number; baths: number;
+  area: string; type: "sale" | "rent"; status: "available" | "sold" | "rented";
+  description: string; image: string; developer: string; amenities: string;
+};
+
+const emptyForm: FormState = {
   title: "", price: "", location: "", beds: 1, baths: 1,
-  area: "", type: "sale" as const, status: "available" as const,
+  area: "", type: "sale", status: "available",
   description: "", image: "", developer: "", amenities: "",
 };
 
