@@ -271,7 +271,7 @@ const PropertyDetail = () => {
           <h2 className="font-serif text-2xl font-bold text-foreground mb-8">Similar Properties</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {otherProperties.map((p, i) => (
-              <Link key={i} to={`/property/${p.id}`}>
+              <Link key={i} to={`/property/${generateSlug(p.title)}`}>
                 <PropertyCard {...p} />
               </Link>
             ))}
