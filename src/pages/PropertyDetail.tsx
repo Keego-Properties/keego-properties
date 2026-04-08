@@ -1,28 +1,35 @@
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import { collection, getDocs, query, where, Timestamp } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PropertyCard from "@/components/PropertyCard";
 import { Heart, Bed, Bath, Maximize, MapPin, Phone, Mail, Share2, ChevronLeft, ChevronRight, Check, Building, Calendar, Layers, Car, Trees, Dumbbell, Waves, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import property1 from "@/assets/property-1.jpg";
-import property2 from "@/assets/property-2.jpg";
-import property3 from "@/assets/property-3.jpg";
-import property4 from "@/assets/property-4.jpg";
+
+interface Property {
+  id: string;
+  title: string;
+  price: string;
+  location: string;
+  beds: number;
+  baths: number;
+  area: string;
+  type: "sale" | "rent";
+  status: "available" | "sold" | "rented";
+  image: string;
+  description?: string;
+  year?: string;
+  parking?: string;
+  floors?: string;
+  developer?: string;
+  amenities?: string[];
+  createdAt: Timestamp;
+}
 
 const generateSlug = (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-
-const allProperties = [
-  { image: property1, title: "Luxury Marina Apartment with Sea View", price: "AED 170,200 /yr", location: "Dubai Marina, Dubai", beds: 1, baths: 1, area: "823 sq-ft", type: "rent" as const, description: "Experience luxury waterfront living in this stunning 1-bedroom apartment in Dubai Marina. Featuring floor-to-ceiling windows with breathtaking sea views, premium finishes, and access to world-class amenities. The open-plan living and dining area is flooded with natural light, while the modern kitchen comes fully equipped with high-end appliances.", year: "2022", parking: "1", floors: "32nd", developer: "Emaar Properties", amenities: ["Swimming Pool", "Gym", "Concierge", "Parking", "Security", "Garden", "Beach Access", "Kids Play Area"] },
-  { image: property2, title: "Modern Villa with Private Pool", price: "AED 3,000,000", location: "Palm Jumeirah, Dubai", beds: 4, baths: 5, area: "3,548 sq-ft", type: "sale" as const, description: "An exceptional modern villa situated on the prestigious Palm Jumeirah. This 4-bedroom masterpiece features a private infinity pool, landscaped garden, and direct beach access. The contemporary design incorporates smart home technology throughout, with premium marble flooring and custom Italian fixtures.", year: "2021", parking: "2", floors: "G+1", developer: "Nakheel", amenities: ["Private Pool", "Beach Access", "Gym", "Smart Home", "Garden", "Security", "Maid's Room", "Driver's Room"] },
-  { image: property3, title: "Premium Penthouse | Panoramic Views", price: "AED 5,200,000", location: "Downtown Dubai", beds: 3, baths: 4, area: "4,815 sq-ft", type: "sale" as const, description: "A rare penthouse offering 360-degree panoramic views of the Burj Khalifa and Dubai Fountain. This exceptional 3-bedroom residence features double-height ceilings, a private terrace, and bespoke interiors crafted by world-renowned designers. The epitome of luxury living in Downtown Dubai.", year: "2023", parking: "3", floors: "Penthouse", developer: "Emaar Properties", amenities: ["Private Terrace", "Swimming Pool", "Gym", "Spa", "Concierge", "Valet Parking", "Wine Cellar", "Smart Home"] },
-  { image: property4, title: "Family Townhouse | Garden View", price: "AED 2,042,000", location: "Dubai Hills Estate, Dubai", beds: 3, baths: 3, area: "2,100 sq-ft", type: "sale" as const, description: "A beautifully designed townhouse in the heart of Dubai Hills Estate, perfect for families. Overlooking lush green parks and the championship golf course, this 3-bedroom home offers contemporary living spaces, a private garden, and close proximity to top schools and shopping.", year: "2020", parking: "2", floors: "G+1", developer: "Meraas", amenities: ["Garden", "Community Pool", "Gym", "Parks", "Golf Course", "Schools Nearby", "Shopping Mall", "Cycling Tracks"] },
-  { image: property3, title: "Spacious Apartment | Pool View", price: "AED 1,170,000", location: "JVC, Dubai", beds: 1, baths: 2, area: "846 sq-ft", type: "sale" as const, description: "A bright and spacious apartment in Jumeirah Village Circle offering stunning pool views. Modern open-plan design with quality finishes, built-in wardrobes, and a fully fitted kitchen. Perfect for investors or first-time buyers looking for value in a thriving community.", year: "2023", parking: "1", floors: "8th", developer: "Danube Properties", amenities: ["Swimming Pool", "Gym", "Garden", "Parking", "Security", "Kids Play Area", "BBQ Area", "Jogging Track"] },
-  { image: property1, title: "Beachfront Studio | Fully Furnished", price: "AED 95,000 /yr", location: "JBR, Dubai", beds: 0, baths: 1, area: "520 sq-ft", type: "rent" as const, description: "A fully furnished beachfront studio in the vibrant JBR community. Wake up to stunning sea views every morning. This turnkey unit includes premium furniture, a fully equipped kitchen, and access to The Walk and the beach. Ideal for professionals or holiday home investors.", year: "2019", parking: "1", floors: "15th", developer: "Dubai Properties", amenities: ["Beach Access", "Swimming Pool", "Gym", "Concierge", "Parking", "Security", "Retail", "Restaurants"] },
-  { image: property4, title: "Executive Villa | Golf Course View", price: "AED 8,500,000", location: "Emirates Hills, Dubai", beds: 5, baths: 6, area: "7,200 sq-ft", type: "sale" as const, description: "A magnificent executive villa in the prestigious Emirates Hills gated community. This 5-bedroom residence offers panoramic views of the Montgomerie Golf Course, a private pool, landscaped gardens, and luxurious interiors with marble flooring and custom woodwork throughout.", year: "2018", parking: "3", floors: "G+1", developer: "Emaar Properties", amenities: ["Private Pool", "Garden", "Golf Course", "Gym", "Security", "Maid's Room", "Driver's Room", "Smart Home"] },
-  { image: property2, title: "Waterfront Apartment | Maid's Room", price: "AED 250,000 /yr", location: "Dubai Creek Harbour", beds: 2, baths: 3, area: "1,450 sq-ft", type: "rent" as const, description: "A premium waterfront apartment in Dubai Creek Harbour with stunning views of the creek and Dubai skyline. This spacious 2-bedroom unit includes a maid's room, modern kitchen, and access to world-class amenities. Located near the upcoming Dubai Creek Tower.", year: "2022", parking: "1", floors: "22nd", developer: "Emaar Properties", amenities: ["Swimming Pool", "Gym", "Garden", "Parking", "Security", "Concierge", "Kids Play Area", "Retail"] },
-];
 
 const amenityIcons: Record<string, React.ReactNode> = {
   "Swimming Pool": <Waves className="w-4 h-4" />,
@@ -39,10 +46,56 @@ const amenityIcons: Record<string, React.ReactNode> = {
 const PropertyDetail = () => {
   const { id } = useParams();
   const { toast } = useToast();
+  const [property, setProperty] = useState<Property | null>(null);
+  const [otherProperties, setOtherProperties] = useState<Property[]>([]);
+  const [loading, setLoading] = useState(true);
   const [currentImage, setCurrentImage] = useState(0);
 
-  const property = allProperties.find(p => generateSlug(p.title) === id);
-  const otherProperties = allProperties.filter(p => generateSlug(p.title) !== id).slice(0, 3);
+  useEffect(() => {
+    const fetchProperty = async () => {
+      if (!id) return;
+
+      try {
+        // Convert slug back to property title for database query
+        const propertyTitle = id.replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase());
+
+        // Fetch specific property
+        const propertyQuery = query(collection(db, "properties"), where("title", "==", propertyTitle));
+        const propertySnap = await getDocs(propertyQuery);
+
+        if (!propertySnap.empty) {
+          const propertyData = { id: propertySnap.docs[0].id, ...propertySnap.docs[0].data() } as Property;
+          setProperty(propertyData);
+
+          // Fetch other properties
+          const allPropertiesSnap = await getDocs(collection(db, "properties"));
+          const allProperties = allPropertiesSnap.docs
+            .map(d => ({ id: d.id, ...d.data() } as Property))
+            .filter(p => p.id !== propertyData.id && p.status === "available")
+            .slice(0, 3);
+          setOtherProperties(allProperties);
+        }
+      } catch (error) {
+        console.error("Error fetching property:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProperty();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen">
+        <Navbar />
+        <div className="pt-32 pb-20 text-center">
+          <p className="text-muted-foreground">Loading property details...</p>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!property) {
     return (
@@ -57,223 +110,220 @@ const PropertyDetail = () => {
     );
   }
 
-  const images = [property.image, property2, property3, property4];
+  // Sample images for now - in a real app, these would be stored in the database
+  const images = [property.image, "/placeholder-property.jpg", "/placeholder-property.jpg", "/placeholder-property.jpg"];
 
-  const handleInquiry = (e: React.FormEvent) => {
-    e.preventDefault();
-    toast({ title: "Inquiry Sent!", description: "Our agent will contact you within 24 hours." });
+  const nextImage = () => setCurrentImage((prev) => (prev + 1) % images.length);
+  const prevImage = () => setCurrentImage((prev) => (prev - 1 + images.length) % images.length);
+
+  const shareProperty = () => {
+    navigator.share?.({
+      title: property.title,
+      text: `Check out this property: ${property.title}`,
+      url: window.location.href,
+    }).catch(() => {
+      navigator.clipboard.writeText(window.location.href);
+      toast({ title: "Link copied to clipboard" });
+    });
   };
 
   return (
     <div className="min-h-screen">
       <Navbar />
 
-      {/* Breadcrumb */}
-      <section className="pt-24 pb-4 bg-muted">
-        <div className="container mx-auto px-4">
-          <nav className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Link to="/" className="hover:text-gold transition-colors">Home</Link>
-            <span>/</span>
-            <Link to="/properties" className="hover:text-gold transition-colors">Properties</Link>
-            <span>/</span>
-            <span className="text-foreground">{property.title}</span>
-          </nav>
-        </div>
-      </section>
-
       {/* Image Gallery */}
-      <section className="pb-8 bg-muted">
-        <div className="container mx-auto px-4">
-          <div className="relative rounded-2xl overflow-hidden aspect-[16/9] md:aspect-[21/9]">
-            <img
-              src={images[currentImage]}
-              alt={property.title}
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-foreground/20 to-transparent" />
-            <button
-              onClick={() => setCurrentImage(i => (i - 1 + images.length) % images.length)}
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-background/80 backdrop-blur flex items-center justify-center hover:bg-background transition-all"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            <button
-              onClick={() => setCurrentImage(i => (i + 1) % images.length)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-background/80 backdrop-blur flex items-center justify-center hover:bg-background transition-all"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-              {images.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setCurrentImage(i)}
-                  className={`w-2.5 h-2.5 rounded-full transition-all ${i === currentImage ? "bg-gold w-6" : "bg-background/60"}`}
-                />
-              ))}
-            </div>
-            <div className="absolute top-4 left-4">
-              <span className="bg-gold text-primary-foreground text-xs font-semibold px-3 py-1.5 rounded-full uppercase tracking-wider">
-                For {property.type === "sale" ? "Sale" : "Rent"}
-              </span>
-            </div>
-            <div className="absolute top-4 right-4 flex gap-2">
-              <button className="w-10 h-10 rounded-full bg-background/80 backdrop-blur flex items-center justify-center hover:bg-background transition-all text-muted-foreground hover:text-destructive">
-                <Heart className="w-5 h-5" />
-              </button>
-              <button className="w-10 h-10 rounded-full bg-background/80 backdrop-blur flex items-center justify-center hover:bg-background transition-all text-muted-foreground hover:text-foreground">
-                <Share2 className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
+      <section className="relative h-[50vh] md:h-[60vh]">
+        <img src={images[currentImage]} alt={property.title} className="w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-black/20" />
 
-          {/* Thumbnails */}
-          <div className="flex gap-3 mt-4">
-            {images.map((img, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentImage(i)}
-                className={`rounded-xl overflow-hidden w-24 h-16 md:w-32 md:h-20 border-2 transition-all ${i === currentImage ? "border-gold" : "border-transparent opacity-60 hover:opacity-100"}`}
-              >
-                <img src={img} alt="" className="w-full h-full object-cover" />
-              </button>
-            ))}
-          </div>
+        {/* Navigation */}
+        <button onClick={prevImage} className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 backdrop-blur-sm hover:bg-white/30 rounded-full p-3 text-white transition-colors">
+          <ChevronLeft className="w-6 h-6" />
+        </button>
+        <button onClick={nextImage} className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 backdrop-blur-sm hover:bg-white/30 rounded-full p-3 text-white transition-colors">
+          <ChevronRight className="w-6 h-6" />
+        </button>
+
+        {/* Image Indicators */}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+          {images.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrentImage(i)}
+              className={`w-2 h-2 rounded-full transition-colors ${i === currentImage ? 'bg-white' : 'bg-white/50'}`}
+            />
+          ))}
+        </div>
+
+        {/* Price Badge */}
+        <div className="absolute top-4 right-4 bg-gold text-primary-foreground px-4 py-2 rounded-full font-semibold">
+          {property.price}
+        </div>
+
+        {/* Action Buttons */}
+        <div className="absolute top-4 left-4 flex gap-2">
+          <button className="bg-white/20 backdrop-blur-sm hover:bg-white/30 rounded-full p-3 text-white transition-colors">
+            <Heart className="w-5 h-5" />
+          </button>
+          <button onClick={shareProperty} className="bg-white/20 backdrop-blur-sm hover:bg-white/30 rounded-full p-3 text-white transition-colors">
+            <Share2 className="w-5 h-5" />
+          </button>
         </div>
       </section>
 
-      {/* Details */}
-      <section className="py-12">
+      {/* Property Info */}
+      <section className="py-16">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-            {/* Main Content */}
-            <div className="lg:col-span-2 space-y-8">
-              <div>
-                <p className="text-gold font-bold text-2xl md:text-3xl mb-2">{property.price}</p>
-                <h1 className="font-serif text-2xl md:text-3xl font-bold text-foreground mb-3">{property.title}</h1>
-                <div className="flex items-center gap-1.5 text-muted-foreground">
-                  <MapPin className="w-4 h-4" />
-                  <span>{property.location}</span>
-                </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            <div className="lg:col-span-2">
+              <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
+                <Link to="/" className="hover:text-gold transition-colors">Home</Link>
+                <span>/</span>
+                <Link to="/properties" className="hover:text-gold transition-colors">Properties</Link>
+                <span>/</span>
+                <span className="text-foreground">{property.title}</span>
+              </nav>
+
+              <h1 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-4">{property.title}</h1>
+
+              <div className="flex items-center gap-2 text-muted-foreground mb-6">
+                <MapPin className="w-4 h-4" />
+                <span>{property.location}</span>
               </div>
 
-              {/* Key Details */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {[
-                  { icon: <Bed className="w-5 h-5" />, label: "Bedrooms", value: property.beds },
-                  { icon: <Bath className="w-5 h-5" />, label: "Bathrooms", value: property.baths },
-                  { icon: <Maximize className="w-5 h-5" />, label: "Area", value: property.area },
-                  { icon: <Building className="w-5 h-5" />, label: "Floor", value: property.floors },
-                  { icon: <Car className="w-5 h-5" />, label: "Parking", value: property.parking },
-                  { icon: <Calendar className="w-5 h-5" />, label: "Built", value: property.year },
-                  { icon: <Layers className="w-5 h-5" />, label: "Type", value: property.type === "sale" ? "Sale" : "Rent" },
-                  { icon: <ShieldCheck className="w-5 h-5" />, label: "Developer", value: property.developer },
-                ].map((item, i) => (
-                  <div key={i} className="bg-muted rounded-xl p-4 text-center">
-                    <div className="flex justify-center text-gold mb-2">{item.icon}</div>
-                    <p className="text-xs text-muted-foreground mb-1">{item.label}</p>
-                    <p className="font-semibold text-foreground text-sm">{item.value}</p>
+              {/* Key Stats */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+                <div className="text-center">
+                  <div className="flex items-center justify-center gap-2 text-gold mb-2">
+                    <Bed className="w-5 h-5" />
+                    <span className="font-bold text-xl">{property.beds}</span>
                   </div>
-                ))}
+                  <p className="text-sm text-muted-foreground">Bedrooms</p>
+                </div>
+                <div className="text-center">
+                  <div className="flex items-center justify-center gap-2 text-gold mb-2">
+                    <Bath className="w-5 h-5" />
+                    <span className="font-bold text-xl">{property.baths}</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Bathrooms</p>
+                </div>
+                <div className="text-center">
+                  <div className="flex items-center justify-center gap-2 text-gold mb-2">
+                    <Maximize className="w-5 h-5" />
+                    <span className="font-bold text-xl">{property.area}</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Area</p>
+                </div>
+                <div className="text-center">
+                  <div className="flex items-center justify-center gap-2 text-gold mb-2">
+                    <Building className="w-5 h-5" />
+                    <span className="font-bold text-xl">{property.type === "sale" ? "For Sale" : "For Rent"}</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Type</p>
+                </div>
               </div>
 
               {/* Description */}
-              <div>
-                <h2 className="font-serif text-xl font-bold text-foreground mb-4">Description</h2>
-                <p className="text-muted-foreground leading-relaxed">{property.description}</p>
+              <div className="mb-8">
+                <h2 className="font-serif text-2xl font-bold text-foreground mb-4">Description</h2>
+                <p className="text-muted-foreground leading-relaxed">
+                  {property.description || "A beautiful property offering modern living spaces and premium amenities."}
+                </p>
+              </div>
+
+              {/* Property Details */}
+              <div className="mb-8">
+                <h2 className="font-serif text-2xl font-bold text-foreground mb-4">Property Details</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {property.year && (
+                    <div className="flex items-center justify-between py-3 border-b border-border">
+                      <span className="text-muted-foreground flex items-center gap-2">
+                        <Calendar className="w-4 h-4" />
+                        Year Built
+                      </span>
+                      <span className="font-semibold">{property.year}</span>
+                    </div>
+                  )}
+                  {property.parking && (
+                    <div className="flex items-center justify-between py-3 border-b border-border">
+                      <span className="text-muted-foreground flex items-center gap-2">
+                        <Car className="w-4 h-4" />
+                        Parking
+                      </span>
+                      <span className="font-semibold">{property.parking} Spaces</span>
+                    </div>
+                  )}
+                  {property.floors && (
+                    <div className="flex items-center justify-between py-3 border-b border-border">
+                      <span className="text-muted-foreground flex items-center gap-2">
+                        <Layers className="w-4 h-4" />
+                        Floor
+                      </span>
+                      <span className="font-semibold">{property.floors}</span>
+                    </div>
+                  )}
+                  {property.developer && (
+                    <div className="flex items-center justify-between py-3 border-b border-border">
+                      <span className="text-muted-foreground flex items-center gap-2">
+                        <Building className="w-4 h-4" />
+                        Developer
+                      </span>
+                      <span className="font-semibold">{property.developer}</span>
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Amenities */}
-              <div>
-                <h2 className="font-serif text-xl font-bold text-foreground mb-4">Amenities & Features</h2>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {property.amenities.map((amenity, i) => (
-                    <div key={i} className="flex items-center gap-2 text-sm text-muted-foreground bg-muted rounded-lg px-3 py-2.5">
-                      <span className="text-gold">{amenityIcons[amenity] || <Check className="w-4 h-4" />}</span>
-                      {amenity}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Location */}
-              <div>
-                <h2 className="font-serif text-xl font-bold text-foreground mb-4">Location</h2>
-                <div className="bg-muted rounded-2xl h-64 flex items-center justify-center">
-                  <div className="text-center text-muted-foreground">
-                    <MapPin className="w-8 h-8 mx-auto mb-2 text-gold" />
-                    <p className="font-medium">{property.location}</p>
+              {property.amenities && property.amenities.length > 0 && (
+                <div className="mb-8">
+                  <h2 className="font-serif text-2xl font-bold text-foreground mb-4">Amenities</h2>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {property.amenities.map((amenity, i) => (
+                      <div key={i} className="flex items-center gap-2 bg-muted rounded-lg px-4 py-3 text-sm">
+                        {amenityIcons[amenity] || <Check className="w-4 h-4 text-gold" />}
+                        {amenity}
+                      </div>
+                    ))}
                   </div>
                 </div>
-              </div>
+              )}
             </div>
 
-            {/* Sidebar - Agent Contact */}
-            <div className="lg:col-span-1">
-              <div className="sticky top-28 bg-card rounded-2xl shadow-[var(--shadow-card)] p-6 space-y-6">
-                <div className="text-center">
-                  <div className="w-16 h-16 rounded-full bg-navy mx-auto mb-3 flex items-center justify-center text-primary-foreground font-serif text-xl font-bold">
-                    DA
-                  </div>
-                  <h3 className="font-serif font-bold text-foreground">Dubai Agent</h3>
-                  <p className="text-sm text-muted-foreground">Senior Property Consultant</p>
-                </div>
+            {/* Contact Sidebar */}
+            <div>
+              <div className="bg-card rounded-2xl shadow-[var(--shadow-card)] p-6 space-y-6 sticky top-28">
+                <h3 className="font-serif text-xl font-bold text-foreground">Interested in this property?</h3>
+                <p className="text-muted-foreground text-sm">Get in touch with our property experts for more information.</p>
 
-                <div className="flex gap-2">
-                  <Button className="flex-1 bg-gold hover:bg-gold/90 text-primary-foreground rounded-full">
-                    <Phone className="w-4 h-4 mr-1" /> Call
+                <div className="space-y-4">
+                  <Button className="w-full bg-gold hover:bg-gold/90 text-primary-foreground">
+                    <Phone className="w-4 h-4 mr-2" />
+                    Call Now
                   </Button>
-                  <Button variant="outline" className="flex-1 rounded-full">
-                    <Mail className="w-4 h-4 mr-1" /> Email
+                  <Button variant="outline" className="w-full">
+                    <Mail className="w-4 h-4 mr-2" />
+                    Send Email
                   </Button>
                 </div>
 
-                <form onSubmit={handleInquiry} className="space-y-3">
-                  <input
-                    type="text"
-                    placeholder="Your Name"
-                    className="w-full px-4 py-2.5 rounded-lg bg-muted text-sm outline-none focus:ring-2 focus:ring-gold/50 placeholder:text-muted-foreground"
-                    required
-                  />
-                  <input
-                    type="email"
-                    placeholder="Email Address"
-                    className="w-full px-4 py-2.5 rounded-lg bg-muted text-sm outline-none focus:ring-2 focus:ring-gold/50 placeholder:text-muted-foreground"
-                    required
-                  />
-                  <input
-                    type="tel"
-                    placeholder="Phone Number"
-                    className="w-full px-4 py-2.5 rounded-lg bg-muted text-sm outline-none focus:ring-2 focus:ring-gold/50 placeholder:text-muted-foreground"
-                  />
-                  <textarea
-                    placeholder="I'm interested in this property..."
-                    rows={3}
-                    className="w-full px-4 py-2.5 rounded-lg bg-muted text-sm outline-none focus:ring-2 focus:ring-gold/50 placeholder:text-muted-foreground resize-none"
-                  />
-                  <Button type="submit" className="w-full bg-navy hover:bg-navy-dark text-primary-foreground rounded-full">
-                    Send Inquiry
-                  </Button>
-                </form>
-
-                <p className="text-xs text-center text-muted-foreground">
-                  By submitting, you agree to our Terms & Privacy Policy
-                </p>
+                <div className="pt-4 border-t border-border">
+                  <p className="text-sm text-muted-foreground mb-2">Property ID: {property.id.slice(0, 8)}</p>
+                  <p className="text-sm text-muted-foreground">Listed: {property.createdAt?.toDate().toLocaleDateString()}</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Similar Properties */}
-      <section className="py-12 bg-cream">
+      {/* Other Properties */}
+      <section className="py-16 bg-cream">
         <div className="container mx-auto px-4">
           <h2 className="font-serif text-2xl font-bold text-foreground mb-8">Similar Properties</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {otherProperties.map((p, i) => (
-              <Link key={i} to={`/property/${generateSlug(p.title)}`}>
-                <PropertyCard {...p} />
-              </Link>
+            {otherProperties.map((p) => (
+              <PropertyCard key={p.id} {...p} />
             ))}
           </div>
         </div>
