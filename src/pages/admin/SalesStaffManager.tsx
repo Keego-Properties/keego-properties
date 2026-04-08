@@ -21,17 +21,20 @@ interface Staff {
   bio: string;
   languages: string;
   status: "active" | "inactive";
+  assignedProperties: string[];
   createdAt: Timestamp;
 }
 
 type FormState = {
   name: string; email: string; phone: string; role: string;
-  photo: string; bio: string; languages: string; status: "active" | "inactive"; photoFile: File | null;
+  photo: string; bio: string; languages: string; status: "active" | "inactive"; 
+  assignedProperties: string[]; photoFile: File | null;
 };
 
 const emptyForm: FormState = {
   name: "", email: "", phone: "", role: "Agent",
-  photo: "", bio: "", languages: "", status: "active", photoFile: null,
+  photo: "", bio: "", languages: "", status: "active", 
+  assignedProperties: [], photoFile: null,
 };
 
 const SalesStaffManager = () => {
@@ -43,12 +46,22 @@ const SalesStaffManager = () => {
   const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
 
+  const [properties, setProperties] = useState<{id: string, title: string, location: string}[]>([]);
+
   const fetchItems = async () => {
     const snap = await getDocs(collection(db, "staff"));
     setItems(snap.docs.map(d => ({ id: d.id, ...d.data() } as Staff)));
   };
 
-  useEffect(() => { fetchItems(); }, []);
+  const fetchProperties = async () => {
+    const snap = await getDocs(collection(db, "properties"));
+    setProperties(snap.docs.map(d => ({ id: d.id, title: d.data().title, location: d.data().location })));
+  };
+
+  useEffect(() => { 
+    fetchItems(); 
+    fetchProperties();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -97,7 +110,8 @@ const SalesStaffManager = () => {
     setForm({
       name: s.name, email: s.email, phone: s.phone,
       role: s.role, photo: s.photo || "", bio: s.bio || "",
-      languages: s.languages || "", status: s.status || "active", photoFile: null,
+      languages: s.languages || "", status: s.status || "active", 
+      assignedProperties: s.assignedProperties || [], photoFile: null,
     });
     setEditId(s.id);
     setShowForm(true);
@@ -189,6 +203,46 @@ const SalesStaffManager = () => {
                   <SelectItem value="inactive">Inactive</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+            <div className="space-y-2 md:col-span-2">
+              <Label>Assigned Properties (Optional)</Label>
+              <Select 
+                value="" 
+                onValueChange={(propertyId) => {
+                  if (!form.assignedProperties.includes(propertyId)) {
+                    setForm({...form, assignedProperties: [...form.assignedProperties, propertyId]});
+                  }
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select properties to assign" />
+                </SelectTrigger>
+                <SelectContent>
+                  {properties.filter(p => !form.assignedProperties.includes(p.id)).map(p => (
+                    <SelectItem key={p.id} value={p.id}>
+                      {p.title} - {p.location}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {form.assignedProperties.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {form.assignedProperties.map(propertyId => {
+                    const property = properties.find(p => p.id === propertyId);
+                    return property ? (
+                      <Badge key={propertyId} variant="secondary" className="flex items-center gap-1">
+                        {property.title}
+                        <button
+                          onClick={() => setForm({...form, assignedProperties: form.assignedProperties.filter(id => id !== propertyId)})}
+                          className="ml-1 hover:text-destructive"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </Badge>
+                    ) : null;
+                  })}
+                </div>
+              )}
             </div>
             <div className="space-y-2 md:col-span-2">
               <Label>Bio</Label>

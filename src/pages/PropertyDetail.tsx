@@ -25,9 +25,9 @@ interface Property {
   parking?: string;
   floors?: string;
   developer?: string;
-  amenities?: string | string[];
-  assignedStaff?: string[];
   slug?: string;
+  amenities?: string[];
+  assignedStaff?: string[];
   createdAt: Timestamp;
 }
 
@@ -50,6 +50,7 @@ const PropertyDetail = () => {
   const { toast } = useToast();
   const [property, setProperty] = useState<Property | null>(null);
   const [otherProperties, setOtherProperties] = useState<Property[]>([]);
+  const [staff, setStaff] = useState<{id: string, name: string, email: string, phone: string, photo: string, role: string}[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentImage, setCurrentImage] = useState(0);
 
@@ -100,6 +101,10 @@ const PropertyDetail = () => {
             .slice(0, 3);
           setOtherProperties(allProperties);
         }
+
+        // Fetch staff members
+        const staffSnap = await getDocs(collection(db, "staff"));
+        setStaff(staffSnap.docs.map(d => ({ id: d.id, ...d.data() })));
       } catch (error) {
         console.error("Error fetching property:", error);
       } finally {
@@ -331,6 +336,46 @@ const PropertyDetail = () => {
                     Send Email
                   </Button>
                 </div>
+
+                {/* Assigned Staff */}
+                {property.assignedStaff && property.assignedStaff.length > 0 && (
+                  <div className="pt-4 border-t border-border">
+                    <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
+                      <Users className="w-4 h-4" />
+                      Your Property Team
+                    </h4>
+                    <div className="space-y-3">
+                      {property.assignedStaff.map(staffId => {
+                        const staffMember = staff.find(s => s.id === staffId);
+                        return staffMember ? (
+                          <div key={staffId} className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
+                            <img 
+                              src={staffMember.photo || "/placeholder-avatar.jpg"} 
+                              alt={staffMember.name} 
+                              className="w-10 h-10 rounded-full object-cover" 
+                            />
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium text-sm text-foreground">{staffMember.name}</p>
+                              <p className="text-xs text-muted-foreground">{staffMember.role}</p>
+                            </div>
+                            <div className="flex gap-1">
+                              {staffMember.phone && (
+                                <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
+                                  <Phone className="w-3 h-3" />
+                                </Button>
+                              )}
+                              {staffMember.email && (
+                                <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
+                                  <Mail className="w-3 h-3" />
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                        ) : null;
+                      })}
+                    </div>
+                  </div>
+                )}
 
                 <div className="pt-4 border-t border-border">
                   <p className="text-sm text-muted-foreground mb-2">Property ID: {property.id.slice(0, 8)}</p>

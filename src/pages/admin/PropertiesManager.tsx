@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, X, CheckCircle2, XCircle, Upload } from "lucide-react";
+import { Plus, Pencil, Trash2, X, CheckCircle2, XCircle, Upload, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 const generateSlug = (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 interface Property {
@@ -34,14 +34,14 @@ type FormState = {
   title: string; price: string; location: string; beds: number; baths: number;
   area: string; type: "sale" | "rent"; status: "available" | "sold" | "rented";
   description: string; image: string; developer: string; amenities: string;
-  imageFile: File | null;
+  assignedStaff: string[]; imageFile: File | null;
 };
 
 const emptyForm: FormState = {
   title: "", price: "", location: "", beds: 1, baths: 1,
   area: "", type: "sale", status: "available",
   description: "", image: "", developer: "", amenities: "",
-  imageFile: null,
+  assignedStaff: [], imageFile: null,
 };
 
 const PropertiesManager = () => {
@@ -53,12 +53,22 @@ const PropertiesManager = () => {
   const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
 
+  const [staff, setStaff] = useState<{id: string, name: string, role: string}[]>([]);
+
   const fetchProperties = async () => {
     const snap = await getDocs(collection(db, "properties"));
     setProperties(snap.docs.map(d => ({ id: d.id, ...d.data() } as Property)));
   };
 
-  useEffect(() => { fetchProperties(); }, []);
+  const fetchStaff = async () => {
+    const snap = await getDocs(collection(db, "staff"));
+    setStaff(snap.docs.map(d => ({ id: d.id, name: d.data().name, role: d.data().role })));
+  };
+
+  useEffect(() => { 
+    fetchProperties(); 
+    fetchStaff();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -113,7 +123,7 @@ const PropertiesManager = () => {
       beds: p.beds, baths: p.baths, area: p.area,
       type: p.type, status: p.status, description: p.description,
       image: p.image, developer: p.developer || "", amenities: p.amenities || "",
-      imageFile: null,
+      assignedStaff: p.assignedStaff || [], imageFile: null,
     });
     setEditId(p.id);
     setShowForm(true);
@@ -231,6 +241,46 @@ const PropertiesManager = () => {
                   <SelectItem value="rented">Rented</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+            <div className="space-y-2 md:col-span-2">
+              <Label>Assigned Staff (Optional)</Label>
+              <Select 
+                value="" 
+                onValueChange={(staffId) => {
+                  if (!form.assignedStaff.includes(staffId)) {
+                    setForm({...form, assignedStaff: [...form.assignedStaff, staffId]});
+                  }
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select staff to assign" />
+                </SelectTrigger>
+                <SelectContent>
+                  {staff.filter(s => !form.assignedStaff.includes(s.id)).map(s => (
+                    <SelectItem key={s.id} value={s.id}>
+                      {s.name} ({s.role})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {form.assignedStaff.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {form.assignedStaff.map(staffId => {
+                    const staffMember = staff.find(s => s.id === staffId);
+                    return staffMember ? (
+                      <Badge key={staffId} variant="secondary" className="flex items-center gap-1">
+                        {staffMember.name} ({staffMember.role})
+                        <button
+                          onClick={() => setForm({...form, assignedStaff: form.assignedStaff.filter(id => id !== staffId)})}
+                          className="ml-1 hover:text-destructive"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </Badge>
+                    ) : null;
+                  })}
+                </div>
+              )}
             </div>
             <div className="space-y-2 md:col-span-2">
               <Label>Amenities (comma-separated)</Label>
