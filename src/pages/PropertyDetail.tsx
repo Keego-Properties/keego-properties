@@ -5,7 +5,7 @@ import { db } from "@/lib/firebase";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PropertyCard from "@/components/PropertyCard";
-import { Heart, Bed, Bath, Maximize, MapPin, Phone, Mail, Share2, ChevronLeft, ChevronRight, Check, Building, Calendar, Layers, Car, Trees, Dumbbell, Waves, ShieldCheck } from "lucide-react";
+import { Heart, Bed, Bath, Maximize, MapPin, Phone, Mail, Share2, ChevronLeft, ChevronRight, Check, Building, Calendar, Layers, Car, Trees, Dumbbell, Waves, ShieldCheck, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 
