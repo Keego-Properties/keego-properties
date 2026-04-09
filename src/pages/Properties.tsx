@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PropertyCard from "@/components/PropertyCard";
-import { Search, SlidersHorizontal } from "lucide-react";
+import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface Property {
@@ -18,12 +19,30 @@ interface Property {
   type: "sale" | "rent";
   status: "available" | "sold" | "rented";
   image: string;
+  category?: string;
 }
 
 const Properties = () => {
+  const location = useLocation();
   const [activeType, setActiveType] = useState("all");
+  const [activeCategory, setActiveCategory] = useState("all");
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const typeParam = params.get("type");
+    const categoryParam = params.get("category");
+
+    setActiveType(
+      typeParam === "buy"
+        ? "sale"
+        : typeParam === "rent"
+        ? "rent"
+        : "all"
+    );
+    setActiveCategory(categoryParam ? decodeURIComponent(categoryParam) : "all");
+  }, [location.search]);
 
   useEffect(() => {
     const fetchProperties = async () => {
@@ -31,7 +50,7 @@ const Properties = () => {
         const snap = await getDocs(collection(db, "properties"));
         const fetchedProperties = snap.docs
           .map(d => ({ id: d.id, ...d.data() } as Property))
-          .filter(p => p.status === "available"); // Only show available properties
+          .filter(p => p.status === "available");
         setProperties(fetchedProperties);
       } catch (error) {
         console.error("Error fetching properties:", error);
@@ -42,7 +61,12 @@ const Properties = () => {
     fetchProperties();
   }, []);
 
-  const filtered = activeType === "all" ? properties : properties.filter(p => p.type === activeType);
+  const filtered = properties.filter((p) => {
+    const typeMatches = activeType === "all" || p.type === activeType;
+    const categoryMatches =
+      activeCategory === "all" || (p.category?.toLowerCase() === activeCategory.toLowerCase());
+    return typeMatches && categoryMatches;
+  });
 
   return (
     <div className="min-h-screen">
@@ -51,10 +75,14 @@ const Properties = () => {
         <div className="container mx-auto px-4 text-center">
           <p className="text-gold font-medium tracking-[0.2em] uppercase text-sm mb-2">Discover</p>
           <h1 className="font-serif text-4xl md:text-5xl font-bold text-primary-foreground mb-6">
-            Our Properties
+            {activeCategory === "all"
+              ? "Our Properties"
+              : `${activeCategory}${activeType === "all" ? "" : ` for ${activeType === "sale" ? "Sale" : "Rent"}`}`}
           </h1>
           <p className="text-primary-foreground/60 max-w-xl mx-auto">
-            Browse our curated selection of premium properties across Dubai's most sought-after communities.
+            {activeCategory === "all"
+              ? "Browse our curated selection of premium properties across Dubai's most sought-after communities."
+              : `Showing available ${activeCategory.toLowerCase()}${activeType === "all" ? "" : ` for ${activeType === "sale" ? "sale" : "rent"}`}.`}
           </p>
         </div>
       </section>
@@ -62,7 +90,7 @@ const Properties = () => {
       <section className="py-8 border-b border-border">
         <div className="container mx-auto px-4">
           <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
               {["all", "sale", "rent"].map((type) => (
                 <button
                   key={type}
@@ -76,6 +104,9 @@ const Properties = () => {
                   {type === "all" ? "All" : type === "sale" ? "For Sale" : "For Rent"}
                 </button>
               ))}
+              <span className="px-4 py-2 rounded-full text-sm font-medium bg-muted text-muted-foreground">
+                {activeCategory === "all" ? "All Categories" : activeCategory}
+              </span>
             </div>
             <div className="flex items-center gap-2 bg-muted rounded-full px-4 py-2">
               <Search className="w-4 h-4 text-muted-foreground" />
