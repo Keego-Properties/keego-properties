@@ -13,6 +13,9 @@ import News from "./pages/News.tsx";
 import NewsDetail from "./pages/NewsDetail.tsx";
 import About from "./pages/About.tsx";
 import Contact from "./pages/Contact.tsx";
+import ListProperty from "./pages/ListProperty.tsx";
+import PropertyValuation from "./pages/PropertyValuation.tsx";
+import YourVoiceMatters from "./pages/YourVoiceMatters.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import AdminLogin from "./pages/admin/Login.tsx";
 import AdminLayout from "./components/admin/AdminLayout.tsx";
@@ -43,6 +46,9 @@ const App = () => (
             <Route path="/news/:id" element={<NewsDetail />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/list-property" element={<ListProperty />} />
+            <Route path="/property-valuation" element={<PropertyValuation />} />
+            <Route path="/your-voice-matters" element={<YourVoiceMatters />} />
 
             {/* Admin routes */}
             <Route path="/admin/login" element={<AdminLogin />} />

@@ -63,6 +63,12 @@ const Navbar = () => {
     { name: "Contact", path: "/contact" },
   ];
 
+  const actionLinks = [
+    { name: "List Property", path: "/list-property" },
+    { name: "Your Voice Matters", path: "/your-voice-matters" },
+    { name: "Property Valuation", path: "/property-valuation" },
+  ];
+
   const propertyMenu = [
     {
       title: "Residential",
@@ -207,14 +213,21 @@ const Navbar = () => {
             ))}
           </div>
 
-          <div className="hidden lg:flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-3">
+            {actionLinks.map((action) => (
+              <Button
+                asChild
+                key={action.name}
+                variant="outline"
+                className="rounded-full border-gold text-gold hover:bg-gold hover:text-primary-foreground transition-all duration-300 px-5"
+              >
+                <Link to={action.path}>{action.name}</Link>
+              </Button>
+            ))}
             <a href="tel:+971501234567" className="flex items-center gap-2 text-primary-foreground/80 hover:text-gold transition-colors text-sm">
               <Phone className="w-4 h-4" />
               +971 50 123 4567
             </a>
-            <Button variant="outline" className="border-gold text-gold hover:bg-gold hover:text-primary-foreground transition-all duration-300 rounded-full px-6">
-              List Property
-            </Button>
           </div>
 
           <button
@@ -241,9 +254,16 @@ const Navbar = () => {
                 {link.name}
               </Link>
             ))}
-            <Button variant="outline" className="w-full border-gold text-gold hover:bg-gold hover:text-primary-foreground rounded-full mt-4">
-              List Property
-            </Button>
+            {actionLinks.map((action) => (
+              <Link
+                key={action.name}
+                to={action.path}
+                onClick={() => setIsOpen(false)}
+                className="block rounded-full border border-border px-4 py-3 text-center text-sm font-medium text-primary-foreground/80 hover:border-gold hover:text-gold"
+              >
+                {action.name}
+              </Link>
+            ))}
           </div>
         </div>
       )}
