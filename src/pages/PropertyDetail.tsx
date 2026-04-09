@@ -28,6 +28,7 @@ interface Property {
   slug?: string;
   amenities?: string[];
   assignedStaff?: string[];
+  category?: string;
   createdAt: Timestamp;
 }
 
@@ -219,6 +220,7 @@ const PropertyDetail = () => {
               <div className="flex items-center gap-2 text-muted-foreground mb-6">
                 <MapPin className="w-4 h-4" />
                 <span>{property.location}</span>
+                {property.category && <span className="text-gold font-medium"> • {property.category}</span>}
               </div>
 
               {/* Key Stats */}

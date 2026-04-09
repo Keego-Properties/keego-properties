@@ -27,6 +27,7 @@ interface Property {
   amenities: string;
   assignedStaff: string[];
   slug: string;
+  category: string;
   createdAt: Timestamp;
 }
 
@@ -34,14 +35,14 @@ type FormState = {
   title: string; price: string; location: string; beds: number; baths: number;
   area: string; type: "sale" | "rent"; status: "available" | "sold" | "rented";
   description: string; image: string; developer: string; amenities: string;
-  assignedStaff: string[]; imageFile: File | null;
+  assignedStaff: string[]; imageFile: File | null; category: string;
 };
 
 const emptyForm: FormState = {
   title: "", price: "", location: "", beds: 1, baths: 1,
   area: "", type: "sale", status: "available",
   description: "", image: "", developer: "", amenities: "",
-  assignedStaff: [], imageFile: null,
+  assignedStaff: [], imageFile: null, category: "",
 };
 
 const PropertiesManager = () => {
@@ -123,7 +124,7 @@ const PropertiesManager = () => {
       beds: p.beds, baths: p.baths, area: p.area,
       type: p.type, status: p.status, description: p.description,
       image: p.image, developer: p.developer || "", amenities: p.amenities || "",
-      assignedStaff: p.assignedStaff || [], imageFile: null,
+      assignedStaff: p.assignedStaff || [], imageFile: null, category: p.category || "",
     });
     setEditId(p.id);
     setShowForm(true);
@@ -239,6 +240,19 @@ const PropertiesManager = () => {
                   <SelectItem value="available">Available</SelectItem>
                   <SelectItem value="sold">Sold</SelectItem>
                   <SelectItem value="rented">Rented</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Category</Label>
+              <Select value={form.category} onValueChange={v => setForm({...form, category: v})}>
+                <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Apartments">Apartments</SelectItem>
+                  <SelectItem value="Town House">Town House</SelectItem>
+                  <SelectItem value="Penthouse">Penthouse</SelectItem>
+                  <SelectItem value="Villas">Villas</SelectItem>
+                  <SelectItem value="Office">Office</SelectItem>
                 </SelectContent>
               </Select>
             </div>

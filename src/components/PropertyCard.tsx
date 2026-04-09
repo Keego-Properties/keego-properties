@@ -13,9 +13,10 @@ interface PropertyCardProps {
   baths: number;
   area: string;
   type: "sale" | "rent";
+  category?: string;
 }
 
-const PropertyCard = ({ id, image, title, price, location, beds, baths, area, type }: PropertyCardProps) => {
+const PropertyCard = ({ id, image, title, price, location, beds, baths, area, type, category }: PropertyCardProps) => {
   const propertyPath = id ?? generateSlug(title);
   return (
     <Link to={`/property/${propertyPath}`} className="block group bg-card rounded-2xl overflow-hidden shadow-[var(--shadow-card)] hover-lift">
@@ -30,7 +31,7 @@ const PropertyCard = ({ id, image, title, price, location, beds, baths, area, ty
         />
         <div className="absolute top-4 left-4">
           <span className="bg-gold text-primary-foreground text-xs font-semibold px-3 py-1.5 rounded-full uppercase tracking-wider">
-            For {type === "sale" ? "Sale" : "Rent"}
+            {category || "Property"} For {type === "sale" ? "Sale" : "Rent"}
           </span>
         </div>
         <button className="absolute top-4 right-4 w-9 h-9 rounded-full bg-primary-foreground/80 backdrop-blur flex items-center justify-center hover:bg-primary-foreground transition-all text-muted-foreground hover:text-destructive">
