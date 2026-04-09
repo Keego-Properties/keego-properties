@@ -15,7 +15,7 @@ const testimonials = [
   {
     name: "Aisha Al Mazrouei",
     role: "Investor",
-    quote: "Prime Properties made my sale easy, quick, and transparent. The feedback team listened and improved the whole process.",
+    quote: "KeeGo Properties made my sale easy, quick, and transparent. The feedback team listened and improved the whole process.",
   },
   {
     name: "Omar Khalid",

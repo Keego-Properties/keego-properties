@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Phone, Mail, MapPin, Facebook, Instagram, Linkedin, Twitter } from "lucide-react";
+import logoImage from "@/assets/eagb.png";
 
 const Footer = () => {
   return (
@@ -7,12 +8,10 @@ const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-gold flex items-center justify-center">
-                <span className="font-serif font-bold text-primary-foreground text-lg">P</span>
-              </div>
+            <div className="flex items-center gap-3 mb-4">
+              <img src={logoImage} alt="KeeGo Properties" className="h-12 w-auto rounded-xl object-contain" />
               <div>
-                <span className="font-serif text-xl font-bold text-primary-foreground">Prime</span>
+                <span className="font-serif text-xl font-bold text-primary-foreground">KeeGo</span>
                 <span className="font-serif text-xl font-bold text-gold ml-1">Properties</span>
               </div>
             </div>
@@ -75,7 +74,7 @@ const Footer = () => {
 
         <div className="border-t border-primary-foreground/10 pt-8 text-center">
           <p className="text-primary-foreground/30 text-sm">
-            © 2026 Prime Properties. All rights reserved. RERA ORN: 12345
+            © 2026 KeeGo Properties. All rights reserved. RERA ORN: 12345
           </p>
         </div>
       </div>

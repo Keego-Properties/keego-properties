@@ -20,7 +20,7 @@ const About = () => {
         <div className="container mx-auto px-4 text-center">
           <p className="text-gold font-medium tracking-[0.2em] uppercase text-sm mb-2">Who We Are</p>
           <h1 className="font-serif text-4xl md:text-5xl font-bold text-primary-foreground mb-6">
-            About Prime Properties
+            About KeeGo Properties
           </h1>
           <p className="text-primary-foreground/60 max-w-xl mx-auto">
             Dubai's trusted real estate partner since 2010, delivering exceptional property experiences.
@@ -37,7 +37,7 @@ const About = () => {
                 Building Dreams in Dubai
               </h2>
               <p className="text-muted-foreground leading-relaxed mb-4">
-                Founded in 2010, Prime Properties has grown to become one of Dubai's most trusted real estate agencies. With a team of over 200 dedicated professionals, we have helped thousands of clients find their perfect home in the UAE.
+                Founded in 2010, KeeGo Properties has grown to become one of Dubai's most trusted real estate agencies. With a team of over 200 dedicated professionals, we have helped thousands of clients find their perfect home in the UAE.
               </p>
               <p className="text-muted-foreground leading-relaxed mb-4">
                 Our deep understanding of the Dubai market, combined with our commitment to personalized service, sets us apart. We don't just sell properties — we build lasting relationships.

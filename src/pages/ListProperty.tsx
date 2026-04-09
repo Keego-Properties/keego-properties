@@ -55,7 +55,7 @@ const ListProperty = () => {
             Reach buyers faster with a premium property listing.
           </h1>
           <p className="mx-auto max-w-3xl text-primary-foreground/70 leading-relaxed">
-            List your property on Prime Properties and connect with qualified buyers, verified leads, and dedicated support tailored to your sale.
+            List your property on KeeGo Properties and connect with qualified buyers, verified leads, and dedicated support tailored to your sale.
           </p>
         </div>
       </section>
