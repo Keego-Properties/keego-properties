@@ -83,14 +83,20 @@ const Navbar = () => {
   const propertyMenu = [
     {
       title: "Residential",
+      buyImage: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80",
+      rentImage: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80",
       items: ["Apartments", "Town House", "Penthouse", "Villas"],
     },
     {
       title: "Off Plan",
+      buyImage: "https://images.unsplash.com/photo-1598928506311-c55ded91a20c?auto=format&fit=crop&w=1200&q=80",
+      rentImage: "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?auto=format&fit=crop&w=1200&q=80",
       items: ["Apartments", "Town House", "Penthouse", "Villas"],
     },
     {
       title: "Commercial",
+      buyImage: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=80",
+      rentImage: "https://images.unsplash.com/photo-1497215842964-222b430dc094?auto=format&fit=crop&w=1200&q=80",
       items: ["Office"],
       footer: [{ label: "View All", value: "" }],
     },
@@ -222,7 +228,20 @@ const Navbar = () => {
             <div className="grid grid-cols-3 gap-8">
               {propertyMenu.map((group) => (
                 <div key={group.title}>
-                  <p className="px-3 py-2 text-sm font-semibold text-primary-foreground">{group.title}</p>
+                  <Link
+                    to={`/properties?type=${openMegaMenuType}`}
+                    className="group relative mb-3 block h-44 overflow-hidden rounded-xl"
+                  >
+                    <img
+                      src={openMegaMenuType === "buy" ? group.buyImage : group.rentImage}
+                      alt={`${group.title} properties`}
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/35 to-black/10" />
+                    <p className="absolute bottom-3 left-3 text-base font-semibold uppercase tracking-[0.14em] text-white">
+                      {group.title}
+                    </p>
+                  </Link>
                   {group.items.map((item) => (
                     <Link
                       key={`${openMegaMenuType}-${group.title}-${item}`}
