@@ -1,20 +1,13 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, Phone, ChevronDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-} from "@/components/ui/dropdown-menu";
 import logoImage from "@/assets/eagb.png";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [buyMenuOpen, setBuyMenuOpen] = useState(false);
   const [rentMenuOpen, setRentMenuOpen] = useState(false);
+  const [showTopHeader, setShowTopHeader] = useState(true);
   const location = useLocation();
 
   const buyTimeoutRef = useRef<NodeJS.Timeout>();
@@ -24,6 +17,10 @@ const Navbar = () => {
     if (buyTimeoutRef.current) {
       clearTimeout(buyTimeoutRef.current);
     }
+    if (rentTimeoutRef.current) {
+      clearTimeout(rentTimeoutRef.current);
+    }
+    setRentMenuOpen(false);
     setBuyMenuOpen(true);
   };
 
@@ -37,6 +34,10 @@ const Navbar = () => {
     if (rentTimeoutRef.current) {
       clearTimeout(rentTimeoutRef.current);
     }
+    if (buyTimeoutRef.current) {
+      clearTimeout(buyTimeoutRef.current);
+    }
+    setBuyMenuOpen(false);
     setRentMenuOpen(true);
   };
 
@@ -47,7 +48,15 @@ const Navbar = () => {
   };
 
   useEffect(() => {
+    const handleScroll = () => {
+      setShowTopHeader(window.scrollY === 0);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+
     return () => {
+      window.removeEventListener("scroll", handleScroll);
       if (buyTimeoutRef.current) {
         clearTimeout(buyTimeoutRef.current);
       }
@@ -60,14 +69,15 @@ const Navbar = () => {
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "Communities", path: "/communities" },
+    { name: "Developers", path: "/developers" },
     { name: "About", path: "/about" },
     { name: "Contact", path: "/contact" },
   ];
 
-  const actionLinks = [
-    { name: "List Property", path: "/list-property" },
+  const topLinks = [
     { name: "Your Voice Matters", path: "/your-voice-matters" },
-    { name: "Property Valuation", path: "/property-valuation" },
+    { name: "List Property", path: "/list-property" },
+    { name: "Contact Us", path: "/contact" },
   ];
 
   const propertyMenu = [
@@ -90,11 +100,35 @@ const Navbar = () => {
   const currentType = new URLSearchParams(location.search).get("type");
   const isBuyActive = location.pathname === "/properties" && currentType === "buy";
   const isRentActive = location.pathname === "/properties" && currentType === "rent";
+  const openMegaMenuType = buyMenuOpen ? "buy" : rentMenuOpen ? "rent" : null;
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-navy-dark/95 backdrop-blur-md border-b border-primary-foreground/10">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-20">
+        <div className={`flex flex-wrap items-center justify-between gap-3 overflow-hidden text-xs uppercase tracking-[0.24em] text-primary-foreground/80 transition-[max-height,opacity,transform,padding,border-color] duration-500 ease-in-out ${showTopHeader ? "max-h-20 translate-y-0 border-b border-primary-foreground/10 py-2 opacity-100" : "pointer-events-none max-h-0 -translate-y-full border-b border-transparent py-0 opacity-0"}`}>
+          <div className="flex-1 flex justify-center">
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              {topLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  to={link.path}
+                  className="rounded-full px-3 py-1 transition-colors duration-200 hover:text-gold"
+                >
+                  {link.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+          <a
+            href="tel:+971501234567"
+            className="flex items-center gap-2 text-primary-foreground/80 transition-colors duration-200 hover:text-gold"
+          >
+            <Phone className="w-4 h-4" />
+            +971 50 123 4567
+          </a>
+        </div>
+
+        <div className="flex items-center justify-between h-20 py-3">
           <Link to="/" className="flex items-center gap-3">
             <img src={logoImage} alt="KeeGo Properties" className="h-12 w-auto rounded-xl object-contain" />
             <div>
@@ -111,91 +145,41 @@ const Navbar = () => {
           </Link>
 
           <div className="hidden lg:flex items-center gap-8">
-            <DropdownMenu open={buyMenuOpen} onOpenChange={setBuyMenuOpen}>
-              <DropdownMenuTrigger asChild>
+            <div
+              className="flex"
+              onMouseEnter={handleBuyMouseEnter}
+              onMouseLeave={handleBuyMouseLeave}
+            >
                 <button
                   type="button"
-                  onMouseEnter={handleBuyMouseEnter}
-                  onMouseLeave={handleBuyMouseLeave}
-                  className={`text-sm font-medium inline-flex items-center gap-1 transition-all duration-200 pb-1 ${
+                  className={`min-w-[4.75rem] justify-center text-sm font-medium inline-flex items-center gap-1 transition-colors duration-200 pb-1 ${
                     isBuyActive
                       ? "text-gold shadow-[0_2px_0_0_#FFD700]"
                       : "text-primary-foreground/80 shadow-[0_2px_0_0_transparent] hover:text-gold hover:shadow-[0_2px_0_0_#FFD700]"
                   }`}
                 >
                   Buy
-                  <ChevronDown className="w-4 h-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${buyMenuOpen ? "rotate-180" : ""}`} />
                 </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-[32rem] p-4"
-                onMouseEnter={handleBuyMouseEnter}
-                onMouseLeave={handleBuyMouseLeave}
-              >
-                <div className="grid grid-cols-3 gap-6">
-                  {propertyMenu.map((group) => (
-                    <div key={group.title}>
-                      <DropdownMenuLabel>{group.title}</DropdownMenuLabel>
-                      {group.items.map((item) => (
-                        <DropdownMenuItem asChild key={item}>
-                          <Link to={`/properties?type=buy${item ? `&category=${encodeURIComponent(item)}` : ""}`}>
-                            {item === "Office" ? "Offices" : item}
-                          </Link>
-                        </DropdownMenuItem>
-                      ))}
-                      {group.footer?.map((footer) => (
-                        <DropdownMenuItem asChild key={footer.label}>
-                          <Link to="/properties?type=buy">{footer.label}</Link>
-                        </DropdownMenuItem>
-                      ))}
-                    </div>
-                  ))}
-                </div>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            </div>
 
-            <DropdownMenu open={rentMenuOpen} onOpenChange={setRentMenuOpen}>
-              <DropdownMenuTrigger asChild>
+            <div
+              className="flex"
+              onMouseEnter={handleRentMouseEnter}
+              onMouseLeave={handleRentMouseLeave}
+            >
                 <button
                   type="button"
-                  onMouseEnter={handleRentMouseEnter}
-                  onMouseLeave={handleRentMouseLeave}
-                  className={`text-sm font-medium inline-flex items-center gap-1 transition-all duration-200 pb-1 ${
+                  className={`min-w-[4.75rem] justify-center text-sm font-medium inline-flex items-center gap-1 transition-colors duration-200 pb-1 ${
                     isRentActive
                       ? "text-gold shadow-[0_2px_0_0_#FFD700]"
                       : "text-primary-foreground/80 shadow-[0_2px_0_0_transparent] hover:text-gold hover:shadow-[0_2px_0_0_#FFD700]"
                   }`}
                 >
                   Rent
-                  <ChevronDown className="w-4 h-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${rentMenuOpen ? "rotate-180" : ""}`} />
                 </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-[32rem] p-4"
-                onMouseEnter={handleRentMouseEnter}
-                onMouseLeave={handleRentMouseLeave}
-              >
-                <div className="grid grid-cols-3 gap-6">
-                  {propertyMenu.map((group) => (
-                    <div key={group.title}>
-                      <DropdownMenuLabel>{group.title}</DropdownMenuLabel>
-                      {group.items.map((item) => (
-                        <DropdownMenuItem asChild key={item}>
-                          <Link to={`/properties?type=rent${item ? `&category=${encodeURIComponent(item)}` : ""}`}>
-                            {item === "Office" ? "Offices" : item}
-                          </Link>
-                        </DropdownMenuItem>
-                      ))}
-                      {group.footer?.map((footer) => (
-                        <DropdownMenuItem asChild key={footer.label}>
-                          <Link to="/properties?type=rent">{footer.label}</Link>
-                        </DropdownMenuItem>
-                      ))}
-                    </div>
-                  ))}
-                </div>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            </div>
 
             {navLinks.map((link) => (
               <Link
@@ -213,16 +197,6 @@ const Navbar = () => {
           </div>
 
           <div className="hidden lg:flex items-center gap-3">
-            {actionLinks.map((action) => (
-              <Button
-                asChild
-                key={action.name}
-                variant="outline"
-                className="rounded-full border-gold text-gold hover:bg-gold hover:text-primary-foreground transition-all duration-300 px-5"
-              >
-                <Link to={action.path}>{action.name}</Link>
-              </Button>
-            ))}
             <a href="tel:+971501234567" className="flex items-center gap-2 text-primary-foreground/80 hover:text-gold transition-colors text-sm">
               <Phone className="w-4 h-4" />
               +971 50 123 4567
@@ -238,9 +212,55 @@ const Navbar = () => {
         </div>
       </div>
 
+      {openMegaMenuType && (
+        <div
+          className="hidden lg:block w-full border-t border-primary-foreground/10 bg-navy-dark/95"
+          onMouseEnter={openMegaMenuType === "buy" ? handleBuyMouseEnter : handleRentMouseEnter}
+          onMouseLeave={openMegaMenuType === "buy" ? handleBuyMouseLeave : handleRentMouseLeave}
+        >
+          <div className="container mx-auto px-4 py-5">
+            <div className="grid grid-cols-3 gap-8">
+              {propertyMenu.map((group) => (
+                <div key={group.title}>
+                  <p className="px-3 py-2 text-sm font-semibold text-primary-foreground">{group.title}</p>
+                  {group.items.map((item) => (
+                    <Link
+                      key={`${openMegaMenuType}-${group.title}-${item}`}
+                      to={`/properties?type=${openMegaMenuType}${item ? `&category=${encodeURIComponent(item)}` : ""}`}
+                      className="block rounded-sm px-3 py-2 text-sm text-primary-foreground/85 transition-colors hover:bg-primary-foreground/10 hover:text-gold"
+                    >
+                      {item === "Office" ? "Offices" : item}
+                    </Link>
+                  ))}
+                  {group.footer?.map((footer) => (
+                    <Link
+                      key={`${openMegaMenuType}-${group.title}-${footer.label}`}
+                      to={`/properties?type=${openMegaMenuType}`}
+                      className="block rounded-sm px-3 py-2 text-sm text-primary-foreground/85 transition-colors hover:bg-primary-foreground/10 hover:text-gold"
+                    >
+                      {footer.label}
+                    </Link>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {isOpen && (
         <div className="lg:hidden bg-navy-dark border-t border-primary-foreground/10">
           <div className="container mx-auto px-4 py-4 space-y-3">
+            {topLinks.map((action) => (
+              <Link
+                key={action.name}
+                to={action.path}
+                onClick={() => setIsOpen(false)}
+                className="block rounded-full border border-border px-4 py-3 text-center text-sm font-medium text-primary-foreground/80 hover:border-gold hover:text-gold"
+              >
+                {action.name}
+              </Link>
+            ))}
             {navLinks.map((link) => (
               <Link
                 key={link.name}
@@ -251,16 +271,6 @@ const Navbar = () => {
                 }`}
               >
                 {link.name}
-              </Link>
-            ))}
-            {actionLinks.map((action) => (
-              <Link
-                key={action.name}
-                to={action.path}
-                onClick={() => setIsOpen(false)}
-                className="block rounded-full border border-border px-4 py-3 text-center text-sm font-medium text-primary-foreground/80 hover:border-gold hover:text-gold"
-              >
-                {action.name}
               </Link>
             ))}
           </div>
