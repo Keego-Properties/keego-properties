@@ -76,7 +76,7 @@ const Navbar = () => {
 
   const topLinks = [
     { name: "Your Voice Matters", path: "/your-voice-matters" },
-    { name: "List Property", path: "/list-property" },
+    { name: "List Property", path: "/list-property", highlight: true },
     { name: "Contact Us", path: "/contact" },
   ];
 
@@ -109,42 +109,39 @@ const Navbar = () => {
   const openMegaMenuType = buyMenuOpen ? "buy" : rentMenuOpen ? "rent" : null;
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-navy-dark/95 backdrop-blur-md border-b border-primary-foreground/10">
+    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-slate-200/80 bg-white/95 shadow-[0_10px_30px_rgba(15,23,42,0.08)] backdrop-blur-md">
       <div className="container mx-auto px-4">
-        <div className={`flex flex-wrap items-center justify-between gap-3 overflow-hidden text-xs uppercase tracking-[0.24em] text-primary-foreground/80 transition-[max-height,opacity,transform,padding,border-color] duration-500 ease-in-out ${showTopHeader ? "max-h-20 translate-y-0 border-b border-primary-foreground/10 py-2 opacity-100" : "pointer-events-none max-h-0 -translate-y-full border-b border-transparent py-0 opacity-0"}`}>
+        <div className={`flex flex-wrap items-center justify-between gap-3 overflow-hidden text-xs uppercase tracking-[0.24em] text-slate-600 transition-[max-height,opacity,transform,padding,border-color] duration-500 ease-in-out ${showTopHeader ? "max-h-20 translate-y-0 border-b border-slate-200 py-2 opacity-100" : "pointer-events-none max-h-0 -translate-y-full border-b border-transparent py-0 opacity-0"}`}>
           <div className="flex-1 flex justify-center">
             <div className="flex flex-wrap items-center justify-center gap-2">
               {topLinks.map((link) => (
                 <Link
                   key={link.name}
                   to={link.path}
-                  className="rounded-full px-3 py-1 transition-colors duration-200 hover:text-gold"
+                  className={`rounded-full px-3 py-1 transition-all duration-200 ${
+                    link.highlight
+                      ? "bg-gold text-navy-dark shadow-[0_10px_24px_rgba(212,175,55,0.3)] hover:bg-gold/90"
+                      : "hover:text-slate-900"
+                  }`}
                 >
                   {link.name}
                 </Link>
               ))}
             </div>
           </div>
-          <a
-            href="tel:+971501234567"
-            className="flex items-center gap-2 text-primary-foreground/80 transition-colors duration-200 hover:text-gold"
-          >
-            <Phone className="w-4 h-4" />
-            +971 50 123 4567
-          </a>
         </div>
 
         <div className="flex items-center justify-between h-20 py-3">
           <Link to="/" className="flex items-center gap-3">
             <img src={logoImage} alt="KeeGo Properties" className="h-12 w-auto rounded-xl object-contain" />
             <div>
-              <span className="font-serif text-xl font-bold text-primary-foreground">
+              <span className="font-serif text-xl font-bold text-slate-900">
                 KeeGo
               </span>
               <span className="font-serif text-xl font-bold text-gold ml-1">
                 Properties
               </span>
-              <p className="text-primary-foreground/50 text-[10px] tracking-[0.2em] uppercase">
+              <p className="text-slate-500 text-[10px] tracking-[0.2em] uppercase">
                 Dubai & Beyond
               </p>
             </div>
@@ -161,7 +158,7 @@ const Navbar = () => {
                   className={`min-w-[4.75rem] justify-center text-sm font-medium inline-flex items-center gap-1 transition-colors duration-200 pb-1 ${
                     isBuyActive
                       ? "text-gold shadow-[0_2px_0_0_#FFD700]"
-                      : "text-primary-foreground/80 shadow-[0_2px_0_0_transparent] hover:text-gold hover:shadow-[0_2px_0_0_#FFD700]"
+                      : "text-slate-700 shadow-[0_2px_0_0_transparent] hover:text-slate-900 hover:shadow-[0_2px_0_0_#FFD700]"
                   }`}
                 >
                   Buy
@@ -179,7 +176,7 @@ const Navbar = () => {
                   className={`min-w-[4.75rem] justify-center text-sm font-medium inline-flex items-center gap-1 transition-colors duration-200 pb-1 ${
                     isRentActive
                       ? "text-gold shadow-[0_2px_0_0_#FFD700]"
-                      : "text-primary-foreground/80 shadow-[0_2px_0_0_transparent] hover:text-gold hover:shadow-[0_2px_0_0_#FFD700]"
+                      : "text-slate-700 shadow-[0_2px_0_0_transparent] hover:text-slate-900 hover:shadow-[0_2px_0_0_#FFD700]"
                   }`}
                 >
                   Rent
@@ -194,7 +191,7 @@ const Navbar = () => {
                 className={`text-sm font-medium transition-colors duration-200 ${
                   isActive(link.path)
                     ? "text-gold"
-                    : "text-primary-foreground/80 hover:text-gold"
+                    : "text-slate-700 hover:text-slate-900"
                 }`}
               >
                 {link.name}
@@ -203,14 +200,14 @@ const Navbar = () => {
           </div>
 
           <div className="hidden lg:flex items-center gap-3">
-            <a href="tel:+971501234567" className="flex items-center gap-2 text-primary-foreground/80 hover:text-gold transition-colors text-sm">
+            <a href="tel:+971501234567" className="flex items-center gap-2 text-slate-700 hover:text-slate-900 transition-colors text-sm">
               <Phone className="w-4 h-4" />
               +971 50 123 4567
             </a>
           </div>
 
           <button
-            className="lg:hidden text-primary-foreground"
+            className="lg:hidden text-slate-900"
             onClick={() => setIsOpen(!isOpen)}
           >
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -220,7 +217,7 @@ const Navbar = () => {
 
       {openMegaMenuType && (
         <div
-          className="hidden lg:block w-full border-t border-primary-foreground/10 bg-navy-dark/95"
+          className="hidden lg:block w-full border-t border-slate-200 bg-white/95"
           onMouseEnter={openMegaMenuType === "buy" ? handleBuyMouseEnter : handleRentMouseEnter}
           onMouseLeave={openMegaMenuType === "buy" ? handleBuyMouseLeave : handleRentMouseLeave}
         >
@@ -246,7 +243,7 @@ const Navbar = () => {
                     <Link
                       key={`${openMegaMenuType}-${group.title}-${item}`}
                       to={`/properties?type=${openMegaMenuType}${item ? `&category=${encodeURIComponent(item)}` : ""}`}
-                      className="block rounded-sm px-3 py-2 text-sm text-primary-foreground/85 transition-colors hover:bg-primary-foreground/10 hover:text-gold"
+                      className="block rounded-sm px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
                     >
                       {item === "Office" ? "Offices" : item}
                     </Link>
@@ -255,7 +252,7 @@ const Navbar = () => {
                     <Link
                       key={`${openMegaMenuType}-${group.title}-${footer.label}`}
                       to={`/properties?type=${openMegaMenuType}`}
-                      className="block rounded-sm px-3 py-2 text-sm text-primary-foreground/85 transition-colors hover:bg-primary-foreground/10 hover:text-gold"
+                      className="block rounded-sm px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
                     >
                       {footer.label}
                     </Link>
@@ -268,14 +265,18 @@ const Navbar = () => {
       )}
 
       {isOpen && (
-        <div className="lg:hidden bg-navy-dark border-t border-primary-foreground/10">
+        <div className="lg:hidden border-t border-slate-200 bg-white">
           <div className="container mx-auto px-4 py-4 space-y-3">
             {topLinks.map((action) => (
               <Link
                 key={action.name}
                 to={action.path}
                 onClick={() => setIsOpen(false)}
-                className="block rounded-full border border-border px-4 py-3 text-center text-sm font-medium text-primary-foreground/80 hover:border-gold hover:text-gold"
+                className={`block rounded-full px-4 py-3 text-center text-sm font-medium transition-colors ${
+                  action.highlight
+                    ? "bg-gold text-navy-dark"
+                    : "border border-slate-200 text-slate-700 hover:border-slate-300 hover:text-slate-900"
+                }`}
               >
                 {action.name}
               </Link>
@@ -286,7 +287,7 @@ const Navbar = () => {
                 to={link.path}
                 onClick={() => setIsOpen(false)}
                 className={`block py-2 text-sm font-medium ${
-                  isActive(link.path) ? "text-gold" : "text-primary-foreground/80"
+                  isActive(link.path) ? "text-gold" : "text-slate-700"
                 }`}
               >
                 {link.name}
