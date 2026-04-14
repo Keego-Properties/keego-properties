@@ -53,8 +53,7 @@ const Properties = () => {
       try {
         const snap = await getDocs(collection(db, "properties"));
         const fetchedProperties = snap.docs
-          .map(d => ({ id: d.id, ...d.data() } as Property))
-          .filter(p => p.status === "available");
+          .map(d => ({ id: d.id, ...d.data() } as Property));
         setProperties(fetchedProperties);
       } catch (error) {
         console.error("Error fetching properties:", error);
@@ -86,7 +85,7 @@ const Properties = () => {
           <p className="text-primary-foreground/60 max-w-xl mx-auto">
             {activeCategory === "all"
               ? "Browse our curated selection of premium properties across Dubai's most sought-after communities."
-              : `Showing available ${activeCategory.toLowerCase()}${effectiveType === "all" ? "" : ` for ${effectiveType === "sale" ? "sale" : "rent"}`}.`}
+              : `Showing ${activeCategory.toLowerCase()}${effectiveType === "all" ? "" : ` for ${effectiveType === "sale" ? "sale" : "rent"}`}.`}
           </p>
         </div>
       </section>
