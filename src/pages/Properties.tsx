@@ -6,7 +6,6 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PropertyCard from "@/components/PropertyCard";
 import { Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 interface Property {
   id: string;
@@ -28,6 +27,11 @@ const Properties = () => {
   const [activeCategory, setActiveCategory] = useState("all");
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const params = new URLSearchParams(location.search);
+  const typeParam = params.get("type");
+  const lockedType = typeParam === "buy" ? "sale" : typeParam === "rent" ? "rent" : null;
+  const effectiveType = lockedType ?? activeType;
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -62,7 +66,7 @@ const Properties = () => {
   }, []);
 
   const filtered = properties.filter((p) => {
-    const typeMatches = activeType === "all" || p.type === activeType;
+    const typeMatches = effectiveType === "all" || p.type === effectiveType;
     const categoryMatches =
       activeCategory === "all" || (p.category?.toLowerCase() === activeCategory.toLowerCase());
     return typeMatches && categoryMatches;
@@ -77,12 +81,12 @@ const Properties = () => {
           <h1 className="font-serif text-4xl md:text-5xl font-bold text-primary-foreground mb-6">
             {activeCategory === "all"
               ? "Our Properties"
-              : `${activeCategory}${activeType === "all" ? "" : ` for ${activeType === "sale" ? "Sale" : "Rent"}`}`}
+              : `${activeCategory}${effectiveType === "all" ? "" : ` for ${effectiveType === "sale" ? "Sale" : "Rent"}`}`}
           </h1>
           <p className="text-primary-foreground/60 max-w-xl mx-auto">
             {activeCategory === "all"
               ? "Browse our curated selection of premium properties across Dubai's most sought-after communities."
-              : `Showing available ${activeCategory.toLowerCase()}${activeType === "all" ? "" : ` for ${activeType === "sale" ? "sale" : "rent"}`}.`}
+              : `Showing available ${activeCategory.toLowerCase()}${effectiveType === "all" ? "" : ` for ${effectiveType === "sale" ? "sale" : "rent"}`}.`}
           </p>
         </div>
       </section>
@@ -91,19 +95,25 @@ const Properties = () => {
         <div className="container mx-auto px-4">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex gap-2 flex-wrap">
-              {["all", "sale", "rent"].map((type) => (
-                <button
-                  key={type}
-                  onClick={() => setActiveType(type)}
-                  className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${
-                    activeType === type
-                      ? "bg-navy text-primary-foreground"
-                      : "bg-muted text-muted-foreground hover:bg-navy/10"
-                  }`}
-                >
-                  {type === "all" ? "All" : type === "sale" ? "For Sale" : "For Rent"}
-                </button>
-              ))}
+              {lockedType ? (
+                <span className="px-5 py-2 rounded-full text-sm font-medium bg-navy text-primary-foreground">
+                  {lockedType === "sale" ? "For Sale" : "For Rent"}
+                </span>
+              ) : (
+                ["all", "sale", "rent"].map((type) => (
+                  <button
+                    key={type}
+                    onClick={() => setActiveType(type)}
+                    className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${
+                      activeType === type
+                        ? "bg-navy text-primary-foreground"
+                        : "bg-muted text-muted-foreground hover:bg-navy/10"
+                    }`}
+                  >
+                    {type === "all" ? "All" : type === "sale" ? "For Sale" : "For Rent"}
+                  </button>
+                ))
+              )}
               {activeCategory !== "all" && (
                 <span className="px-4 py-2 rounded-full text-sm font-medium bg-muted text-muted-foreground">
                   {activeCategory}
