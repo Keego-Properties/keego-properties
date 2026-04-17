@@ -7,6 +7,7 @@ interface PropertyEnquiryFormProps {
 
 const PropertyEnquiryForm = ({ defaultType = "all" }: PropertyEnquiryFormProps) => {
   const [submitted, setSubmitted] = useState(false);
+  const [lookingTo, setLookingTo] = useState(defaultType === "all" ? "" : defaultType);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -78,9 +79,9 @@ const PropertyEnquiryForm = ({ defaultType = "all" }: PropertyEnquiryFormProps) 
             <div className="flex flex-col gap-1">
               <label className="text-xs text-primary-foreground/60">I'm looking to</label>
               <select
-                defaultValue={defaultType === "all" ? "" : defaultType}
-                disabled={defaultType !== "all"}
-                className="h-10 rounded-md border border-primary-foreground/20 bg-navy-dark px-3 text-sm text-primary-foreground focus:border-gold focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed"
+                value={lookingTo}
+                onChange={(e) => setLookingTo(e.target.value)}
+                className="h-10 rounded-md border border-primary-foreground/20 bg-navy-dark px-3 text-sm text-primary-foreground focus:border-gold focus:outline-none"
               >
                 <option value="" disabled>Select…</option>
                 <option value="buy">Buy</option>
