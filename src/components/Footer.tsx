@@ -36,14 +36,6 @@ const Footer = () => {
         { label: "Luxury Property Services", to: "/buy" }
       ],
     },
-    {
-      title: "Contact Info",
-      links: [
-        { label: "+971 50 123 4567", href: "tel:+971501234567" },
-        { label: "info@keegoproperties.com", href: "mailto:info@keegoproperties.com" },
-        { label: "Business Bay, Dubai, UAE", to: "/contact" }
-      ],
-    },
   ];
 
   const legalLinks = [
@@ -56,7 +48,7 @@ const Footer = () => {
   return (
     <footer className="bg-black pt-16 pb-8">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 gap-10 pb-12 lg:grid-cols-[1fr_1fr_1fr_1fr_1.25fr]">
+        <div className="grid grid-cols-1 gap-10 pb-12 sm:grid-cols-2 lg:grid-cols-[auto_1fr_1fr_1fr_1.5fr]">
           <div className="flex flex-col justify-start">
             <img src={logoImage} alt="KeeGo Properties" className="h-36 w-auto object-contain" />
           </div>
@@ -88,6 +80,7 @@ const Footer = () => {
             </div>
           ))}
 
+          {/* Newsletter */}
           <div>
             <h4 className="mb-3 text-sm font-medium tracking-wide text-primary-foreground">Join the KeeGo Newsletter</h4>
             <form className="space-y-3">
@@ -114,6 +107,15 @@ const Footer = () => {
               </button>
             </form>
           </div>
+        </div>
+
+        {/* Contact Info — horizontal strip */}
+        <div className="border-t border-primary-foreground/15 py-6">
+            <div className="flex flex-wrap gap-x-10 gap-y-2 justify-center text-center">
+              <a href="tel:+971501234567" className="text-sm text-primary-foreground/55 transition-colors duration-200 hover:text-gold">+971 50 123 4567</a>
+              <a href="mailto:info@keegoproperties.com" className="text-sm text-primary-foreground/55 transition-colors duration-200 hover:text-gold">info@keegoproperties.com</a>
+              <Link to="/contact" className="text-sm text-primary-foreground/55 transition-colors duration-200 hover:text-gold">Business Bay, Dubai, UAE</Link>
+            </div>
         </div>
 
         <div className="border-t border-primary-foreground/15 pt-5">
