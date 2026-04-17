@@ -5,6 +5,7 @@ import { db } from "@/lib/firebase";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PropertyCard from "@/components/PropertyCard";
+import PropertyEnquiryForm from "@/components/PropertyEnquiryForm";
 import { Search } from "lucide-react";
 
 interface Property {
@@ -168,6 +169,7 @@ const Properties = () => {
           )}
         </div>
       </section>
+      <PropertyEnquiryForm defaultType={lockedType ?? "all"} />
       <Footer />
     </div>
   );
