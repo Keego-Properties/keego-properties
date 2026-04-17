@@ -8,7 +8,7 @@ import {
   Music2,
   Send,
 } from "lucide-react";
-import logoImage from "@/assets/eagb.png";
+import logoImage from "@/assets/KeeGo Logo.png";
 
 const Footer = () => {
   const footerColumns = [
@@ -57,6 +57,9 @@ const Footer = () => {
     <footer className="bg-black pt-16 pb-8">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 gap-10 pb-12 lg:grid-cols-[1fr_1fr_1fr_1fr_1.25fr]">
+          <div className="flex flex-col justify-start">
+            <img src={logoImage} alt="KeeGo Properties" className="h-36 w-auto object-contain" />
+          </div>
           {footerColumns.map((column) => (
             <div key={column.title}>
               <h4 className="mb-4 text-sm font-medium tracking-wide text-primary-foreground">{column.title}</h4>
