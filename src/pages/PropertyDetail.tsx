@@ -217,6 +217,12 @@ const PropertyDetail = () => {
 
               <h1 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-4">{property.title}</h1>
 
+              {property.status !== "available" && (
+                <span className="inline-block mb-4 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider bg-red-600/15 text-red-400 border border-red-600/30">
+                  {property.status === "sold" ? "Sold" : "Rented"}
+                </span>
+              )}
+
               <div className="flex items-center gap-2 text-muted-foreground mb-6">
                 <MapPin className="w-4 h-4" />
                 <span>{property.location}</span>
