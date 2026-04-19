@@ -19,10 +19,25 @@ interface Community {
   createdAt: Timestamp;
 }
 
+interface Property {
+  id: string;
+  title: string;
+  price: string;
+  location: string;
+  beds: number;
+  baths: number;
+  area: string;
+  type: "sale" | "rent";
+  status: string;
+  image: string;
+  category?: string;
+}
+
 const CommunityDetail = () => {
   const { id } = useParams();
   const [community, setCommunity] = useState<Community | null>(null);
   const [otherCommunities, setOtherCommunities] = useState<Community[]>([]);
+  const [communityProperties, setCommunityProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -30,10 +45,8 @@ const CommunityDetail = () => {
       if (!id) return;
 
       try {
-        // Convert slug back to community name for database query
         const communityName = id.replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase());
 
-        // Fetch specific community
         const communityQuery = query(collection(db, "communities"), where("name", "==", communityName));
         const communitySnap = await getDocs(communityQuery);
 
@@ -41,13 +54,23 @@ const CommunityDetail = () => {
           const communityData = { id: communitySnap.docs[0].id, ...communitySnap.docs[0].data() } as Community;
           setCommunity(communityData);
 
-          // Fetch other communities
           const allCommunitiesSnap = await getDocs(collection(db, "communities"));
           const allCommunities = allCommunitiesSnap.docs
             .map(d => ({ id: d.id, ...d.data() } as Community))
             .filter(c => c.id !== communityData.id)
             .slice(0, 3);
           setOtherCommunities(allCommunities);
+
+          // Fetch real properties matching this community
+          const propertiesSnap = await getDocs(collection(db, "properties"));
+          const matched = propertiesSnap.docs
+            .map(d => ({ id: d.id, ...d.data() } as Property))
+            .filter(p =>
+              p.status === "available" &&
+              p.location?.toLowerCase().includes(communityData.name.toLowerCase())
+            )
+            .slice(0, 4);
+          setCommunityProperties(matched);
         }
       } catch (error) {
         console.error("Error fetching community:", error);
@@ -83,14 +106,6 @@ const CommunityDetail = () => {
       </div>
     );
   }
-
-  // Sample properties for now - in a real app, these would be fetched from database
-  const sampleProperties = [
-    { image: "/placeholder-property.jpg", title: "Luxury Apartment with City View", price: "AED 1,850,000", location: `${community.name}, Dubai`, beds: 2, baths: 2, area: "1,200 sq-ft", type: "sale" as const },
-    { image: "/placeholder-property.jpg", title: "Premium Penthouse | High Floor", price: "AED 4,500,000", location: `${community.name}, Dubai`, beds: 3, baths: 3, area: "3,200 sq-ft", type: "sale" as const },
-    { image: "/placeholder-property.jpg", title: "Modern Studio | Fully Furnished", price: "AED 85,000 /yr", location: `${community.name}, Dubai`, beds: 0, baths: 1, area: "520 sq-ft", type: "rent" as const },
-    { image: "/placeholder-property.jpg", title: "Spacious Villa | Garden View", price: "AED 3,200,000", location: `${community.name}, Dubai`, beds: 4, baths: 4, area: "3,800 sq-ft", type: "sale" as const },
-  ];
 
   // Parse highlights from comma-separated string
   const highlightsArray = community.highlights ? community.highlights.split(',').map(h => h.trim()) : [];
@@ -207,9 +222,15 @@ const CommunityDetail = () => {
             </Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {sampleProperties.map((p, i) => (
-              <PropertyCard key={i} {...p} />
-            ))}
+            {communityProperties.length === 0 ? (
+              <p className="col-span-4 text-center py-8 text-muted-foreground text-sm">
+                No properties listed for this community yet.
+              </p>
+            ) : (
+              communityProperties.map((p) => (
+                <PropertyCard key={p.id} {...p} />
+              ))
+            )}
           </div>
         </div>
       </section>
