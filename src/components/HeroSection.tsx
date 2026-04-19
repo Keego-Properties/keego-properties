@@ -6,12 +6,19 @@ import heroImage from "@/assets/hero-dubai.jpg";
 const HeroSection = () => {
   const [activeTab, setActiveTab] = useState("buy");
   const tabs = ["Buy", "Rent", "Sell", "Manage"];
+  const heroVideoSrc = "https://res.cloudinary.com/dy0t4agoh/video/upload/110923-689949643_medium_gvjpcc.mp4";
 
   return (
     <section className="relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden">
-      <div
-        className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(${heroImage})` }}
+      <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${heroImage})` }} />
+      <video
+        className="absolute inset-0 h-full w-full object-cover"
+        src={heroVideoSrc}
+        autoPlay
+        muted
+        loop
+        playsInline
+        poster={heroImage}
       />
       <div className="absolute inset-0" style={{ background: "var(--gradient-hero)" }} />
 
