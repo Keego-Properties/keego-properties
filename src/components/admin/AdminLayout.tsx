@@ -2,7 +2,7 @@ import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   Building2, Home, MapPin, Users, Newspaper,
-  LogOut, Menu, X, LayoutDashboard, HardHat
+  LogOut, Menu, X, LayoutDashboard, HardHat, Handshake
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -15,6 +15,7 @@ const navItems = [
   { to: "/admin/staff", icon: Users, label: "Sales Staff" },
   { to: "/admin/news", icon: Newspaper, label: "News" },
   { to: "/admin/developers", icon: HardHat, label: "Developers" },
+  { to: "/admin/services", icon: Handshake, label: "Services" },
 ];
 
 const AdminLayout = () => {

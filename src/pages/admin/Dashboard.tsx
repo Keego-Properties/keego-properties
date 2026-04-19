@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { collection, getCountFromServer } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { Home, MapPin, Users, Newspaper } from "lucide-react";
+import { Home, MapPin, Users, Newspaper, Handshake } from "lucide-react";
 
 const statCards = [
   { key: "properties", label: "Properties", icon: Home, color: "bg-blue-500" },
   { key: "communities", label: "Communities", icon: MapPin, color: "bg-emerald-500" },
   { key: "staff", label: "Sales Staff", icon: Users, color: "bg-violet-500" },
   { key: "news", label: "News Posts", icon: Newspaper, color: "bg-amber-500" },
+  { key: "services", label: "Services", icon: Handshake, color: "bg-cyan-600" },
 ];
 
 const AdminDashboard = () => {
@@ -15,7 +16,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     const fetchCounts = async () => {
-      const collections = ["properties", "communities", "staff", "news"];
+      const collections = ["properties", "communities", "staff", "news", "services"];
       const results: Record<string, number> = {};
       for (const col of collections) {
         try {
@@ -49,7 +50,7 @@ const AdminDashboard = () => {
       <div className="bg-card rounded-xl border border-border p-6">
         <h2 className="font-semibold text-foreground mb-2">Welcome to your CMS</h2>
         <p className="text-muted-foreground text-sm">
-          Use the sidebar to manage properties, communities, sales staff, and news articles.
+          Use the sidebar to manage properties, communities, sales staff, services, and news articles.
           All changes will be reflected on the public website in real-time.
         </p>
       </div>
