@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, X, Upload } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface Community {
   id: string;
@@ -18,17 +19,18 @@ interface Community {
   highlights: string;
   propertiesCount: number;
   avgPrice: string;
+  propertyIds: string[];
   createdAt: Timestamp;
 }
 
 type FormState = {
   name: string; description: string; image: string; location: string;
-  highlights: string; propertiesCount: number; avgPrice: string; imageFile: File | null;
+  highlights: string; propertiesCount: number; avgPrice: string; imageFile: File | null; propertyIds: string[];
 };
 
 const emptyForm: FormState = {
   name: "", description: "", image: "", location: "",
-  highlights: "", propertiesCount: 0, avgPrice: "", imageFile: null,
+  highlights: "", propertiesCount: 0, avgPrice: "", imageFile: null, propertyIds: [],
 };
 
 const CommunitiesManager = () => {
@@ -39,13 +41,19 @@ const CommunitiesManager = () => {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
+  const [allProperties, setAllProperties] = useState<{id: string, title: string, location: string}[]>([]);
 
   const fetchItems = async () => {
     const snap = await getDocs(collection(db, "communities"));
     setItems(snap.docs.map(d => ({ id: d.id, ...d.data() } as Community)));
   };
 
-  useEffect(() => { fetchItems(); }, []);
+  const fetchProperties = async () => {
+    const snap = await getDocs(collection(db, "properties"));
+    setAllProperties(snap.docs.map(d => ({ id: d.id, title: d.data().title, location: d.data().location })));
+  };
+
+  useEffect(() => { fetchItems(); fetchProperties(); }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -96,7 +104,7 @@ const CommunitiesManager = () => {
       name: c.name, description: c.description, image: c.image,
       location: c.location || "", highlights: c.highlights || "",
       propertiesCount: c.propertiesCount || 0, avgPrice: c.avgPrice || "",
-      imageFile: null,
+      imageFile: null, propertyIds: c.propertyIds || [],
     });
     setEditId(c.id);
     setShowForm(true);
@@ -170,6 +178,44 @@ const CommunitiesManager = () => {
             <div className="space-y-2">
               <Label>Highlights (comma-separated)</Label>
               <Input value={form.highlights} onChange={e => setForm({...form, highlights: e.target.value})} placeholder="Beachfront, Family, Schools" />
+            </div>
+            <div className="space-y-2 md:col-span-2">
+              <Label>Properties in this Community (Optional)</Label>
+              <select
+                className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm focus:border-ring focus:outline-none"
+                value=""
+                onChange={e => {
+                  const val = e.target.value;
+                  if (val && !form.propertyIds.includes(val))
+                    setForm({...form, propertyIds: [...form.propertyIds, val]});
+                }}
+              >
+                <option value="">— Select a property to add —</option>
+                {allProperties
+                  .filter(p => !form.propertyIds.includes(p.id))
+                  .map(p => (
+                    <option key={p.id} value={p.id}>{p.title}{p.location ? ` · ${p.location}` : ""}</option>
+                  ))}
+              </select>
+              {form.propertyIds.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {form.propertyIds.map(pid => {
+                    const prop = allProperties.find(p => p.id === pid);
+                    return prop ? (
+                      <Badge key={pid} variant="secondary" className="flex items-center gap-1">
+                        {prop.title}
+                        <button
+                          type="button"
+                          onClick={() => setForm({...form, propertyIds: form.propertyIds.filter(id => id !== pid)})}
+                          className="ml-1 hover:text-destructive"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </Badge>
+                    ) : null;
+                  })}
+                </div>
+              )}
             </div>
             <div className="space-y-2 md:col-span-2">
               <Label>Description</Label>

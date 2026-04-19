@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { collection, getDocs, query, where, Timestamp } from "firebase/firestore";
+import { collection, getDocs, query, where, doc, getDoc, Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -14,6 +14,7 @@ interface Community {
   image: string;
   location: string;
   highlights: string;
+  propertyIds?: string[];
   propertiesCount: number;
   avgPrice: string;
   createdAt: Timestamp;
@@ -61,15 +62,24 @@ const CommunityDetail = () => {
             .slice(0, 3);
           setOtherCommunities(allCommunities);
 
-          // Fetch real properties matching this community
+          // Fetch properties: use pinned propertyIds if set, else fallback to location match
           const propertiesSnap = await getDocs(collection(db, "properties"));
-          const matched = propertiesSnap.docs
-            .map(d => ({ id: d.id, ...d.data() } as Property))
-            .filter(p =>
-              p.status === "available" &&
-              p.location?.toLowerCase().includes(communityData.name.toLowerCase())
-            )
-            .slice(0, 4);
+          const allProps = propertiesSnap.docs.map(d => ({ id: d.id, ...d.data() } as Property));
+
+          let matched: Property[];
+          if (communityData.propertyIds && communityData.propertyIds.length > 0) {
+            // Show all explicitly assigned properties (regardless of status)
+            matched = allProps
+              .filter(p => communityData.propertyIds!.includes(p.id))
+              .slice(0, 12);
+          } else {
+            matched = allProps
+              .filter(p =>
+                p.status === "available" &&
+                p.location?.toLowerCase().includes(communityData.name.toLowerCase())
+              )
+              .slice(0, 4);
+          }
           setCommunityProperties(matched);
         }
       } catch (error) {
@@ -221,9 +231,9 @@ const CommunityDetail = () => {
               View All <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {communityProperties.length === 0 ? (
-              <p className="col-span-4 text-center py-8 text-muted-foreground text-sm">
+              <p className="col-span-3 text-center py-8 text-muted-foreground text-sm">
                 No properties listed for this community yet.
               </p>
             ) : (
