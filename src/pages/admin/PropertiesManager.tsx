@@ -28,6 +28,7 @@ interface Property {
   assignedStaff: string[];
   slug: string;
   category: string;
+  subCategory: string;
   createdAt: Timestamp;
 }
 
@@ -35,14 +36,14 @@ type FormState = {
   title: string; price: string; location: string; beds: number; baths: number;
   area: string; type: "sale" | "rent"; status: "available" | "sold" | "rented";
   description: string; image: string; developer: string; amenities: string;
-  assignedStaff: string[]; imageFile: File | null; category: string;
+  assignedStaff: string[]; imageFile: File | null; category: string; subCategory: string;
 };
 
 const emptyForm: FormState = {
   title: "", price: "", location: "", beds: 1, baths: 1,
   area: "", type: "sale", status: "available",
   description: "", image: "", developer: "", amenities: "",
-  assignedStaff: [], imageFile: null, category: "",
+  assignedStaff: [], imageFile: null, category: "", subCategory: "",
 };
 
 const PropertiesManager = () => {
@@ -55,6 +56,7 @@ const PropertiesManager = () => {
   const { toast } = useToast();
 
   const [staff, setStaff] = useState<{id: string, name: string, role: string}[]>([]);
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
 
   const fetchProperties = async () => {
     const snap = await getDocs(collection(db, "properties"));
@@ -124,7 +126,7 @@ const PropertiesManager = () => {
       beds: p.beds, baths: p.baths, area: p.area,
       type: p.type, status: p.status, description: p.description,
       image: p.image, developer: p.developer || "", amenities: p.amenities || "",
-      assignedStaff: p.assignedStaff || [], imageFile: null, category: p.category || "",
+      assignedStaff: p.assignedStaff || [], imageFile: null, category: p.category || "", subCategory: p.subCategory || "",
     });
     setEditId(p.id);
     setShowForm(true);
@@ -159,6 +161,29 @@ const PropertiesManager = () => {
         <Button onClick={() => { setForm(emptyForm); setEditId(null); setShowForm(true); }}>
           <Plus className="w-4 h-4 mr-1" /> Add Property
         </Button>
+      </div>
+
+      {/* Category summary tabs */}
+      <div className="flex flex-wrap gap-2 mb-6">
+        {(["all", "Off-plan", "Residential", "Commercial"] as const).map((cat) => {
+          const count = cat === "all"
+            ? properties.filter(p => p.status === "available").length
+            : properties.filter(p => p.category === cat && p.status === "available").length;
+          return (
+            <button
+              key={cat}
+              onClick={() => setCategoryFilter(cat)}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all border ${
+                categoryFilter === cat
+                  ? "bg-primary text-primary-foreground border-primary"
+                  : "bg-muted text-muted-foreground border-border hover:border-primary/50"
+              }`}
+            >
+              {cat === "all" ? "All" : cat}
+              <span className="ml-2 text-xs opacity-70">{count} available</span>
+            </button>
+          );
+        })}
       </div>
 
       {showForm && (
@@ -245,14 +270,31 @@ const PropertiesManager = () => {
             </div>
             <div className="space-y-2">
               <Label>Category</Label>
-              <Select value={form.category} onValueChange={v => setForm({...form, category: v})}>
+              <Select value={form.category} onValueChange={v => setForm({...form, category: v, subCategory: ""})}>
                 <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Apartments">Apartments</SelectItem>
-                  <SelectItem value="Town House">Town House</SelectItem>
-                  <SelectItem value="Penthouse">Penthouse</SelectItem>
-                  <SelectItem value="Villas">Villas</SelectItem>
-                  <SelectItem value="Office">Office</SelectItem>
+                  <SelectItem value="Off-plan">Off-plan</SelectItem>
+                  <SelectItem value="Residential">Residential</SelectItem>
+                  <SelectItem value="Commercial">Commercial</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Sub-category</Label>
+              <Select
+                value={form.subCategory}
+                onValueChange={v => setForm({...form, subCategory: v})}
+                disabled={!form.category}
+              >
+                <SelectTrigger><SelectValue placeholder={form.category ? "Select sub-category" : "Select a category first"} /></SelectTrigger>
+                <SelectContent>
+                  {({
+                    "Off-plan":    ["Apartments", "Villas", "Town House", "Penthouse"],
+                    "Residential": ["Apartments", "Town House", "Penthouse", "Villas"],
+                    "Commercial":  ["Office"],
+                  }[form.category] ?? []).map((opt: string) => (
+                    <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -334,20 +376,24 @@ const PropertiesManager = () => {
                 <th className="text-left p-3 font-medium text-muted-foreground">Price</th>
                 <th className="text-left p-3 font-medium text-muted-foreground">Location</th>
                 <th className="text-left p-3 font-medium text-muted-foreground">Type</th>
+                <th className="text-left p-3 font-medium text-muted-foreground">Category</th>
                 <th className="text-left p-3 font-medium text-muted-foreground">Status</th>
                 <th className="text-right p-3 font-medium text-muted-foreground">Actions</th>
               </tr>
             </thead>
             <tbody>
               {properties.length === 0 && (
-                <tr><td colSpan={6} className="p-8 text-center text-muted-foreground">No properties yet. Add your first property above.</td></tr>
+                <tr><td colSpan={7} className="p-8 text-center text-muted-foreground">No properties yet. Add your first property above.</td></tr>
               )}
-              {properties.map(p => (
+              {properties
+                .filter(p => categoryFilter === "all" || p.category === categoryFilter)
+                .map(p => (
                 <tr key={p.id} className="border-b border-border last:border-0 hover:bg-muted/30">
                   <td className="p-3 font-medium text-foreground">{p.title}</td>
                   <td className="p-3 text-muted-foreground">{p.price}</td>
                   <td className="p-3 text-muted-foreground">{p.location}</td>
                   <td className="p-3"><Badge variant="outline">{p.type === "sale" ? "Sale" : "Rent"}</Badge></td>
+                  <td className="p-3"><Badge variant="outline">{p.category || "—"}</Badge>{p.subCategory && <Badge variant="outline" className="ml-1">{p.subCategory}</Badge>}</td>
                   <td className="p-3">{statusBadge(p.status)}</td>
                   <td className="p-3 text-right">
                     <div className="flex items-center justify-end gap-1">

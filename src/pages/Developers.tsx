@@ -1,16 +1,26 @@
+import { useEffect, useState } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
-const partners = [
-  "Emaar Properties",
-  "Nakheel",
-  "Damac",
-  "Sobha Realty",
-  "Dubai Properties",
-  "Meraas",
-];
+interface Developer {
+  id: string;
+  name: string;
+  description: string;
+  logo: string;
+  website: string;
+}
 
 const Developers = () => {
+  const [developers, setDevelopers] = useState<Developer[]>([]);
+
+  useEffect(() => {
+    getDocs(collection(db, "developers")).then((snap) => {
+      setDevelopers(snap.docs.map((d) => ({ id: d.id, ...d.data() } as Developer)));
+    });
+  }, []);
+
   return (
     <div className="min-h-screen">
       <Navbar />
@@ -65,11 +75,29 @@ const Developers = () => {
               <p className="text-gold uppercase tracking-[0.2em] text-xs mb-3">Developer partners</p>
               <h3 className="text-2xl font-semibold text-primary-foreground mb-6">Trusted names in Dubai development</h3>
               <div className="grid gap-4">
-                {partners.map((partner) => (
-                  <div key={partner} className="rounded-3xl bg-card p-5 text-foreground shadow-[var(--shadow-card)]">
-                    {partner}
-                  </div>
-                ))}
+                {developers.length === 0 ? (
+                  <p className="text-primary-foreground/50 text-sm">No developers listed yet.</p>
+                ) : (
+                  developers.map((dev) => (
+                    <div key={dev.id} className="rounded-3xl bg-card p-5 shadow-[var(--shadow-card)] flex items-center gap-4">
+                      {dev.logo && (
+                        <img src={dev.logo} alt={dev.name} className="h-10 w-10 object-contain rounded flex-shrink-0" />
+                      )}
+                      <div>
+                        {dev.website ? (
+                          <a href={dev.website} target="_blank" rel="noopener noreferrer" className="font-medium text-foreground hover:text-primary transition-colors">
+                            {dev.name}
+                          </a>
+                        ) : (
+                          <span className="font-medium text-foreground">{dev.name}</span>
+                        )}
+                        {dev.description && (
+                          <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{dev.description}</p>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           </div>

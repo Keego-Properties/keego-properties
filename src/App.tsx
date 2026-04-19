@@ -26,6 +26,7 @@ import PropertiesManager from "./pages/admin/PropertiesManager.tsx";
 import CommunitiesManager from "./pages/admin/CommunitiesManager.tsx";
 import SalesStaffManager from "./pages/admin/SalesStaffManager.tsx";
 import NewsManager from "./pages/admin/NewsManager.tsx";
+import DevelopersManager from "./pages/admin/DevelopersManager.tsx";
 import ProtectedRoute from "./components/admin/ProtectedRoute.tsx";
 
 const queryClient = new QueryClient();
@@ -62,6 +63,7 @@ const App = () => (
               <Route path="communities" element={<CommunitiesManager />} />
               <Route path="staff" element={<SalesStaffManager />} />
               <Route path="news" element={<NewsManager />} />
+              <Route path="developers" element={<DevelopersManager />} />
             </Route>
 
             <Route path="*" element={<NotFound />} />

@@ -8,6 +8,14 @@ interface PropertyEnquiryFormProps {
 const PropertyEnquiryForm = ({ defaultType = "all" }: PropertyEnquiryFormProps) => {
   const [submitted, setSubmitted] = useState(false);
   const [lookingTo, setLookingTo] = useState(defaultType === "all" ? "" : defaultType);
+  const [category, setCategory] = useState("");
+  const [subCategory, setSubCategory] = useState("");
+
+  const subCategoryOptions: Record<string, string[]> = {
+    "Off-plan":    ["Apartments", "Villas", "Town House", "Penthouse"],
+    "Residential": ["Apartments", "Town House", "Penthouse", "Villas"],
+    "Commercial":  ["Office"],
+  };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -86,6 +94,35 @@ const PropertyEnquiryForm = ({ defaultType = "all" }: PropertyEnquiryFormProps) 
                 <option value="" disabled>Select…</option>
                 <option value="buy">Buy</option>
                 <option value="rent">Rent</option>
+              </select>
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label className="text-xs text-primary-foreground/60">Property Category</label>
+              <select
+                value={category}
+                onChange={(e) => { setCategory(e.target.value); setSubCategory(""); }}
+                className="h-10 rounded-md border border-primary-foreground/20 bg-navy-dark px-3 text-sm text-primary-foreground focus:border-gold focus:outline-none"
+              >
+                <option value="" disabled>Select…</option>
+                <option value="Off-plan">Off-plan</option>
+                <option value="Residential">Residential</option>
+                <option value="Commercial">Commercial</option>
+              </select>
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label className="text-xs text-primary-foreground/60">Sub-category</label>
+              <select
+                value={subCategory}
+                onChange={(e) => setSubCategory(e.target.value)}
+                disabled={!category}
+                className="h-10 rounded-md border border-primary-foreground/20 bg-navy-dark px-3 text-sm text-primary-foreground focus:border-gold focus:outline-none disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <option value="" disabled>{category ? "Select…" : "Select a category first"}</option>
+                {(subCategoryOptions[category] ?? []).map((opt) => (
+                  <option key={opt} value={opt}>{opt}</option>
+                ))}
               </select>
             </div>
 
