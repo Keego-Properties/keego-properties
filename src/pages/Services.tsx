@@ -1,6 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
-import { Building2, ChartNoAxesColumn, ConciergeBell, FileSearch, Handshake, Home, KeyRound, ShieldCheck, Sparkles, Users } from "lucide-react";
+import {
+  FaArrowTrendUp,
+  FaBuilding,
+  FaCalculator,
+  FaChartLine,
+  FaGem,
+  FaHouse,
+  FaLandmark,
+  FaListUl,
+} from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -8,16 +17,14 @@ import { Button } from "@/components/ui/button";
 import { db } from "@/lib/firebase";
 
 const iconMap = {
-  Home,
-  KeyRound,
-  ChartNoAxesColumn,
-  Sparkles,
-  FileSearch,
-  Building2,
-  Users,
-  ConciergeBell,
-  ShieldCheck,
-  Handshake,
+  "fa-chart-line": FaChartLine,
+  "fa-house": FaHouse,
+  "fa-arrow-trend-up": FaArrowTrendUp,
+  "fa-building": FaBuilding,
+  "fa-gem": FaGem,
+  "fa-calculator": FaCalculator,
+  "fa-landmark": FaLandmark,
+  "fa-list": FaListUl,
 };
 
 type IconName = keyof typeof iconMap;
@@ -36,7 +43,7 @@ const defaultServices: ServiceItem[] = [
     id: "default-sales",
     title: "Property Sales",
     description: "End-to-end support for listing, pricing, and closing premium residential and commercial sales.",
-    icon: "Home",
+    icon: "fa-house",
     status: "published",
     displayOrder: 1,
   },
@@ -44,7 +51,7 @@ const defaultServices: ServiceItem[] = [
     id: "default-leasing",
     title: "Property Leasing",
     description: "Long-term and short-term rental advisory with tenant screening and lease management support.",
-    icon: "KeyRound",
+    icon: "fa-list",
     status: "published",
     displayOrder: 2,
   },
@@ -52,7 +59,7 @@ const defaultServices: ServiceItem[] = [
     id: "default-asset",
     title: "Asset Management",
     description: "Performance-focused property oversight with occupancy, maintenance, and portfolio reporting.",
-    icon: "ChartNoAxesColumn",
+    icon: "fa-chart-line",
     status: "published",
     displayOrder: 3,
   },
@@ -60,7 +67,7 @@ const defaultServices: ServiceItem[] = [
     id: "default-investment",
     title: "Investment Advisory",
     description: "Data-backed recommendations for high-growth locations, yield strategy, and portfolio expansion.",
-    icon: "Sparkles",
+    icon: "fa-arrow-trend-up",
     status: "published",
     displayOrder: 4,
   },
@@ -68,7 +75,7 @@ const defaultServices: ServiceItem[] = [
     id: "default-valuation",
     title: "Valuation Services",
     description: "Verified, market-aligned valuations for sale, refinance, leasing, and investor due diligence.",
-    icon: "FileSearch",
+    icon: "fa-calculator",
     status: "published",
     displayOrder: 5,
   },
@@ -76,7 +83,7 @@ const defaultServices: ServiceItem[] = [
     id: "default-commercial",
     title: "Commercial Brokerage",
     description: "Office and retail advisory for acquisition, leasing, and commercial repositioning opportunities.",
-    icon: "Building2",
+    icon: "fa-building",
     status: "published",
     displayOrder: 6,
   },
@@ -84,7 +91,7 @@ const defaultServices: ServiceItem[] = [
     id: "default-developer",
     title: "Developer Solutions",
     description: "Project launch strategy, inventory movement support, and targeted buyer acquisition campaigns.",
-    icon: "Users",
+    icon: "fa-landmark",
     status: "published",
     displayOrder: 7,
   },
@@ -92,7 +99,7 @@ const defaultServices: ServiceItem[] = [
     id: "default-concierge",
     title: "Concierge Support",
     description: "Dedicated support for relocation, documentation flow, and post-transaction coordination.",
-    icon: "ConciergeBell",
+    icon: "fa-gem",
     status: "published",
     displayOrder: 8,
   },
@@ -100,7 +107,7 @@ const defaultServices: ServiceItem[] = [
     id: "default-compliance",
     title: "Compliance Guidance",
     description: "Clear guidance on regulatory, legal, and documentation requirements across the transaction cycle.",
-    icon: "ShieldCheck",
+    icon: "fa-list",
     status: "published",
     displayOrder: 9,
   },
@@ -157,7 +164,7 @@ const Services = () => {
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {visibleServices.map((service) => {
-                const Icon = iconMap[service.icon] || Home;
+                const Icon = iconMap[service.icon] || FaHouse;
                 return (
               <article
                 key={service.title}

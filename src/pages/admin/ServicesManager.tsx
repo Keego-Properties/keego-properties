@@ -1,21 +1,21 @@
 import { useEffect, useMemo, useState } from "react";
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, Timestamp } from "firebase/firestore";
 import {
-  Building2,
-  ChartNoAxesColumn,
-  ConciergeBell,
-  FileSearch,
-  Handshake,
-  Home,
-  KeyRound,
-  ShieldCheck,
-  Sparkles,
   Trash2,
-  Users,
   X,
   Plus,
   Pencil,
 } from "lucide-react";
+import {
+  FaArrowTrendUp,
+  FaBuilding,
+  FaCalculator,
+  FaChartLine,
+  FaGem,
+  FaHouse,
+  FaLandmark,
+  FaListUl,
+} from "react-icons/fa6";
 import { db } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -26,19 +26,28 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const iconMap = {
-  Home,
-  KeyRound,
-  ChartNoAxesColumn,
-  Sparkles,
-  FileSearch,
-  Building2,
-  Users,
-  ConciergeBell,
-  ShieldCheck,
-  Handshake,
+  "fa-chart-line": FaChartLine,
+  "fa-house": FaHouse,
+  "fa-arrow-trend-up": FaArrowTrendUp,
+  "fa-building": FaBuilding,
+  "fa-gem": FaGem,
+  "fa-calculator": FaCalculator,
+  "fa-landmark": FaLandmark,
+  "fa-list": FaListUl,
 };
 
 type IconName = keyof typeof iconMap;
+
+const iconOptions: IconName[] = [
+  "fa-chart-line",
+  "fa-house",
+  "fa-arrow-trend-up",
+  "fa-building",
+  "fa-gem",
+  "fa-calculator",
+  "fa-landmark",
+  "fa-list",
+];
 
 interface ServiceItem {
   id: string;
@@ -61,7 +70,7 @@ type FormState = {
 const emptyForm: FormState = {
   title: "",
   description: "",
-  icon: "Home",
+  icon: "fa-house",
   status: "draft",
   displayOrder: "0",
 };
@@ -84,8 +93,18 @@ const ServicesManager = () => {
   );
 
   const fetchServices = async () => {
-    const snap = await getDocs(collection(db, "services"));
-    setServices(snap.docs.map((d) => ({ id: d.id, ...d.data() } as ServiceItem)));
+    try {
+      const snap = await getDocs(collection(db, "services"));
+      setServices(snap.docs.map((d) => ({ id: d.id, ...d.data() } as ServiceItem)));
+    } catch (error) {
+      console.error("Error fetching services:", error);
+      toast({
+        title: "Cannot access services",
+        description: "You do not have permission to read the services collection.",
+        variant: "destructive",
+      });
+      setServices([]);
+    }
   };
 
   useEffect(() => {
@@ -118,10 +137,14 @@ const ServicesManager = () => {
       setForm(emptyForm);
       setShowForm(false);
       setEditId(null);
-      fetchServices();
+      await fetchServices();
     } catch (error) {
       console.error("Error saving service:", error);
-      toast({ title: "Error saving service", variant: "destructive" });
+      toast({
+        title: "Error saving service",
+        description: "Check Firestore rules for create/update access to services.",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -131,7 +154,7 @@ const ServicesManager = () => {
     setForm({
       title: service.title,
       description: service.description,
-      icon: service.icon || "Home",
+      icon: service.icon || "fa-house",
       status: service.status || "draft",
       displayOrder: String(service.displayOrder ?? 0),
     });
@@ -141,19 +164,37 @@ const ServicesManager = () => {
 
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this service?")) return;
-    await deleteDoc(doc(db, "services", id));
-    toast({ title: "Service deleted" });
-    fetchServices();
+    try {
+      await deleteDoc(doc(db, "services", id));
+      toast({ title: "Service deleted" });
+      await fetchServices();
+    } catch (error) {
+      console.error("Error deleting service:", error);
+      toast({
+        title: "Error deleting service",
+        description: "Check Firestore rules for delete access to services.",
+        variant: "destructive",
+      });
+    }
   };
 
   const togglePublish = async (service: ServiceItem) => {
     const nextStatus = service.status === "published" ? "draft" : "published";
-    await updateDoc(doc(db, "services", service.id), {
-      status: nextStatus,
-      updatedAt: Timestamp.now(),
-    });
-    toast({ title: `Service ${nextStatus}` });
-    fetchServices();
+    try {
+      await updateDoc(doc(db, "services", service.id), {
+        status: nextStatus,
+        updatedAt: Timestamp.now(),
+      });
+      toast({ title: `Service ${nextStatus}` });
+      await fetchServices();
+    } catch (error) {
+      console.error("Error updating service status:", error);
+      toast({
+        title: "Error updating status",
+        description: "Check Firestore rules for update access to services.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -210,11 +251,16 @@ const ServicesManager = () => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {Object.keys(iconMap).map((iconName) => (
+                  {iconOptions.map((iconName) => {
+                    const Icon = iconMap[iconName];
+                    return (
                     <SelectItem key={iconName} value={iconName}>
-                      {iconName}
+                      <span className="inline-flex items-center gap-2">
+                        <Icon className="h-4 w-4" />
+                        {iconName}
+                      </span>
                     </SelectItem>
-                  ))}
+                  );})}
                 </SelectContent>
               </Select>
             </div>
@@ -272,7 +318,7 @@ const ServicesManager = () => {
               </thead>
               <tbody>
                 {sortedServices.map((service) => {
-                  const Icon = iconMap[service.icon] || Home;
+                  const Icon = iconMap[service.icon] || FaHouse;
                   return (
                     <tr key={service.id} className="border-b border-border last:border-0 hover:bg-muted/20 transition-colors">
                       <td className="px-4 py-3 text-muted-foreground">{service.displayOrder ?? 0}</td>
