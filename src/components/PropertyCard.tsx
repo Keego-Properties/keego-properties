@@ -1,4 +1,4 @@
-import { Heart, Bed, Bath, Maximize, MapPin, Phone } from "lucide-react";
+import { Bed, Bath, Maximize, MapPin, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const generateSlug = (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -34,9 +34,7 @@ const PropertyCard = ({ id, image, title, price, location, beds, baths, area, ty
             {category || "Property"} For {type === "sale" ? "Sale" : "Rent"}
           </span>
         </div>
-        <button className="absolute top-4 right-4 w-9 h-9 rounded-full bg-primary-foreground/80 backdrop-blur flex items-center justify-center hover:bg-primary-foreground transition-all text-muted-foreground hover:text-destructive">
-          <Heart className="w-4 h-4" />
-        </button>
+
       </div>
 
       <div className="p-5">
