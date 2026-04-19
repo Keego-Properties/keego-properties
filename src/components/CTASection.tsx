@@ -28,7 +28,7 @@ const CTASection = () => {
                 </Button>
               </Link>
               <Link to="/properties">
-                <Button variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 rounded-full px-8 h-12 text-base font-medium transition-all duration-300">
+                <Button variant="outline" className="bg-gold hover:bg-gold-dark text-primary-foreground rounded-full px-8 h-12 text-base font-medium transition-all duration-300">
                   Browse Properties
                 </Button>
               </Link>
