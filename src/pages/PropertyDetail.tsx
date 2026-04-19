@@ -5,6 +5,7 @@ import { db } from "@/lib/firebase";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PropertyCard from "@/components/PropertyCard";
+import PropertyEnquiryForm from "@/components/PropertyEnquiryForm";
 import { Heart, Bed, Bath, Maximize, MapPin, Phone, Mail, Share2, ChevronLeft, ChevronRight, Check, Building, Calendar, Layers, Car, Trees, Dumbbell, Waves, ShieldCheck, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -59,7 +60,7 @@ const PropertyDetail = () => {
     Array.isArray(property.amenities)
       ? property.amenities
       : typeof property.amenities === "string"
-        ? property.amenities.split(",").map((amenity) => amenity.trim()).filter(Boolean)
+        ? (property.amenities as string).split(",").map((amenity) => amenity.trim()).filter(Boolean)
         : []
   ) : [];
 
@@ -105,7 +106,7 @@ const PropertyDetail = () => {
 
         // Fetch staff members
         const staffSnap = await getDocs(collection(db, "staff"));
-        setStaff(staffSnap.docs.map(d => ({ id: d.id, ...d.data() })));
+        setStaff(staffSnap.docs.map(d => ({ id: d.id, ...d.data() } as { id: string; name: string; email: string; phone: string; photo: string; role: string })));
       } catch (error) {
         console.error("Error fetching property:", error);
       } finally {
@@ -394,6 +395,12 @@ const PropertyDetail = () => {
           </div>
         </div>
       </section>
+
+      {/* Contact / Enquiry Form */}
+      <PropertyEnquiryForm
+        defaultType={property.type === "sale" ? "buy" : "rent"}
+        propertyName={property.title}
+      />
 
       {/* Other Properties */}
       <section className="py-16 bg-cream">
