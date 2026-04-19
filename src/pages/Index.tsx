@@ -6,6 +6,7 @@ import ServicesGrid from "@/components/ServicesGrid";
 import StatsSection from "@/components/StatsSection";
 import NewsSection from "@/components/NewsSection";
 import CTASection from "@/components/CTASection";
+import PromoBanner from "@/components/PromoBanner";
 import Footer from "@/components/Footer";
 
 const Index = () => {
@@ -14,6 +15,7 @@ const Index = () => {
       <Navbar />
       <HeroSection />
       <FeaturedProperties />
+      <PromoBanner />
       <CommunitiesSection />
       <ServicesGrid />
       <StatsSection />
