@@ -147,9 +147,6 @@ const Developers = () => {
                     key={dev.id}
                     className={`group relative ${bg} aspect-[4/3] flex flex-col items-center justify-center p-8 overflow-hidden cursor-pointer`}
                   >
-                    {/* hover overlay — bottom half gradient */}
-                    <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
                     {/* external link */}
                     {dev.website && (
                       <a
@@ -173,21 +170,9 @@ const Developers = () => {
                       ) : (
                         <>
                           <Building2 className="w-10 h-10 text-foreground/40" />
-                          <span className="text-foreground font-semibold text-center text-sm leading-tight">
-                            {dev.name}
-                          </span>
                         </>
                       )}
                     </div>
-
-                    {/* name on hover */}
-                    {dev.logo && (
-                      <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-10">
-                        <p className="text-foreground text-sm font-semibold text-center truncate">
-                          {dev.name}
-                        </p>
-                      </div>
-                    )}
                   </div>
                 );
               })}
