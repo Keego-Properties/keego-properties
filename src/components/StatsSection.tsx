@@ -29,7 +29,7 @@ function useCountUp(target: number, duration = 2000, active: boolean) {
 const StatItem = ({ stat }: { stat: typeof stats[number] }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(false);
-  const count = useCountUp(stat.value, 2000, active);
+  const count = useCountUp(stat.value, 4000, active);
 
   useEffect(() => {
     const el = ref.current;
