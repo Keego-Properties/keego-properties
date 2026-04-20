@@ -43,7 +43,7 @@ const FeaturedProperties = () => {
     fetchProperties();
   }, []);
   return (
-    <section className="py-20 bg-cream">
+    <section id="featured-properties" className="py-20 bg-cream">
       <div className="container mx-auto px-4">
         <div className="flex items-end justify-between mb-12">
           <div>

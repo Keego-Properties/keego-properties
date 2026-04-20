@@ -33,11 +33,13 @@ const Properties = () => {
   const typeParam = params.get("type");
   const lockedType = typeParam === "buy" ? "sale" : typeParam === "rent" ? "rent" : null;
   const effectiveType = lockedType ?? activeType;
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const typeParam = params.get("type");
     const categoryParam = params.get("category");
+    const searchParam = params.get("search");
 
     setActiveType(
       typeParam === "buy"
@@ -47,6 +49,7 @@ const Properties = () => {
         : "all"
     );
     setActiveCategory(categoryParam ? decodeURIComponent(categoryParam) : "all");
+    setSearchQuery(searchParam ? decodeURIComponent(searchParam) : "");
   }, [location.search]);
 
   useEffect(() => {
@@ -69,7 +72,11 @@ const Properties = () => {
     const typeMatches = effectiveType === "all" || p.type === effectiveType;
     const categoryMatches =
       activeCategory === "all" || (p.category?.toLowerCase() === activeCategory.toLowerCase());
-    return typeMatches && categoryMatches;
+    const searchMatches =
+      !searchQuery ||
+      p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.location.toLowerCase().includes(searchQuery.toLowerCase());
+    return typeMatches && categoryMatches && searchMatches;
   });
 
   return (
@@ -124,6 +131,8 @@ const Properties = () => {
               <Search className="w-4 h-4 text-muted-foreground" />
               <input
                 type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search properties..."
                 className="bg-transparent text-sm outline-none placeholder:text-muted-foreground w-48"
               />
