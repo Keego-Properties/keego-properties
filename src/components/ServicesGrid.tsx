@@ -19,10 +19,10 @@ const ServicesGrid = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <p className="text-gold font-medium tracking-[0.2em] uppercase text-sm mb-2">
-            Tailored to You
+            Made to Suit You
           </p>
           <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground">
-            Your Home, Your Way
+            Refined Living, Tailored to You
           </h2>
         </div>
 
