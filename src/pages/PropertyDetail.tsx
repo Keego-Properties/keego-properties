@@ -6,7 +6,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PropertyCard from "@/components/PropertyCard";
 import PropertyEnquiryForm from "@/components/PropertyEnquiryForm";
-import { Heart, Bed, Bath, Maximize, MapPin, Phone, Mail, Share2, ChevronLeft, ChevronRight, Check, Building, Calendar, Layers, Car, Trees, Dumbbell, Waves, ShieldCheck, Users } from "lucide-react";
+import { Heart, Bed, Bath, Maximize, MapPin, Phone, Mail, Share2, ChevronLeft, ChevronRight, Check, Building, Calendar, Layers, Car, Trees, Dumbbell, Waves, ShieldCheck, Users, Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 
@@ -55,6 +55,24 @@ const PropertyDetail = () => {
   const [staff, setStaff] = useState<{id: string, name: string, email: string, phone: string, photo: string, role: string}[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentImage, setCurrentImage] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+
+  const openLightbox = (idx: number) => { setCurrentImage(idx); setLightboxOpen(true); };
+  const closeLightbox = () => setLightboxOpen(false);
+
+  const [imageCount, setImageCount] = useState(4);
+
+  // Keyboard navigation
+  useEffect(() => {
+    if (!lightboxOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight") setCurrentImage(p => (p + 1) % imageCount);
+      if (e.key === "ArrowLeft") setCurrentImage(p => (p - 1 + imageCount) % imageCount);
+      if (e.key === "Escape") closeLightbox();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [lightboxOpen, imageCount]);
 
   const normalizedAmenities = property ? (
     Array.isArray(property.amenities)
@@ -144,6 +162,8 @@ const PropertyDetail = () => {
 
   // Sample images for now - in a real app, these would be stored in the database
   const images = [property.image, "/placeholder-property.jpg", "/placeholder-property.jpg", "/placeholder-property.jpg"];
+  // sync count for keyboard nav
+  if (imageCount !== images.length) setImageCount(images.length);
 
   const nextImage = () => setCurrentImage((prev) => (prev + 1) % images.length);
   const prevImage = () => setCurrentImage((prev) => (prev - 1 + images.length) % images.length);
@@ -160,259 +180,392 @@ const PropertyDetail = () => {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-white">
       <Navbar />
 
-      {/* Image Gallery */}
-      <section className="relative h-[50vh] md:h-[60vh]">
-        <img src={images[currentImage]} alt={property.title} className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-black/20" />
+      {/* ── Lightbox ── */}
+      {lightboxOpen && (
+        <div
+          className="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center"
+          onClick={closeLightbox}
+        >
+          {/* Close */}
+          <button
+            className="absolute top-5 right-5 w-11 h-11 rounded-full bg-white/10 hover:bg-white/25 flex items-center justify-center text-white transition-all z-10"
+            onClick={closeLightbox}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
 
-        {/* Navigation */}
-        <button onClick={prevImage} className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 backdrop-blur-sm hover:bg-white/30 rounded-full p-3 text-white transition-colors">
-          <ChevronLeft className="w-6 h-6" />
-        </button>
-        <button onClick={nextImage} className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 backdrop-blur-sm hover:bg-white/30 rounded-full p-3 text-white transition-colors">
-          <ChevronRight className="w-6 h-6" />
-        </button>
+          {/* Prev */}
+          <button
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/25 flex items-center justify-center text-white transition-all z-10"
+            onClick={(e) => { e.stopPropagation(); setCurrentImage(p => (p - 1 + images.length) % images.length); }}
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </button>
 
-        {/* Image Indicators */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-          {images.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setCurrentImage(i)}
-              className={`w-2 h-2 rounded-full transition-colors ${i === currentImage ? 'bg-white' : 'bg-white/50'}`}
+          {/* Image */}
+          <div className="max-w-5xl max-h-[85vh] w-full px-20" onClick={e => e.stopPropagation()}>
+            <img
+              src={images[currentImage]}
+              alt={`${property.title} – photo ${currentImage + 1}`}
+              className="w-full h-full object-contain max-h-[80vh] rounded-xl"
             />
-          ))}
-        </div>
+            <p className="text-center text-white/50 text-sm mt-3">{currentImage + 1} / {images.length}</p>
+          </div>
 
-        {/* Price Badge */}
-        <div className="absolute top-4 right-4 bg-gold text-primary-foreground px-4 py-2 rounded-full font-semibold">
-          {property.price}
-        </div>
+          {/* Next */}
+          <button
+            className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/25 flex items-center justify-center text-white transition-all z-10"
+            onClick={(e) => { e.stopPropagation(); setCurrentImage(p => (p + 1) % images.length); }}
+          >
+            <ChevronRight className="w-6 h-6" />
+          </button>
 
-        {/* Action Buttons */}
-        <div className="absolute top-4 left-4 flex gap-2">
-          <button className="bg-white/20 backdrop-blur-sm hover:bg-white/30 rounded-full p-3 text-white transition-colors">
-            <Heart className="w-5 h-5" />
-          </button>
-          <button onClick={shareProperty} className="bg-white/20 backdrop-blur-sm hover:bg-white/30 rounded-full p-3 text-white transition-colors">
-            <Share2 className="w-5 h-5" />
-          </button>
+          {/* Dot strip */}
+          <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-2">
+            {images.map((_, i) => (
+              <button
+                key={i}
+                onClick={(e) => { e.stopPropagation(); setCurrentImage(i); }}
+                className={`rounded-full transition-all duration-300 ${
+                  i === currentImage ? "w-6 h-2 bg-[#D4AF37]" : "w-2 h-2 bg-white/40 hover:bg-white/70"
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── Hero Gallery ── */}
+      <section className="pt-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 py-4">
+
+          {/* Breadcrumb */}
+          <nav className="flex items-center gap-1.5 text-xs text-slate-400 mb-4">
+            <Link to="/" className="hover:text-slate-700 transition-colors">Home</Link>
+            <span>/</span>
+            <Link to="/properties" className="hover:text-slate-700 transition-colors">Properties</Link>
+            <span>/</span>
+            <span className="text-slate-600 font-medium truncate max-w-[200px]">{property.title}</span>
+          </nav>
+
+          {/* Split gallery */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 rounded-2xl overflow-hidden" style={{ height: 520 }}>
+
+            {/* Main large image */}
+            <div className="relative group cursor-pointer h-full" onClick={() => openLightbox(0)}>
+              <img
+                src={images[0]}
+                alt={property.title}
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+              />
+              {/* Photo count badge */}
+              <div className="absolute top-4 left-4 flex items-center gap-1.5 bg-black/50 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1.5 rounded-full">
+                <Camera className="w-3.5 h-3.5" />
+                {images.filter(img => img && !img.includes('placeholder')).length || images.length}
+              </div>
+            </div>
+
+            {/* 2×2 thumbnail grid */}
+            <div className="grid grid-cols-2 grid-rows-2 gap-2 h-full">
+              {[1, 2, 3, 4].map((idx) => (
+                <div
+                  key={idx}
+                  className="relative group cursor-pointer overflow-hidden"
+                  onClick={() => openLightbox(idx % images.length)}
+                >
+                  <img
+                    src={images[idx % images.length]}
+                    alt={`${property.title} ${idx + 1}`}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                  />
+                  {/* Show all photos overlay on last thumb */}
+                  {idx === 4 && images.length > 5 && (
+                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                      <span className="text-white font-semibold text-sm">+{images.length - 5} photos</span>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
         </div>
       </section>
 
-      {/* Property Info */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            <div className="lg:col-span-2">
-              <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
-                <Link to="/" className="hover:text-gold transition-colors">Home</Link>
-                <span>/</span>
-                <Link to="/properties" className="hover:text-gold transition-colors">Properties</Link>
-                <span>/</span>
-                <span className="text-foreground">{property.title}</span>
-              </nav>
+      {/* ── Key Stats Bar ── */}
+      <div className="bg-[#0b1628]">
+        <div className="max-w-7xl mx-auto px-6 md:px-12">
 
-              <h1 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-4">{property.title}</h1>
-
+          {/* Title + price row */}
+          <div className="flex flex-wrap items-start justify-between gap-4 pt-8 pb-6 border-b border-white/10">
+            <div>
               {property.status !== "available" && (
-                <span className="inline-block mb-4 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider bg-red-600/15 text-red-400 border border-red-600/30">
+                <span className="inline-block mb-2 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest bg-red-500/20 text-red-400">
                   {property.status === "sold" ? "Sold" : "Rented"}
                 </span>
               )}
-
-              <div className="flex items-center gap-2 text-muted-foreground mb-6">
-                <MapPin className="w-4 h-4" />
+              <h1 className="font-serif text-2xl md:text-4xl font-bold text-white leading-tight mb-2">
+                {property.title}
+              </h1>
+              <div className="flex items-center gap-2 text-white/50 text-sm">
+                <MapPin className="w-3.5 h-3.5 text-[#D4AF37]" />
                 <span>{property.location}</span>
-                {property.category && <span className="text-gold font-medium"> • {property.category}</span>}
+                {property.category && (
+                  <span className="text-[#D4AF37] font-medium">· {property.category}</span>
+                )}
               </div>
+            </div>
+            <div className="text-right">
+              <p className="text-white/40 text-xs uppercase tracking-widest mb-1">
+                {property.type === "sale" ? "Sale Price" : "Rental Price"}
+              </p>
+              <p className="font-serif text-3xl md:text-4xl font-bold text-[#D4AF37]">{property.price}</p>
+              <button
+                onClick={shareProperty}
+                className="mt-2 inline-flex items-center gap-1.5 text-xs text-white/40 hover:text-white/70 transition-colors"
+              >
+                <Share2 className="w-3.5 h-3.5" /> Share
+              </button>
+            </div>
+          </div>
 
-              {/* Key Stats */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-                <div className="text-center">
-                  <div className="flex items-center justify-center gap-2 text-gold mb-2">
-                    <Bed className="w-5 h-5" />
-                    <span className="font-bold text-xl">{property.beds}</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">Bedrooms</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-white/10">
+            {[
+              { icon: Bed, label: "Bedrooms", value: property.beds },
+              { icon: Bath, label: "Bathrooms", value: property.baths },
+              { icon: Maximize, label: "Area", value: property.area },
+              { icon: Building, label: "Listing", value: property.type === "sale" ? "For Sale" : "For Rent" },
+            ].map(({ icon: Icon, label, value }) => (
+              <div key={label} className="flex items-center gap-3 px-6 py-5">
+                <div className="w-9 h-9 rounded-lg bg-[#D4AF37]/10 border border-[#D4AF37]/20 flex items-center justify-center shrink-0">
+                  <Icon className="w-4 h-4 text-[#D4AF37]" />
                 </div>
-                <div className="text-center">
-                  <div className="flex items-center justify-center gap-2 text-gold mb-2">
-                    <Bath className="w-5 h-5" />
-                    <span className="font-bold text-xl">{property.baths}</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">Bathrooms</p>
-                </div>
-                <div className="text-center">
-                  <div className="flex items-center justify-center gap-2 text-gold mb-2">
-                    <Maximize className="w-5 h-5" />
-                    <span className="font-bold text-xl">{property.area}</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">Area</p>
-                </div>
-                <div className="text-center">
-                  <div className="flex items-center justify-center gap-2 text-gold mb-2">
-                    <Building className="w-5 h-5" />
-                    <span className="font-bold text-xl">{property.type === "sale" ? "For Sale" : "For Rent"}</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">Type</p>
+                <div>
+                  <p className="text-white font-semibold text-sm leading-tight">{value}</p>
+                  <p className="text-white/45 text-xs">{label}</p>
                 </div>
               </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Main Content ── */}
+      <section className="py-16 bg-[#fafaf9]">
+        <div className="max-w-7xl mx-auto px-6 md:px-12">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+
+            {/* Left: Details */}
+            <div className="lg:col-span-2 space-y-10">
 
               {/* Description */}
-              <div className="mb-8">
-                <h2 className="font-serif text-2xl font-bold text-foreground mb-4">Description</h2>
-                <p className="text-muted-foreground leading-relaxed">
-                  {property.description || "A beautiful property offering modern living spaces and premium amenities."}
+              <div className="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_16px_rgba(0,0,0,0.04)] p-8">
+                <p className="text-[10px] font-bold tracking-widest uppercase text-[#D4AF37] mb-3">Overview</p>
+                <h2 className="font-serif text-2xl font-bold text-[#0b1628] mb-4">About This Property</h2>
+                <p className="text-slate-600 leading-relaxed text-sm">
+                  {property.description || "A beautiful property offering modern living spaces and premium amenities in one of Dubai's most sought-after locations."}
                 </p>
               </div>
 
               {/* Property Details */}
-              <div className="mb-8">
-                <h2 className="font-serif text-2xl font-bold text-foreground mb-4">Property Details</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {property.year && (
-                    <div className="flex items-center justify-between py-3 border-b border-border">
-                      <span className="text-muted-foreground flex items-center gap-2">
-                        <Calendar className="w-4 h-4" />
-                        Year Built
+              <div className="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_16px_rgba(0,0,0,0.04)] p-8">
+                <p className="text-[10px] font-bold tracking-widest uppercase text-[#D4AF37] mb-3">Specifications</p>
+                <h2 className="font-serif text-2xl font-bold text-[#0b1628] mb-6">Property Details</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-0 divide-y sm:divide-y-0 sm:divide-x-0">
+                  {[
+                    property.year && { icon: Calendar, label: "Year Built", value: property.year },
+                    property.parking && { icon: Car, label: "Parking", value: `${property.parking} Spaces` },
+                    property.floors && { icon: Layers, label: "Floor", value: property.floors },
+                    property.developer && { icon: Building, label: "Developer", value: property.developer },
+                  ].filter(Boolean).map((item: any) => (
+                    <div key={item.label} className="flex items-center justify-between py-4 border-b border-slate-100 last:border-0">
+                      <span className="flex items-center gap-2 text-slate-500 text-sm">
+                        <item.icon className="w-4 h-4 text-[#D4AF37]" />
+                        {item.label}
                       </span>
-                      <span className="font-semibold">{property.year}</span>
+                      <span className="font-semibold text-[#0b1628] text-sm">{item.value}</span>
                     </div>
-                  )}
-                  {property.parking && (
-                    <div className="flex items-center justify-between py-3 border-b border-border">
-                      <span className="text-muted-foreground flex items-center gap-2">
-                        <Car className="w-4 h-4" />
-                        Parking
-                      </span>
-                      <span className="font-semibold">{property.parking} Spaces</span>
-                    </div>
-                  )}
-                  {property.floors && (
-                    <div className="flex items-center justify-between py-3 border-b border-border">
-                      <span className="text-muted-foreground flex items-center gap-2">
-                        <Layers className="w-4 h-4" />
-                        Floor
-                      </span>
-                      <span className="font-semibold">{property.floors}</span>
-                    </div>
-                  )}
-                  {property.developer && (
-                    <div className="flex items-center justify-between py-3 border-b border-border">
-                      <span className="text-muted-foreground flex items-center gap-2">
-                        <Building className="w-4 h-4" />
-                        Developer
-                      </span>
-                      <span className="font-semibold">{property.developer}</span>
-                    </div>
-                  )}
+                  ))}
+                  <div className="flex items-center justify-between py-4 border-b border-slate-100">
+                    <span className="flex items-center gap-2 text-slate-500 text-sm">
+                      <Bed className="w-4 h-4 text-[#D4AF37]" />
+                      Bedrooms
+                    </span>
+                    <span className="font-semibold text-[#0b1628] text-sm">{property.beds}</span>
+                  </div>
+                  <div className="flex items-center justify-between py-4 border-b border-slate-100">
+                    <span className="flex items-center gap-2 text-slate-500 text-sm">
+                      <Bath className="w-4 h-4 text-[#D4AF37]" />
+                      Bathrooms
+                    </span>
+                    <span className="font-semibold text-[#0b1628] text-sm">{property.baths}</span>
+                  </div>
+                  <div className="flex items-center justify-between py-4">
+                    <span className="flex items-center gap-2 text-slate-500 text-sm">
+                      <Maximize className="w-4 h-4 text-[#D4AF37]" />
+                      Total Area
+                    </span>
+                    <span className="font-semibold text-[#0b1628] text-sm">{property.area}</span>
+                  </div>
                 </div>
               </div>
 
               {/* Amenities */}
               {normalizedAmenities.length > 0 && (
-                <div className="mb-8">
-                  <h2 className="font-serif text-2xl font-bold text-foreground mb-4">Amenities</h2>
+                <div className="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_16px_rgba(0,0,0,0.04)] p-8">
+                  <p className="text-[10px] font-bold tracking-widest uppercase text-[#D4AF37] mb-3">Features</p>
+                  <h2 className="font-serif text-2xl font-bold text-[#0b1628] mb-6">Amenities & Features</h2>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {normalizedAmenities.map((amenity, i) => (
-                      <div key={i} className="flex items-center gap-2 bg-muted rounded-lg px-4 py-3 text-sm">
-                        {amenityIcons[amenity] || <Check className="w-4 h-4 text-gold" />}
+                      <div
+                        key={i}
+                        className="flex items-center gap-2.5 bg-[#fafaf9] border border-slate-100 rounded-xl px-4 py-3 text-sm text-[#0b1628]"
+                      >
+                        <span className="text-[#D4AF37]">
+                          {amenityIcons[amenity] || <Check className="w-4 h-4" />}
+                        </span>
                         {amenity}
                       </div>
                     ))}
                   </div>
                 </div>
               )}
+
+              {/* Property ID footer */}
+              <div className="flex items-center gap-6 text-xs text-slate-400 px-1">
+                <span>Property ID: <span className="text-slate-600 font-medium">{property.id.slice(0, 8).toUpperCase()}</span></span>
+                {property.createdAt && (
+                  <span>Listed: <span className="text-slate-600 font-medium">{property.createdAt.toDate().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}</span></span>
+                )}
+              </div>
             </div>
 
-            {/* Contact Sidebar */}
-            <div>
-              <div className="bg-card rounded-2xl shadow-[var(--shadow-card)] p-6 space-y-6 sticky top-28">
-                <h3 className="font-serif text-xl font-bold text-foreground">Interested in this property?</h3>
-                <p className="text-muted-foreground text-sm">Get in touch with our property experts for more information.</p>
-
-                <div className="space-y-4">
-                  <Button className="w-full bg-gold hover:bg-gold/90 text-primary-foreground">
-                    <Phone className="w-4 h-4 mr-2" />
-                    Call Now
-                  </Button>
-                  <Button variant="outline" className="w-full">
-                    <Mail className="w-4 h-4 mr-2" />
-                    Send Email
-                  </Button>
+            {/* Right: Sticky Sidebar */}
+            <div className="space-y-6">
+              {/* Price card */}
+              <div className="bg-[#0b1628] rounded-2xl p-6 shadow-[0_8px_32px_rgba(11,22,40,0.2)]">
+                <div
+                  className="absolute top-0 left-0 right-0 h-px rounded-t-2xl"
+                  style={{ background: "linear-gradient(90deg, transparent, rgba(212,175,55,0.6), transparent)" }}
+                />
+                <p className="text-white/50 text-xs uppercase tracking-widest mb-1">
+                  {property.type === "sale" ? "Sale Price" : "Monthly Rent"}
+                </p>
+                <p className="font-serif text-3xl font-bold text-[#D4AF37] mb-5">{property.price}</p>
+                <div className="space-y-3">
+                  <a
+                    href="tel:+971000000000"
+                    className="flex items-center justify-center gap-2 w-full bg-[#D4AF37] hover:bg-[#c9a72f] text-[#0b1628] font-semibold py-3 rounded-xl transition-colors text-sm shadow-[0_4px_16px_rgba(212,175,55,0.3)]"
+                  >
+                    <Phone className="w-4 h-4" /> Call Now
+                  </a>
+                  <a
+                    href={`mailto:info@keegoproperties.com?subject=Enquiry: ${encodeURIComponent(property.title)}`}
+                    className="flex items-center justify-center gap-2 w-full border border-white/20 hover:border-white/40 text-white hover:text-white font-medium py-3 rounded-xl transition-colors text-sm"
+                  >
+                    <Mail className="w-4 h-4" /> Send Email
+                  </a>
                 </div>
+              </div>
 
-                {/* Assigned Staff */}
-                {property.assignedStaff && property.assignedStaff.length > 0 && (
-                  <div className="pt-4 border-t border-border">
-                    <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
-                      <Users className="w-4 h-4" />
-                      Your Property Team
-                    </h4>
-                    <div className="space-y-3">
-                      {property.assignedStaff.map(staffId => {
-                        const staffMember = staff.find(s => s.id === staffId);
-                        return staffMember ? (
-                          <div key={staffId} className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
-                            <img 
-                              src={staffMember.photo || "/placeholder-avatar.jpg"} 
-                              alt={staffMember.name} 
-                              className="w-10 h-10 rounded-full object-cover" 
-                            />
-                            <div className="flex-1 min-w-0">
-                              <p className="font-medium text-sm text-foreground">{staffMember.name}</p>
-                              <p className="text-xs text-muted-foreground">{staffMember.role}</p>
-                            </div>
-                            <div className="flex gap-1">
-                              {staffMember.phone && (
-                                <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
-                                  <Phone className="w-3 h-3" />
-                                </Button>
-                              )}
-                              {staffMember.email && (
-                                <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
-                                  <Mail className="w-3 h-3" />
-                                </Button>
-                              )}
-                            </div>
+              {/* Assigned Staff */}
+              {property.assignedStaff && property.assignedStaff.length > 0 && (
+                <div className="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_16px_rgba(0,0,0,0.04)] p-6">
+                  <p className="text-[10px] font-bold tracking-widest uppercase text-[#D4AF37] mb-1">Your Team</p>
+                  <h3 className="font-semibold text-[#0b1628] mb-4 text-sm">Property Specialists</h3>
+                  <div className="space-y-3">
+                    {property.assignedStaff.map((staffId) => {
+                      const member = staff.find((s) => s.id === staffId);
+                      return member ? (
+                        <div key={staffId} className="flex items-center gap-3 p-3 bg-[#fafaf9] rounded-xl border border-slate-100">
+                          <img
+                            src={member.photo || "/placeholder-avatar.jpg"}
+                            alt={member.name}
+                            className="w-10 h-10 rounded-full object-cover border-2 border-[#D4AF37]/30"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <p className="font-semibold text-[#0b1628] text-sm">{member.name}</p>
+                            <p className="text-xs text-slate-500">{member.role}</p>
                           </div>
-                        ) : null;
-                      })}
-                    </div>
+                          <div className="flex gap-1">
+                            {member.phone && (
+                              <a
+                                href={`tel:${member.phone}`}
+                                className="w-8 h-8 rounded-lg bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20 flex items-center justify-center text-[#D4AF37] transition-colors"
+                              >
+                                <Phone className="w-3.5 h-3.5" />
+                              </a>
+                            )}
+                            {member.email && (
+                              <a
+                                href={`mailto:${member.email}`}
+                                className="w-8 h-8 rounded-lg bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20 flex items-center justify-center text-[#D4AF37] transition-colors"
+                              >
+                                <Mail className="w-3.5 h-3.5" />
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                      ) : null;
+                    })}
                   </div>
-                )}
-
-                <div className="pt-4 border-t border-border">
-                  <p className="text-sm text-muted-foreground mb-2">Property ID: {property.id.slice(0, 8)}</p>
-                  <p className="text-sm text-muted-foreground">Listed: {property.createdAt?.toDate().toLocaleDateString()}</p>
                 </div>
+              )}
+
+              {/* Why KeeGo trust block */}
+              <div className="bg-[#fafaf9] rounded-2xl border border-slate-100 p-6">
+                <p className="text-[10px] font-bold tracking-widest uppercase text-[#D4AF37] mb-3">Why KeeGo</p>
+                {[
+                  "Verified listings, zero surprises",
+                  "Expert guidance at every step",
+                  "Trusted by 10,000+ happy clients",
+                ].map((point) => (
+                  <div key={point} className="flex items-center gap-2.5 mb-2.5 last:mb-0">
+                    <div className="w-4 h-4 rounded-full bg-[#D4AF37]/15 flex items-center justify-center shrink-0">
+                      <Check className="w-2.5 h-2.5 text-[#D4AF37]" />
+                    </div>
+                    <p className="text-xs text-slate-600">{point}</p>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Contact / Enquiry Form */}
+      {/* ── Enquiry Form ── */}
       <PropertyEnquiryForm
         defaultType={property.type === "sale" ? "buy" : "rent"}
         propertyName={property.title}
       />
 
-      {/* Other Properties */}
-      <section className="py-16 bg-cream">
-        <div className="container mx-auto px-4">
-          <h2 className="font-serif text-2xl font-bold text-foreground mb-8">Similar Properties</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {otherProperties.map((p) => (
-              <PropertyCard key={p.id} {...p} />
-            ))}
+      {/* ── Similar Properties ── */}
+      {otherProperties.length > 0 && (
+        <section className="py-16 bg-white">
+          <div className="max-w-7xl mx-auto px-6 md:px-12">
+            <div className="flex items-end justify-between mb-10">
+              <div>
+                <p className="text-[#D4AF37] font-medium tracking-[0.2em] uppercase text-xs mb-2">Explore More</p>
+                <h2 className="font-serif text-3xl font-bold text-[#0b1628]">Similar Properties</h2>
+              </div>
+              <Link
+                to="/properties"
+                className="text-sm font-medium text-[#D4AF37] hover:underline hidden md:block"
+              >
+                View All →
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {otherProperties.map((p) => (
+                <PropertyCard key={p.id} {...p} />
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       <Footer />
     </div>
