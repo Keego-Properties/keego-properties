@@ -23,6 +23,7 @@ interface Property {
   status: "available" | "sold" | "rented";
   description: string;
   image: string;
+  images?: string[];
   developer: string;
   amenities: string;
   assignedStaff: string[];
@@ -35,15 +36,15 @@ interface Property {
 type FormState = {
   title: string; price: string; location: string; beds: number; baths: number;
   area: string; type: "sale" | "rent"; status: "available" | "sold" | "rented";
-  description: string; image: string; developer: string; amenities: string;
-  assignedStaff: string[]; imageFile: File | null; category: string; subCategory: string;
+  description: string; image: string; images: string[]; developer: string; amenities: string;
+  assignedStaff: string[]; imageFile: File | null; imageFiles: File[]; category: string; subCategory: string;
 };
 
 const emptyForm: FormState = {
   title: "", price: "", location: "", beds: 1, baths: 1,
   area: "", type: "sale", status: "available",
-  description: "", image: "", developer: "", amenities: "",
-  assignedStaff: [], imageFile: null, category: "", subCategory: "",
+  description: "", image: "", images: [], developer: "", amenities: "",
+  assignedStaff: [], imageFile: null, imageFiles: [], category: "", subCategory: "",
 };
 
 const PropertiesManager = () => {
@@ -80,25 +81,46 @@ const PropertiesManager = () => {
     try {
       let imageUrl = form.image;
 
-      // Upload new image if file is selected
+      // Upload primary image if file is selected
       if (form.imageFile) {
         setUploading(true);
         const fileName = `properties/${Date.now()}_${form.imageFile.name}`;
         const storageRef = ref(storage, fileName);
         await uploadBytes(storageRef, form.imageFile);
         imageUrl = await getDownloadURL(storageRef);
+      }
+
+      // Upload additional images
+      let additionalUrls: string[] = [...form.images];
+      if (form.imageFiles.length > 0) {
+        setUploading(true);
+        const uploadPromises = form.imageFiles.map(async (file) => {
+          const fileName = `properties/${Date.now()}_${Math.random().toString(36).slice(2)}_${file.name}`;
+          const storageRef = ref(storage, fileName);
+          await uploadBytes(storageRef, file);
+          return getDownloadURL(storageRef);
+        });
+        const newUrls = await Promise.all(uploadPromises);
+        additionalUrls = [...additionalUrls, ...newUrls];
         setUploading(false);
       }
+
+      // Merge: images[] always starts with primary image
+      const allImages = imageUrl
+        ? [imageUrl, ...additionalUrls.filter(u => u !== imageUrl)]
+        : additionalUrls;
 
       const data = {
         ...form,
         image: imageUrl,
+        images: allImages,
         beds: Number(form.beds),
         baths: Number(form.baths),
         slug: generateSlug(form.title),
         updatedAt: Timestamp.now()
       };
-      delete (data as any).imageFile; // Remove file from data
+      delete (data as any).imageFile;
+      delete (data as any).imageFiles;
 
       if (editId) {
         await updateDoc(doc(db, "properties", editId), data);
@@ -125,8 +147,8 @@ const PropertiesManager = () => {
       title: p.title, price: p.price, location: p.location,
       beds: p.beds, baths: p.baths, area: p.area,
       type: p.type, status: p.status, description: p.description,
-      image: p.image, developer: p.developer || "", amenities: p.amenities || "",
-      assignedStaff: p.assignedStaff || [], imageFile: null, category: p.category || "", subCategory: p.subCategory || "",
+      image: p.image, images: p.images || [], developer: p.developer || "", amenities: p.amenities || "",
+      assignedStaff: p.assignedStaff || [], imageFile: null, imageFiles: [], category: p.category || "", subCategory: p.subCategory || "",
     });
     setEditId(p.id);
     setShowForm(true);
@@ -206,7 +228,7 @@ const PropertiesManager = () => {
               <Input value={form.location} onChange={e => setForm({...form, location: e.target.value})} />
             </div>
             <div className="space-y-2">
-              <Label>Image Upload</Label>
+              <Label>Cover Image</Label>
               <div className="space-y-2">
                 <Input
                   type="file"
@@ -220,13 +242,57 @@ const PropertiesManager = () => {
                 {form.image && !form.imageFile && (
                   <div className="flex items-center gap-2 p-2 bg-muted rounded-md">
                     <img src={form.image} alt="Current" className="w-16 h-16 object-cover rounded" />
-                    <span className="text-sm text-muted-foreground">Current image</span>
+                    <span className="text-sm text-muted-foreground">Current cover image</span>
                   </div>
                 )}
                 {form.imageFile && (
                   <div className="flex items-center gap-2 p-2 bg-muted rounded-md">
                     <img src={URL.createObjectURL(form.imageFile)} alt="Preview" className="w-16 h-16 object-cover rounded" />
-                    <span className="text-sm text-muted-foreground">New image selected</span>
+                    <span className="text-sm text-muted-foreground">New cover image selected</span>
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Additional Images (Gallery)</Label>
+              <div className="space-y-2">
+                <Input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={(e) => {
+                    const files = Array.from(e.target.files || []);
+                    setForm({...form, imageFiles: files});
+                  }}
+                  className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                />
+                {/* Previews of newly selected files */}
+                {form.imageFiles.length > 0 && (
+                  <div className="flex flex-wrap gap-2 p-2 bg-muted rounded-md">
+                    {form.imageFiles.map((file, i) => (
+                      <img key={i} src={URL.createObjectURL(file)} alt={`New ${i + 1}`} className="w-16 h-16 object-cover rounded" />
+                    ))}
+                    <span className="text-xs text-muted-foreground self-end">{form.imageFiles.length} new image(s) selected</span>
+                  </div>
+                )}
+                {/* Existing gallery images */}
+                {form.images.filter(url => url && url !== form.image).length > 0 && (
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted-foreground">Existing gallery images:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {form.images.filter(url => url && url !== form.image).map((url, i) => (
+                        <div key={i} className="relative group">
+                          <img src={url} alt={`Gallery ${i + 1}`} className="w-16 h-16 object-cover rounded border" />
+                          <button
+                            type="button"
+                            onClick={() => setForm({...form, images: form.images.filter(u => u !== url)})}
+                            className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-destructive text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>

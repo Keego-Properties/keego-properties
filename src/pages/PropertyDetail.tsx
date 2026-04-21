@@ -21,6 +21,7 @@ interface Property {
   type: "sale" | "rent";
   status: "available" | "sold" | "rented";
   image: string;
+  images?: string[];
   description?: string;
   year?: string;
   parking?: string;
@@ -160,8 +161,12 @@ const PropertyDetail = () => {
     );
   }
 
-  // Sample images for now - in a real app, these would be stored in the database
-  const images = [property.image, "/placeholder-property.jpg", "/placeholder-property.jpg", "/placeholder-property.jpg"];
+  // Use stored gallery images if available, fallback to single image
+  const images = (() => {
+    if (property.images && property.images.length > 1) return property.images;
+    const base = [property.image];
+    return base;
+  })();
   // sync count for keyboard nav
   if (imageCount !== images.length) setImageCount(images.length);
 
@@ -252,7 +257,7 @@ const PropertyDetail = () => {
           </nav>
 
           {/* Split gallery */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 rounded-2xl overflow-hidden" style={{ height: 520 }}>
+          <div className={`grid gap-2 rounded-2xl overflow-hidden ${images.length > 1 ? "md:grid-cols-2" : "grid-cols-1"}`} style={{ height: 520 }}>
 
             {/* Main large image */}
             <div className="relative group cursor-pointer h-full" onClick={() => openLightbox(0)}>
@@ -264,32 +269,49 @@ const PropertyDetail = () => {
               {/* Photo count badge */}
               <div className="absolute top-4 left-4 flex items-center gap-1.5 bg-black/50 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1.5 rounded-full">
                 <Camera className="w-3.5 h-3.5" />
-                {images.filter(img => img && !img.includes('placeholder')).length || images.length}
+                {images.length}
               </div>
+              {/* Heart */}
+              <button className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/90 hover:bg-white shadow-md flex items-center justify-center transition-all group/heart">
+                <Heart className="w-4 h-4 text-slate-500 group-hover/heart:text-red-500 transition-colors" />
+              </button>
             </div>
 
-            {/* 2×2 thumbnail grid */}
-            <div className="grid grid-cols-2 grid-rows-2 gap-2 h-full">
-              {[1, 2, 3, 4].map((idx) => (
-                <div
-                  key={idx}
-                  className="relative group cursor-pointer overflow-hidden"
-                  onClick={() => openLightbox(idx % images.length)}
-                >
-                  <img
-                    src={images[idx % images.length]}
-                    alt={`${property.title} ${idx + 1}`}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-                  />
-                  {/* Show all photos overlay on last thumb */}
-                  {idx === 4 && images.length > 5 && (
-                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                      <span className="text-white font-semibold text-sm">+{images.length - 5} photos</span>
+            {/* Thumbnail grid — only if there are extra images */}
+            {images.length > 1 && (
+              <div className="grid grid-cols-2 grid-rows-2 gap-2 h-full">
+                {[1, 2, 3, 4].map((idx) => {
+                  const imgSrc = images[idx];
+                  if (!imgSrc && idx > 1) return null;
+                  const isLast = idx === 4;
+                  const moreCount = images.length - 5;
+                  return (
+                    <div
+                      key={idx}
+                      className="relative group cursor-pointer overflow-hidden bg-slate-100"
+                      onClick={() => imgSrc ? openLightbox(idx) : openLightbox(4)}
+                    >
+                      {imgSrc ? (
+                        <img
+                          src={imgSrc}
+                          alt={`${property.title} ${idx + 1}`}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-slate-100">
+                          <Camera className="w-6 h-6 text-slate-300" />
+                        </div>
+                      )}
+                      {isLast && moreCount > 0 && imgSrc && (
+                        <div className="absolute inset-0 bg-black/55 flex items-center justify-center">
+                          <span className="text-white font-semibold text-sm">+{moreCount} photos</span>
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-              ))}
-            </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
         </div>
