@@ -29,6 +29,7 @@ import NewsManager from "./pages/admin/NewsManager.tsx";
 import DevelopersManager from "./pages/admin/DevelopersManager.tsx";
 import ServicesManager from "./pages/admin/ServicesManager.tsx";
 import CareersManager from "./pages/admin/CareersManager.tsx";
+import ReviewsManager from "./pages/admin/ReviewsManager.tsx";
 import Careers from "./pages/Careers.tsx";
 import ProtectedRoute from "./components/admin/ProtectedRoute.tsx";
 
@@ -70,6 +71,7 @@ const App = () => (
               <Route path="developers" element={<DevelopersManager />} />
               <Route path="services" element={<ServicesManager />} />
               <Route path="careers" element={<CareersManager />} />
+              <Route path="reviews" element={<ReviewsManager />} />
             </Route>
 
             <Route path="*" element={<NotFound />} />

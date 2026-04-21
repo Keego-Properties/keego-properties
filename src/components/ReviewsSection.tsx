@@ -1,69 +1,46 @@
 import { useState, useEffect, useRef } from "react";
+import { collection, getDocs, Timestamp } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 import { Star, Quote } from "lucide-react";
 
-const reviews = [
-  {
-    name: "James Whitfield",
-    role: "Property Investor",
-    location: "London, UK",
-    rating: 5,
-    text: "KeeGo Properties made my off-plan investment completely seamless. Their market knowledge and after-sales support are truly world-class. I closed on two units in Downtown Dubai within a week.",
-    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80",
-  },
-  {
-    name: "Fatima Al Rashidi",
-    role: "Homeowner",
-    location: "Dubai, UAE",
-    rating: 5,
-    text: "Finding our family villa in Arabian Ranches felt overwhelming until KeeGo stepped in. They listened to every detail, showed us only the right options, and negotiated a fantastic price.",
-    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80",
-  },
-  {
-    name: "Marcus Chen",
-    role: "Commercial Tenant",
-    location: "Singapore",
-    rating: 5,
-    text: "We leased our DIFC office through KeeGo and the process was faster than any agency I've used globally. Professional, proactive, and genuinely invested in finding the right fit.",
-    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=100&q=80",
-  },
-  {
-    name: "Priya Sharma",
-    role: "First-Time Buyer",
-    location: "Mumbai, India",
-    rating: 5,
-    text: "As a first-time buyer in Dubai, I was nervous. KeeGo held my hand through every step — from mortgage pre-approval to handover day. I couldn't be happier with my apartment in JVC.",
-    avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=100&q=80",
-  },
-  {
-    name: "Oliver Braun",
-    role: "Developer Partner",
-    location: "Frankfurt, Germany",
-    rating: 5,
-    text: "We partnered with KeeGo to market our Palm Jumeirah project. Their network, digital reach, and sales strategy moved units faster than projected. A truly premium partner.",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80",
-  },
-  {
-    name: "Aisha Nkemdirim",
-    role: "Rental Tenant",
-    location: "Lagos, Nigeria",
-    rating: 5,
-    text: "I relocated to Dubai for work and KeeGo found me a stunning furnished apartment in Business Bay within 48 hours. Their responsiveness and professionalism are unmatched.",
-    avatar: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=100&q=80",
-  },
-];
+interface Review {
+  id: string;
+  name: string;
+  role: string;
+  location: string;
+  rating: number;
+  text: string;
+  avatar: string;
+  published: boolean;
+  createdAt: Timestamp;
+}
 
 const ReviewsSection = () => {
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const pausedRef = useRef(false);
 
   useEffect(() => {
+    const fetchReviews = async () => {
+      const snap = await getDocs(collection(db, "reviews"));
+      const all = snap.docs.map((d) => ({ id: d.id, ...d.data() } as Review));
+      const published = all.filter((r) => r.published);
+      setReviews(published);
+    };
+    fetchReviews();
+  }, []);
+
+  useEffect(() => {
+    if (reviews.length === 0) return;
     const timer = setInterval(() => {
       if (!pausedRef.current) {
         setActiveIndex((prev) => (prev + 1) % reviews.length);
       }
     }, 3800);
     return () => clearInterval(timer);
-  }, []);
+  }, [reviews.length]);
+
+  if (reviews.length === 0) return null;
 
   return (
     <section className="py-24 bg-[#0b1628] overflow-hidden">
