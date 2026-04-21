@@ -28,6 +28,8 @@ import SalesStaffManager from "./pages/admin/SalesStaffManager.tsx";
 import NewsManager from "./pages/admin/NewsManager.tsx";
 import DevelopersManager from "./pages/admin/DevelopersManager.tsx";
 import ServicesManager from "./pages/admin/ServicesManager.tsx";
+import CareersManager from "./pages/admin/CareersManager.tsx";
+import Careers from "./pages/Careers.tsx";
 import ProtectedRoute from "./components/admin/ProtectedRoute.tsx";
 
 const queryClient = new QueryClient();
@@ -55,6 +57,7 @@ const App = () => (
             <Route path="/your-voice-matters" element={<YourVoiceMatters />} />
             <Route path="/developers" element={<Developers />} />
             <Route path="/services" element={<Services />} />
+            <Route path="/careers" element={<Careers />} />
 
             {/* Admin routes */}
             <Route path="/admin/login" element={<AdminLogin />} />
@@ -66,6 +69,7 @@ const App = () => (
               <Route path="news" element={<NewsManager />} />
               <Route path="developers" element={<DevelopersManager />} />
               <Route path="services" element={<ServicesManager />} />
+              <Route path="careers" element={<CareersManager />} />
             </Route>
 
             <Route path="*" element={<NotFound />} />
