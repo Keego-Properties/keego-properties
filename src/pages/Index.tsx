@@ -5,6 +5,7 @@ import CommunitiesSection from "@/components/CommunitiesSection";
 import ServicesGrid from "@/components/ServicesGrid";
 import StatsSection from "@/components/StatsSection";
 import NewsSection from "@/components/NewsSection";
+import ReviewsSection from "@/components/ReviewsSection";
 import CTASection from "@/components/CTASection";
 import PromoBanner from "@/components/PromoBanner";
 import Footer from "@/components/Footer";
@@ -20,6 +21,7 @@ const Index = () => {
       <ServicesGrid />
       <StatsSection />
       <NewsSection />
+      <ReviewsSection />
       <CTASection />
       <Footer />
     </div>
