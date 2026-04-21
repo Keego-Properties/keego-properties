@@ -135,7 +135,7 @@ const Navbar = () => {
 
         <div className="flex items-center justify-between h-20 py-3">
           <Link to="/" className="flex items-center gap-3">
-            <img src={logoImage} alt="KeeGo Properties" className="h-12 w-auto rounded-xl object-contain" />
+            <img src={logoImage} alt="KeeGo Properties" className="h-16 w-auto rounded-xl object-contain" />
             <div>
               <span className="font-serif text-xl font-bold text-slate-900">
                 KeeGo
