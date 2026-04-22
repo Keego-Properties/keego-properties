@@ -143,9 +143,9 @@ const Navbar = () => {
               <span className="font-serif text-xl font-bold text-gold ml-1">
                 Properties
               </span>
-              <p className="text-slate-500 text-[10px] tracking-[0.2em] uppercase">
+              {/* <p className="text-slate-500 text-[10px] tracking-[0.2em] uppercase">
                 Dubai & Beyond
-              </p>
+              </p> */}
             </div>
           </Link>
 
