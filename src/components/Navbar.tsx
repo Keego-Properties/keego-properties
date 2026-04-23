@@ -1,17 +1,51 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Phone, ChevronDown } from "lucide-react";
+import { Menu, X, Phone, ChevronDown, ArrowUpRight, Landmark, MapPin, Sparkles } from "lucide-react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 import logoImage from "@/assets/eagb.png";
+
+interface Developer {
+  id: string;
+  name: string;
+  website?: string;
+}
+
+interface ServiceItem {
+  id: string;
+  title: string;
+  status?: "published" | "draft";
+  displayOrder?: number;
+}
+
+interface Community {
+  id: string;
+  name: string;
+  location?: string;
+  propertiesCount?: number;
+}
+
+const generateSlug = (value: string) =>
+  value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [buyMenuOpen, setBuyMenuOpen] = useState(false);
   const [rentMenuOpen, setRentMenuOpen] = useState(false);
+  const [servicesMenuOpen, setServicesMenuOpen] = useState(false);
+  const [communitiesMenuOpen, setCommunitiesMenuOpen] = useState(false);
+  const [developersMenuOpen, setDevelopersMenuOpen] = useState(false);
+  const [services, setServices] = useState<ServiceItem[]>([]);
+  const [communities, setCommunities] = useState<Community[]>([]);
+  const [developers, setDevelopers] = useState<Developer[]>([]);
   const [showTopHeader, setShowTopHeader] = useState(true);
   const location = useLocation();
 
   const buyTimeoutRef = useRef<NodeJS.Timeout>();
   const rentTimeoutRef = useRef<NodeJS.Timeout>();
+  const servicesTimeoutRef = useRef<NodeJS.Timeout>();
+  const communitiesTimeoutRef = useRef<NodeJS.Timeout>();
+  const developersTimeoutRef = useRef<NodeJS.Timeout>();
 
   const handleBuyMouseEnter = () => {
     if (buyTimeoutRef.current) {
@@ -20,6 +54,18 @@ const Navbar = () => {
     if (rentTimeoutRef.current) {
       clearTimeout(rentTimeoutRef.current);
     }
+    if (servicesTimeoutRef.current) {
+      clearTimeout(servicesTimeoutRef.current);
+    }
+    if (communitiesTimeoutRef.current) {
+      clearTimeout(communitiesTimeoutRef.current);
+    }
+    if (developersTimeoutRef.current) {
+      clearTimeout(developersTimeoutRef.current);
+    }
+    setServicesMenuOpen(false);
+    setCommunitiesMenuOpen(false);
+    setDevelopersMenuOpen(false);
     setRentMenuOpen(false);
     setBuyMenuOpen(true);
   };
@@ -37,7 +83,19 @@ const Navbar = () => {
     if (buyTimeoutRef.current) {
       clearTimeout(buyTimeoutRef.current);
     }
+    if (servicesTimeoutRef.current) {
+      clearTimeout(servicesTimeoutRef.current);
+    }
+    if (communitiesTimeoutRef.current) {
+      clearTimeout(communitiesTimeoutRef.current);
+    }
+    if (developersTimeoutRef.current) {
+      clearTimeout(developersTimeoutRef.current);
+    }
     setBuyMenuOpen(false);
+    setServicesMenuOpen(false);
+    setCommunitiesMenuOpen(false);
+    setDevelopersMenuOpen(false);
     setRentMenuOpen(true);
   };
 
@@ -46,6 +104,124 @@ const Navbar = () => {
       setRentMenuOpen(false);
     }, 150);
   };
+
+  const handleServicesMouseEnter = () => {
+    if (servicesTimeoutRef.current) {
+      clearTimeout(servicesTimeoutRef.current);
+    }
+    if (buyTimeoutRef.current) {
+      clearTimeout(buyTimeoutRef.current);
+    }
+    if (rentTimeoutRef.current) {
+      clearTimeout(rentTimeoutRef.current);
+    }
+    if (communitiesTimeoutRef.current) {
+      clearTimeout(communitiesTimeoutRef.current);
+    }
+    if (developersTimeoutRef.current) {
+      clearTimeout(developersTimeoutRef.current);
+    }
+    setBuyMenuOpen(false);
+    setRentMenuOpen(false);
+    setCommunitiesMenuOpen(false);
+    setDevelopersMenuOpen(false);
+    setServicesMenuOpen(true);
+  };
+
+  const handleServicesMouseLeave = () => {
+    servicesTimeoutRef.current = setTimeout(() => {
+      setServicesMenuOpen(false);
+    }, 150);
+  };
+
+  const handleCommunitiesMouseEnter = () => {
+    if (communitiesTimeoutRef.current) {
+      clearTimeout(communitiesTimeoutRef.current);
+    }
+    if (buyTimeoutRef.current) {
+      clearTimeout(buyTimeoutRef.current);
+    }
+    if (rentTimeoutRef.current) {
+      clearTimeout(rentTimeoutRef.current);
+    }
+    if (servicesTimeoutRef.current) {
+      clearTimeout(servicesTimeoutRef.current);
+    }
+    if (developersTimeoutRef.current) {
+      clearTimeout(developersTimeoutRef.current);
+    }
+    setBuyMenuOpen(false);
+    setRentMenuOpen(false);
+    setServicesMenuOpen(false);
+    setDevelopersMenuOpen(false);
+    setCommunitiesMenuOpen(true);
+  };
+
+  const handleCommunitiesMouseLeave = () => {
+    communitiesTimeoutRef.current = setTimeout(() => {
+      setCommunitiesMenuOpen(false);
+    }, 150);
+  };
+
+  const handleDevelopersMouseEnter = () => {
+    if (developersTimeoutRef.current) {
+      clearTimeout(developersTimeoutRef.current);
+    }
+    if (buyTimeoutRef.current) {
+      clearTimeout(buyTimeoutRef.current);
+    }
+    if (rentTimeoutRef.current) {
+      clearTimeout(rentTimeoutRef.current);
+    }
+    if (servicesTimeoutRef.current) {
+      clearTimeout(servicesTimeoutRef.current);
+    }
+    if (communitiesTimeoutRef.current) {
+      clearTimeout(communitiesTimeoutRef.current);
+    }
+    setBuyMenuOpen(false);
+    setRentMenuOpen(false);
+    setServicesMenuOpen(false);
+    setCommunitiesMenuOpen(false);
+    setDevelopersMenuOpen(true);
+  };
+
+  const handleDevelopersMouseLeave = () => {
+    developersTimeoutRef.current = setTimeout(() => {
+      setDevelopersMenuOpen(false);
+    }, 150);
+  };
+
+  useEffect(() => {
+    const fetchMenuData = async () => {
+      try {
+        const [servicesSnap, communitiesSnap, developersSnap] = await Promise.all([
+          getDocs(collection(db, "services")),
+          getDocs(collection(db, "communities")),
+          getDocs(collection(db, "developers")),
+        ]);
+
+        setServices(
+          servicesSnap.docs
+            .map((doc) => ({ id: doc.id, ...doc.data() } as ServiceItem))
+            .filter((service) => service.status !== "draft")
+            .sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0)),
+        );
+        setCommunities(
+          communitiesSnap.docs
+            .map((doc) => ({ id: doc.id, ...doc.data() } as Community))
+            .sort((a, b) => a.name.localeCompare(b.name)),
+        );
+        setDevelopers(
+          developersSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Developer)),
+        );
+      } catch (error) {
+        console.error("Error fetching navbar menu data:", error);
+      }
+    };
+
+    fetchMenuData();
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -63,14 +239,23 @@ const Navbar = () => {
       if (rentTimeoutRef.current) {
         clearTimeout(rentTimeoutRef.current);
       }
+      if (servicesTimeoutRef.current) {
+        clearTimeout(servicesTimeoutRef.current);
+      }
+      if (communitiesTimeoutRef.current) {
+        clearTimeout(communitiesTimeoutRef.current);
+      }
+      if (developersTimeoutRef.current) {
+        clearTimeout(developersTimeoutRef.current);
+      }
     };
   }, []);
 
   const navLinks = [
+    { name: "Developers", path: "/developers", mobileOnly: true },
+    { name: "Services", path: "/services", mobileOnly: true },
     { name: "Home", path: "/" },
-    { name: "Services", path: "/services" },
-    { name: "Communities", path: "/communities" },
-    { name: "Developers", path: "/developers" },
+    { name: "Communities", path: "/communities", mobileOnly: true },
     { name: "About", path: "/about" },
     { name: "Careers", path: "/careers" },
     { name: "Contact", path: "/contact" },
@@ -108,6 +293,9 @@ const Navbar = () => {
   const currentType = new URLSearchParams(location.search).get("type");
   const isBuyActive = location.pathname === "/properties" && currentType === "buy";
   const isRentActive = location.pathname === "/properties" && currentType === "rent";
+  const isServicesActive = location.pathname === "/services";
+  const isCommunitiesActive = location.pathname === "/communities" || location.pathname.startsWith("/community/");
+  const isDevelopersActive = location.pathname === "/developers";
   const openMegaMenuType = buyMenuOpen ? "buy" : rentMenuOpen ? "rent" : null;
 
   return (
@@ -143,9 +331,9 @@ const Navbar = () => {
               <span className="font-serif text-xl font-bold text-gold ml-1">
                 Properties
               </span>
-              {/* <p className="text-slate-500 text-[10px] tracking-[0.2em] uppercase">
+              <p className="text-slate-500 text-[10px] tracking-[0.2em] uppercase">
                 Dubai & Beyond
-              </p> */}
+              </p>
             </div>
           </Link>
 
@@ -186,12 +374,81 @@ const Navbar = () => {
                 </button>
             </div>
 
-            {navLinks.map((link) => (
+            <Link
+              to="/"
+              className={`text-sm font-medium transition-colors duration-200 pb-1 ${
+                isActive("/")
+                  ? "text-gold"
+                  : "text-slate-700 hover:text-slate-900"
+              }`}
+            >
+              Home
+            </Link>
+
+            <div
+              className="flex"
+              onMouseEnter={handleServicesMouseEnter}
+              onMouseLeave={handleServicesMouseLeave}
+            >
+              <button
+                type="button"
+                className={`min-w-[5.75rem] justify-center text-sm font-medium inline-flex items-center gap-1 transition-colors duration-200 pb-1 ${
+                  isServicesActive || servicesMenuOpen
+                    ? "text-gold shadow-[0_2px_0_0_#FFD700]"
+                    : "text-slate-700 shadow-[0_2px_0_0_transparent] hover:text-slate-900 hover:shadow-[0_2px_0_0_#FFD700]"
+                }`}
+              >
+                Services
+                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${servicesMenuOpen ? "rotate-180" : ""}`} />
+              </button>
+            </div>
+
+            <div
+              className="flex"
+              onMouseEnter={handleCommunitiesMouseEnter}
+              onMouseLeave={handleCommunitiesMouseLeave}
+            >
+              <button
+                type="button"
+                className={`min-w-[6.75rem] justify-center text-sm font-medium inline-flex items-center gap-1 transition-colors duration-200 pb-1 ${
+                  isCommunitiesActive || communitiesMenuOpen
+                    ? "text-gold shadow-[0_2px_0_0_#FFD700]"
+                    : "text-slate-700 shadow-[0_2px_0_0_transparent] hover:text-slate-900 hover:shadow-[0_2px_0_0_#FFD700]"
+                }`}
+              >
+                Communities
+                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${communitiesMenuOpen ? "rotate-180" : ""}`} />
+              </button>
+            </div>
+
+            <div
+              className="flex"
+              onMouseEnter={handleDevelopersMouseEnter}
+              onMouseLeave={handleDevelopersMouseLeave}
+            >
+              <button
+                type="button"
+                className={`min-w-[6.75rem] justify-center text-sm font-medium inline-flex items-center gap-1 transition-colors duration-200 pb-1 ${
+                  isDevelopersActive || developersMenuOpen
+                    ? "text-gold shadow-[0_2px_0_0_#FFD700]"
+                    : "text-slate-700 shadow-[0_2px_0_0_transparent] hover:text-slate-900 hover:shadow-[0_2px_0_0_#FFD700]"
+                }`}
+              >
+                Developers
+                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${developersMenuOpen ? "rotate-180" : ""}`} />
+              </button>
+            </div>
+
+            {navLinks.filter((link) => !link.mobileOnly && link.path !== "/").map((link) => (
               <Link
                 key={link.name}
                 to={link.path}
-                className={`text-sm font-medium transition-colors duration-200 ${
-                  isActive(link.path)
+                className={`text-sm font-medium transition-colors duration-200 pb-1 ${
+                  link.highlightStyle
+                    ? isActive(link.path)
+                      ? "text-gold shadow-[0_2px_0_0_#FFD700]"
+                      : "text-slate-700 shadow-[0_2px_0_0_transparent] hover:text-slate-900 hover:shadow-[0_2px_0_0_#FFD700]"
+                    : isActive(link.path)
                     ? "text-gold"
                     : "text-slate-700 hover:text-slate-900"
                 }`}
@@ -216,6 +473,129 @@ const Navbar = () => {
           </button>
         </div>
       </div>
+
+      {servicesMenuOpen && (
+        <div
+          className="hidden lg:block w-full border-b border-slate-100 bg-white"
+          style={{ boxShadow: "0 4px 16px rgba(15,23,42,0.06)" }}
+          onMouseEnter={handleServicesMouseEnter}
+          onMouseLeave={handleServicesMouseLeave}
+        >
+          <div className="container mx-auto px-4 py-2 flex items-center gap-3">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-gold shrink-0">Services</span>
+            <div className="w-px h-3.5 bg-slate-200 shrink-0" />
+            {services.length === 0 ? (
+              <span className="text-xs text-slate-400">No services added yet.</span>
+            ) : (
+              <div className="flex min-w-0 items-center gap-3 overflow-x-auto whitespace-nowrap">
+                {services.map((service) => (
+                  <span key={service.id} className="inline-flex items-center">
+                    <Link
+                      to={`/services#${service.id}`}
+                      className="inline-flex items-center gap-1.5 text-[12px] text-slate-600 transition-colors hover:text-slate-900"
+                    >
+                      <Sparkles className="h-3 w-3 text-gold/75" />
+                      {service.title}
+                    </Link>
+                  </span>
+                ))}
+              </div>
+            )}
+            <Link
+              to="/services"
+              className="ml-auto shrink-0 inline-flex items-center gap-1 text-[11px] font-medium text-slate-400 hover:text-gold transition-colors"
+            >
+              View all <ArrowUpRight className="h-3 w-3" />
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {communitiesMenuOpen && (
+        <div
+          className="hidden lg:block w-full border-b border-slate-100 bg-white"
+          style={{ boxShadow: "0 4px 16px rgba(15,23,42,0.06)" }}
+          onMouseEnter={handleCommunitiesMouseEnter}
+          onMouseLeave={handleCommunitiesMouseLeave}
+        >
+          <div className="container mx-auto px-4 py-2 flex items-center gap-3">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-gold shrink-0">Communities</span>
+            <div className="w-px h-3.5 bg-slate-200 shrink-0" />
+            {communities.length === 0 ? (
+              <span className="text-xs text-slate-400">No communities added yet.</span>
+            ) : (
+              <div className="flex min-w-0 items-center gap-3 overflow-x-auto whitespace-nowrap">
+                {communities.map((community) => (
+                  <span key={community.id} className="inline-flex items-center">
+                    <Link
+                      to={`/community/${generateSlug(community.name)}`}
+                      className="inline-flex items-center gap-1.5 text-[12px] text-slate-600 transition-colors hover:text-slate-900"
+                    >
+                      <MapPin className="h-3 w-3 text-gold/75" />
+                      {community.name}
+                    </Link>
+                  </span>
+                ))}
+              </div>
+            )}
+            <Link
+              to="/communities"
+              className="ml-auto shrink-0 inline-flex items-center gap-1 text-[11px] font-medium text-slate-400 hover:text-gold transition-colors"
+            >
+              View all <ArrowUpRight className="h-3 w-3" />
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {developersMenuOpen && (
+        <div
+          className="hidden lg:block w-full border-b border-slate-100 bg-white"
+          style={{ boxShadow: "0 4px 16px rgba(15,23,42,0.06)" }}
+          onMouseEnter={handleDevelopersMouseEnter}
+          onMouseLeave={handleDevelopersMouseLeave}
+        >
+          <div className="container mx-auto px-4 py-2 flex items-center gap-3">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-gold shrink-0">Developers</span>
+            <div className="w-px h-3.5 bg-slate-200 shrink-0" />
+            {developers.length === 0 ? (
+              <span className="text-xs text-slate-400">No developers added yet.</span>
+            ) : (
+              <div className="flex min-w-0 items-center gap-3 overflow-x-auto whitespace-nowrap">
+                {developers.map((developer) => (
+                  <span key={developer.id} className="inline-flex items-center">
+                    {developer.website ? (
+                      <a
+                        href={developer.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-[12px] text-slate-600 transition-colors hover:text-slate-900"
+                      >
+                        <Landmark className="h-3 w-3 text-gold/75" />
+                        {developer.name}
+                      </a>
+                    ) : (
+                      <Link
+                        to="/developers"
+                        className="inline-flex items-center gap-1.5 text-[12px] text-slate-600 transition-colors hover:text-slate-900"
+                      >
+                        <Landmark className="h-3 w-3 text-gold/75" />
+                        {developer.name}
+                      </Link>
+                    )}
+                  </span>
+                ))}
+              </div>
+            )}
+            <Link
+              to="/developers"
+              className="ml-auto shrink-0 inline-flex items-center gap-1 text-[11px] font-medium text-slate-400 hover:text-gold transition-colors"
+            >
+              View all <ArrowUpRight className="h-3 w-3" />
+            </Link>
+          </div>
+        </div>
+      )}
 
       {openMegaMenuType && (
         <div

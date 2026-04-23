@@ -168,6 +168,7 @@ const Services = () => {
                 return (
               <article
                 key={service.title}
+                id={service.id}
                 className="group rounded-[1.75rem] border border-border bg-card p-7 shadow-[var(--shadow-card)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-elevated)]"
               >
                 <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gold/10 text-gold transition-colors duration-300 group-hover:bg-gold/20">
