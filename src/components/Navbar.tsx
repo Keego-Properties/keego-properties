@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Phone, ChevronDown, ArrowUpRight, Landmark, MapPin, Sparkles, MessageSquareHeart, ListPlus, PhoneCall } from "lucide-react";
+import { Menu, X, Phone, ChevronDown, ArrowUpRight, Building2, MapPin, Sparkles, MessageSquareHeart, ListPlus, PhoneCall } from "lucide-react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import logoImage from "@/assets/eagb.png";
@@ -584,7 +584,7 @@ const Navbar = () => {
                         rel="noopener noreferrer"
                         className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
                       >
-                        <Landmark className="h-4 w-4 text-gold" />
+                        <Building2 className="h-4 w-4 text-gold" />
                         <span>{developer.name}</span>
                       </a>
                     ) : (
@@ -593,7 +593,7 @@ const Navbar = () => {
                         to="/developers"
                         className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
                       >
-                        <Landmark className="h-4 w-4 text-gold" />
+                        <Building2 className="h-4 w-4 text-gold" />
                         <span>{developer.name}</span>
                       </Link>
                     )
