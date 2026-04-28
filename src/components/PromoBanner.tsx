@@ -4,7 +4,7 @@ import bannerImg from "@/assets/hero-dubai.jpg";
 
 const PromoBanner = () => {
   return (
-    <section className="relative w-full h-64 md:h-80 overflow-hidden">
+    <section className="relative w-full h-96 md:h-[36rem] overflow-hidden">
       {/* Background image */}
       <img
         src={bannerImg}
