@@ -3,12 +3,20 @@ import {
   Facebook,
   Instagram,
   Linkedin,
-  Twitter,
-  Youtube,
-  Music2,
   Send,
 } from "lucide-react";
 import logoImage from "@/assets/KeeGo Logo.png";
+
+const XIcon = ({ className }: { className?: string }) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    aria-hidden="true"
+    className={className}
+  >
+    <path d="M18.244 2H21.5l-7.113 8.13L22.75 22h-6.547l-5.127-6.708L5.21 22H1.95l7.608-8.697L1.25 2h6.713l4.634 6.117L18.244 2Zm-1.142 18.05h1.804L6.988 3.846H5.053L17.102 20.05Z" />
+  </svg>
+);
 
 const Footer = () => {
   const footerColumns = [
@@ -36,7 +44,7 @@ const Footer = () => {
     { label: "Privacy Policy", to: "/contact" }
   ];
 
-  const socialIcons = [Facebook, Twitter, Youtube, Music2, Linkedin, Instagram];
+  const socialIcons = [Facebook, Instagram, XIcon, Linkedin];
 
   return (
     <footer className="bg-black pt-16 pb-8">
@@ -51,21 +59,12 @@ const Footer = () => {
               <ul className="space-y-2.5">
                 {column.links.map((link) => (
                   <li key={link.label}>
-                    {"href" in link ? (
-                      <a
-                        href={link.href}
-                        className="text-sm text-primary-foreground/55 transition-colors duration-200 hover:text-gold"
-                      >
-                        {link.label}
-                      </a>
-                    ) : (
-                      <Link
-                        to={link.to}
-                        className="text-sm text-primary-foreground/55 transition-colors duration-200 hover:text-gold"
-                      >
-                        {link.label}
-                      </Link>
-                    )}
+                    <Link
+                      to={link.to}
+                      className="text-sm text-primary-foreground/55 transition-colors duration-200 hover:text-gold"
+                    >
+                      {link.label}
+                    </Link>
                   </li>
                 ))}
               </ul>
