@@ -30,6 +30,7 @@ const generateSlug = (value: string) =>
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [moreMenuOpen, setMoreMenuOpen] = useState(false);
   const [buyMenuOpen, setBuyMenuOpen] = useState(false);
   const [rentMenuOpen, setRentMenuOpen] = useState(false);
   const [servicesMenuOpen, setServicesMenuOpen] = useState(false);
@@ -48,6 +49,7 @@ const Navbar = () => {
   const developersTimeoutRef = useRef<NodeJS.Timeout>();
 
   const handleBuyMouseEnter = () => {
+    setMoreMenuOpen(false);
     if (buyTimeoutRef.current) {
       clearTimeout(buyTimeoutRef.current);
     }
@@ -77,6 +79,7 @@ const Navbar = () => {
   };
 
   const handleRentMouseEnter = () => {
+    setMoreMenuOpen(false);
     if (rentTimeoutRef.current) {
       clearTimeout(rentTimeoutRef.current);
     }
@@ -106,6 +109,7 @@ const Navbar = () => {
   };
 
   const handleServicesMouseEnter = () => {
+    setMoreMenuOpen(false);
     if (servicesTimeoutRef.current) {
       clearTimeout(servicesTimeoutRef.current);
     }
@@ -135,6 +139,7 @@ const Navbar = () => {
   };
 
   const handleCommunitiesMouseEnter = () => {
+    setMoreMenuOpen(false);
     if (communitiesTimeoutRef.current) {
       clearTimeout(communitiesTimeoutRef.current);
     }
@@ -164,6 +169,7 @@ const Navbar = () => {
   };
 
   const handleDevelopersMouseEnter = () => {
+    setMoreMenuOpen(false);
     if (developersTimeoutRef.current) {
       clearTimeout(developersTimeoutRef.current);
     }
@@ -258,7 +264,6 @@ const Navbar = () => {
     { name: "Communities", path: "/communities", mobileOnly: true },
     { name: "About", path: "/about" },
     { name: "Careers", path: "/careers" },
-    { name: "Contact", path: "/contact" },
   ];
 
   const topLinks = [
@@ -296,6 +301,7 @@ const Navbar = () => {
   const isServicesActive = location.pathname === "/services";
   const isCommunitiesActive = location.pathname === "/communities" || location.pathname.startsWith("/community/");
   const isDevelopersActive = location.pathname === "/developers";
+  const isMoreActive = location.pathname === "/about" || location.pathname === "/careers";
   const openMegaMenuType = buyMenuOpen ? "buy" : rentMenuOpen ? "rent" : null;
 
   return (
@@ -319,10 +325,14 @@ const Navbar = () => {
                 </Link>
               ))}
             </div>
+              <a href="tel:+971501234567" className="hidden lg:inline-flex items-center gap-2 text-slate-700 hover:text-slate-900 transition-colors text-sm">
+                  <Phone className="w-4 h-4" />
+                  +971 50 123 4567
+              </a>
           </div>
         </div>
 
-        <div className="flex items-center justify-between h-20 py-3">
+        <div className="flex items-center justify-around h-20 py-3">
           <Link to="/" className="flex items-center gap-3">
             <img src={logoImage} alt="KeeGo Properties" className="h-16 w-auto rounded-xl object-contain" />
             <div>
@@ -338,7 +348,7 @@ const Navbar = () => {
             </div>
           </Link>
 
-          <div className="hidden lg:flex items-center gap-8">
+          <div className="hidden lg:flex items-center gap-5">
             <div
               className="flex"
               onMouseEnter={handleBuyMouseEnter}
@@ -440,16 +450,20 @@ const Navbar = () => {
               </button>
             </div>
 
-            {navLinks.filter((link) => !link.mobileOnly && link.path !== "/").map((link) => (
+            {navLinks
+              .filter(
+                (link) =>
+                  !link.mobileOnly &&
+                  link.path !== "/" &&
+                  link.path !== "/about" &&
+                  link.path !== "/careers",
+              )
+              .map((link) => (
               <Link
                 key={link.name}
                 to={link.path}
                 className={`text-sm font-medium transition-colors duration-200 pb-1 ${
-                  link.highlightStyle
-                    ? isActive(link.path)
-                      ? "text-gold shadow-[0_2px_0_0_#FFD700]"
-                      : "text-slate-700 shadow-[0_2px_0_0_transparent] hover:text-slate-900 hover:shadow-[0_2px_0_0_#FFD700]"
-                    : isActive(link.path)
+                  isActive(link.path)
                     ? "text-gold"
                     : "text-slate-700 hover:text-slate-900"
                 }`}
@@ -457,13 +471,40 @@ const Navbar = () => {
                 {link.name}
               </Link>
             ))}
-          </div>
 
-          <div className="hidden lg:flex items-center gap-3">
-            <a href="tel:+971501234567" className="flex items-center gap-2 text-slate-700 hover:text-slate-900 transition-colors text-sm">
-              <Phone className="w-4 h-4" />
-              +971 50 123 4567
-            </a>
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setMoreMenuOpen((prev) => !prev)}
+                className={`inline-flex items-center gap-1 text-sm font-medium transition-colors duration-200 pb-1 ${
+                  isMoreActive || moreMenuOpen
+                    ? "text-gold shadow-[0_2px_0_0_#FFD700]"
+                    : "text-slate-700 shadow-[0_2px_0_0_transparent] hover:text-slate-900 hover:shadow-[0_2px_0_0_#FFD700]"
+                }`}
+              >
+                More
+                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${moreMenuOpen ? "rotate-180" : ""}`} />
+              </button>
+
+              {moreMenuOpen && (
+                <div className="absolute right-0 mt-2 w-44 rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
+                  <Link
+                    to="/about"
+                    onClick={() => setMoreMenuOpen(false)}
+                    className="block rounded-lg px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
+                  >
+                    About
+                  </Link>
+                  <Link
+                    to="/careers"
+                    onClick={() => setMoreMenuOpen(false)}
+                    className="block rounded-lg px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
+                  >
+                    Careers
+                  </Link>
+                </div>
+              )}
+            </div>
           </div>
 
           <button
