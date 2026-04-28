@@ -25,15 +25,8 @@ const Footer = () => {
       links: [
         { label: "Home", to: "/home" },
         { label: "Communities", to: "/communities" },
-        { label: "Developers", to: "/developers" }
-      ],
-    },
-    {
-      title: "Services",
-      links: [
-        { label: "Asset Management", to: "/buy" },
-        { label: "Holiday Homes", to: "/buy" },
-        { label: "Luxury Property Services", to: "/buy" }
+        { label: "Developers", to: "/developers" },
+        { label: "Services", to: "/services" }
       ],
     },
   ];
@@ -48,9 +41,9 @@ const Footer = () => {
   return (
     <footer className="bg-black pt-16 pb-8">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 gap-10 pb-12 sm:grid-cols-2 lg:grid-cols-[auto_1fr_1fr_1fr_1.5fr]">
+        <div className="grid grid-cols-1 gap-10 pb-12 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_1fr]">
           <div className="flex flex-col justify-start">
-            <img src={logoImage} alt="KeeGo Properties" className="h-36 w-auto object-contain" />
+            <img src={logoImage} alt="KeeGo Properties" className="h-48 w-auto object-contain" />
           </div>
           {footerColumns.map((column) => (
             <div key={column.title}>
