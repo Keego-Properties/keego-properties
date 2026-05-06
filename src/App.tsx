@@ -31,6 +31,9 @@ import DevelopersManager from "./pages/admin/DevelopersManager.tsx";
 import ServicesManager from "./pages/admin/ServicesManager.tsx";
 import CareersManager from "./pages/admin/CareersManager.tsx";
 import ReviewsManager from "./pages/admin/ReviewsManager.tsx";
+import BlogsManager from "./pages/admin/BlogsManager.tsx";
+import Blog from "./pages/Blog.tsx";
+import BlogDetail from "./pages/BlogDetail.tsx";
 import Careers from "./pages/Careers.tsx";
 import ProtectedRoute from "./components/admin/ProtectedRoute.tsx";
 
@@ -60,6 +63,10 @@ const App = () => (
             <Route path="/developers" element={<Developers />} />
             <Route path="/services" element={<Services />} />
             <Route path="/careers" element={<Careers />} />
+            <Route path="/blogs" element={<Blog />} />
+            <Route path="/blogs/:id" element={<BlogDetail />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:id" element={<BlogDetail />} />
 
             {/* Admin routes */}
             <Route path="/admin/login" element={<AdminLogin />} />
@@ -73,6 +80,7 @@ const App = () => (
               <Route path="services" element={<ServicesManager />} />
               <Route path="careers" element={<CareersManager />} />
               <Route path="reviews" element={<ReviewsManager />} />
+              <Route path="blog" element={<BlogsManager />} />
             </Route>
 
             <Route path="*" element={<NotFound />} />

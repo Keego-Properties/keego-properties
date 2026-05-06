@@ -2,7 +2,7 @@ import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   Building2, Home, MapPin, Users, Newspaper,
-  LogOut, Menu, X, LayoutDashboard, HardHat, Handshake, BriefcaseBusiness, Star
+  LogOut, Menu, X, LayoutDashboard, HardHat, Handshake, BriefcaseBusiness, Star, BookOpen
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -14,6 +14,7 @@ const navItems = [
   { to: "/admin/communities", icon: MapPin, label: "Communities" },
   { to: "/admin/staff", icon: Users, label: "Sales Staff" },
   { to: "/admin/news", icon: Newspaper, label: "News" },
+  { to: "/admin/blog", icon: BookOpen, label: "Blog" },
   { to: "/admin/developers", icon: HardHat, label: "Developers" },
   { to: "/admin/services", icon: Handshake, label: "Services" },
   { to: "/admin/careers", icon: BriefcaseBusiness, label: "Careers" },
