@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/contexts/AuthContext";
+import FloatingContactButtons from "@/components/FloatingContactButtons";
 import Index from "./pages/Index.tsx";
 import Properties from "./pages/Properties.tsx";
 import Communities from "./pages/Communities.tsx";
@@ -76,6 +77,7 @@ const App = () => (
 
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <FloatingContactButtons />
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>
