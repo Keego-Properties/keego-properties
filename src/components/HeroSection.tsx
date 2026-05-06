@@ -1,16 +1,61 @@
-import { useState } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import heroImage from "@/assets/hero-dubai.jpg";
+import communityMarinaImage from "@/assets/community-marina.jpg";
+import communityDowntownImage from "@/assets/community-downtown.jpg";
+
+// ─── Slides config ───────────────────────────────────────────────────────────
+// Add a videoSrc URL for each slide. Leave videoSrc empty ("") to show the
+// poster image for FALLBACK_DURATION milliseconds, then auto-advance.
+const slides = [
+  {
+    videoSrc: "https://res.cloudinary.com/dy0t4agoh/video/upload/110923-689949643_medium_gvjpcc.mp4",
+    poster: heroImage,
+  },
+  {
+    videoSrc: "https://res.cloudinary.com/dy0t4agoh/video/upload/q_auto/f_auto/v1776611195/265261_medium_xcl5tk.mp4",
+    poster: communityMarinaImage,
+  },
+  {
+    videoSrc: "https://res.cloudinary.com/dy0t4agoh/video/upload/q_auto/f_auto/v1778088269/istockphoto-1908736020-640_adpp_is_lkpijj.mp4",
+    poster: communityDowntownImage,
+  },
+];
+
+const FALLBACK_DURATION = 5000; // ms to display image-only slides before advancing
 
 const HeroSection = () => {
   const [activeTab, setActiveTab] = useState("buy");
   const [propertyType, setPropertyType] = useState("");
   const [searchText, setSearchText] = useState("");
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const fallbackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const tabs = ["Buy", "Rent"];
-  const heroVideoSrc = "https://res.cloudinary.com/dy0t4agoh/video/upload/110923-689949643_medium_gvjpcc.mp4";
   const navigate = useNavigate();
+
+  const goToNext = useCallback(() => {
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
+  }, []);
+
+  useEffect(() => {
+    const slide = slides[currentSlide];
+    if (fallbackTimer.current) clearTimeout(fallbackTimer.current);
+
+    if (!slide.videoSrc) {
+      fallbackTimer.current = setTimeout(goToNext, FALLBACK_DURATION);
+      return () => { if (fallbackTimer.current) clearTimeout(fallbackTimer.current); };
+    }
+
+    const video = videoRef.current;
+    if (!video) return;
+    video.load();
+    video.play().catch(() => {});
+
+    return () => { if (fallbackTimer.current) clearTimeout(fallbackTimer.current); };
+  }, [currentSlide, goToNext]);
 
   const handleSearch = () => {
     const params = new URLSearchParams();
@@ -20,18 +65,31 @@ const HeroSection = () => {
     navigate(`/properties?${params.toString()}`);
   };
 
+  const slide = slides[currentSlide];
+
   return (
     <section className="relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden">
-      <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${heroImage})` }} />
-      <video
-        className="absolute inset-0 h-full w-full object-cover"
-        src={heroVideoSrc}
-        autoPlay
-        muted
-        loop
-        playsInline
-        poster={heroImage}
+      {/* Poster / background image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center transition-opacity duration-700"
+        style={{ backgroundImage: `url(${slide.poster})` }}
       />
+
+      {/* Video (rendered only when a src is provided) */}
+      {slide.videoSrc && (
+        <video
+          ref={videoRef}
+          key={slide.videoSrc}
+          className="absolute inset-0 h-full w-full object-cover"
+          src={slide.videoSrc}
+          autoPlay
+          muted
+          playsInline
+          poster={slide.poster}
+          onEnded={goToNext}
+        />
+      )}
+
       <div className="absolute inset-0" style={{ background: "var(--gradient-hero)" }} />
 
       <div className="relative z-10 container mx-auto px-4 text-center">
@@ -92,6 +150,20 @@ const HeroSection = () => {
             </Button>
           </div>
         </div>
+      </div>
+
+      {/* Slide indicators */}
+      <div className="absolute bottom-24 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+        {slides.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setCurrentSlide(i)}
+            className={`h-1.5 rounded-full transition-all duration-300 ${
+              i === currentSlide ? "w-6 bg-gold" : "w-1.5 bg-primary-foreground/40 hover:bg-primary-foreground/70"
+            }`}
+            aria-label={`Go to slide ${i + 1}`}
+          />
+        ))}
       </div>
 
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
