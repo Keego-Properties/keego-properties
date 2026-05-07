@@ -19,6 +19,7 @@ import PropertyValuation from "./pages/PropertyValuation.tsx";
 import YourVoiceMatters from "./pages/YourVoiceMatters.tsx";
 import Developers from "./pages/Developers.tsx";
 import Services from "./pages/Services.tsx";
+import ServiceDetail from "./pages/ServiceDetail.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import AdminLogin from "./pages/admin/Login.tsx";
 import AdminLayout from "./components/admin/AdminLayout.tsx";
@@ -62,6 +63,7 @@ const App = () => (
             <Route path="/your-voice-matters" element={<YourVoiceMatters />} />
             <Route path="/developers" element={<Developers />} />
             <Route path="/services" element={<Services />} />
+            <Route path="/services/:id" element={<ServiceDetail />} />
             <Route path="/careers" element={<Careers />} />
             <Route path="/blogs" element={<Blog />} />
             <Route path="/blogs/:id" element={<BlogDetail />} />

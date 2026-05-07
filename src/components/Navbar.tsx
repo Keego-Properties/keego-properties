@@ -541,7 +541,7 @@ const Navbar = () => {
                   {services.map((service) => (
                     <Link
                       key={service.id}
-                      to={`/services#${service.id}`}
+                      to={`/services/${service.id}`}
                       className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
                     >
                       <Sparkles className="h-4 w-4 text-gold" />
