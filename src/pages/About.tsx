@@ -45,19 +45,49 @@ const highlights = [
   },
 ];
 
+const aboutBannerVideo = "https://res.cloudinary.com/dy0t4agoh/video/upload/110923-689949643_medium_gvjpcc.mp4";
+
 const About = () => {
   return (
     <div className="min-h-screen">
       <Navbar />
-      <section className="pt-32 pb-8 bg-navy-dark">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-gold font-medium tracking-[0.2em] uppercase text-sm mb-2">Who We Are</p>
-          <h1 className="font-serif text-4xl md:text-5xl font-bold text-primary-foreground mb-6">
-            About KeeGo Properties
-          </h1>
-          <p className="text-primary-foreground/60 max-w-xl mx-auto">
-            Dubai's trusted real estate partner since 2010, delivering exceptional property experiences.
-          </p>
+      <section className="relative pt-24 sm:pt-28">
+        <div className="relative h-[68vh] min-h-[420px] w-full overflow-hidden">
+          <video
+            className="absolute inset-0 h-full w-full object-cover"
+            src={aboutBannerVideo}
+            autoPlay
+            muted
+            loop
+            playsInline
+            poster={aboutTeam}
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-navy-dark/70 via-navy-dark/55 to-navy-dark/80" />
+
+          <div className="relative z-10 h-full">
+            <div className="container mx-auto px-4 h-full flex flex-col justify-center">
+              <p className="text-gold font-medium tracking-[0.24em] uppercase text-xs sm:text-sm mb-3">Who We Are</p>
+              <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-primary-foreground max-w-4xl leading-tight mb-5">
+                About KeeGo Properties
+              </h1>
+              <p className="text-primary-foreground/80 max-w-2xl text-sm sm:text-base leading-relaxed">
+                Dubai's trusted real estate partner since 2010, delivering exceptional property experiences through
+                market insight, transparent service, and long-term client relationships.
+              </p>
+
+              <div className="mt-8 flex flex-wrap gap-3">
+                <div className="rounded-full bg-primary-foreground/12 backdrop-blur-sm border border-primary-foreground/20 px-4 py-2 text-primary-foreground text-xs sm:text-sm">
+                  2010 Founded
+                </div>
+                <div className="rounded-full bg-primary-foreground/12 backdrop-blur-sm border border-primary-foreground/20 px-4 py-2 text-primary-foreground text-xs sm:text-sm">
+                  200+ Team Members
+                </div>
+                <div className="rounded-full bg-primary-foreground/12 backdrop-blur-sm border border-primary-foreground/20 px-4 py-2 text-primary-foreground text-xs sm:text-sm">
+                  Client-First Advisory
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
