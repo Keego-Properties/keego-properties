@@ -1,4 +1,4 @@
-import { Award, Users, Building2, Globe, Target, Shield, Eye, Heart } from "lucide-react";
+import { Award, Users, Building2, Globe, Target, Shield, Eye, Heart, Lightbulb, Star, Handshake } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import StatsSection from "@/components/StatsSection";
@@ -6,42 +6,42 @@ import CTASection from "@/components/CTASection";
 import aboutTeam from "@/assets/about-team.jpg";
 
 const values = [
-  { icon: Target, title: "Excellence", description: "We strive for the highest standards in every transaction." },
-  { icon: Shield, title: "Integrity", description: "Trust and transparency are at the core of everything we do." },
-  { icon: Eye, title: "Innovation", description: "We leverage technology to deliver a seamless experience." },
-  { icon: Heart, title: "Client First", description: "Your satisfaction is our top priority." },
+  { icon: Lightbulb, title: "Driven by Innovation", description: "We believe growth comes through continuous improvement, fresh thinking, and the ability to adapt to an evolving market. Innovation drives the way we serve, advise, and create opportunities for our clients." },
+  { icon: Star, title: "Passion for Excellence", description: "Real estate is more than a business; it is a commitment to delivering meaningful results. Our passion for what we do inspires us to maintain high standards across every service we offer." },
+  { icon: Handshake, title: "Stronger Together", description: "Great results are built through collaboration. We value lasting relationships with clients, partners, and communities, believing that trust and teamwork create stronger opportunities for everyone." },
+  { icon: Shield, title: "Built on Responsibility", description: "Every decision we make reflects our commitment to integrity, accountability, and professionalism. We take responsibility for delivering solutions that protect client interests and create long-term value." },
 ];
 
 const missionVision = [
   {
-    icon: Target,
-    title: "Our Mission",
-    description:
-      "To simplify real estate in Dubai through trusted advice, transparent service, and tailored solutions that help every client make confident property decisions.",
-  },
-  {
     icon: Globe,
     title: "Our Vision",
     description:
-      "To be the most client-centric real estate brand in the UAE, known for market expertise, long-term relationships, and measurable value creation.",
+      "To be a trusted real estate brand recognized for delivering integrated property solutions, strategic investment opportunities, and specialized services that create long-term value in Dubai and beyond.",
+  },
+  {
+    icon: Target,
+    title: "Our Mission",
+    description:
+      "To provide client-focused real estate solutions through market expertise, transparency, and professional execution, while building a sustainable ecosystem powered by innovation, specialized services, and long-term relationships.",
   },
 ];
 
 const highlights = [
   {
     icon: Building2,
-    title: "Full-Service Property Support",
-    description: "Buying, selling, renting, off-plan advisory, and investment strategy under one trusted team.",
+    title: "Integrated Property Ecosystem",
+    description: "From brokerage and investment advisory to asset management and specialized services, Keego Properties delivers end-to-end real estate support under one trusted brand.",
   },
   {
     icon: Users,
-    title: "Local Experts, Global Perspective",
-    description: "A multilingual team that understands both Dubai neighborhoods and international investor expectations.",
+    title: "Specialist Divisions",
+    description: "Through Ultima Homes we deliver holiday home and short-term rental solutions, while Fixoo Nova provides professional property maintenance and building care services.",
   },
   {
     icon: Award,
-    title: "Results You Can Measure",
-    description: "Data-driven pricing, faster deal cycles, and client-first negotiation to protect your returns.",
+    title: "RERA-Licensed & Compliant",
+    description: "Operating with full RERA licensing and a strong commitment to integrity, service excellence, and long-term client partnerships across Dubai's property market.",
   },
 ];
 
@@ -71,19 +71,18 @@ const About = () => {
                 About KeeGo Properties
               </h1>
               <p className="text-primary-foreground/80 max-w-2xl text-sm sm:text-base leading-relaxed">
-                Dubai's trusted real estate partner since 2010, delivering exceptional property experiences through
-                market insight, transparent service, and long-term client relationships.
+                A dynamic real estate company operating in Dubai's fast-evolving property market — built on trust, professionalism, and a client-first approach to creating long-term value.
               </p>
 
               <div className="mt-8 flex flex-wrap gap-3">
                 <div className="rounded-full bg-primary-foreground/12 backdrop-blur-sm border border-primary-foreground/20 px-4 py-2 text-primary-foreground text-xs sm:text-sm">
-                  2010 Founded
+                  RERA Licensed
                 </div>
                 <div className="rounded-full bg-primary-foreground/12 backdrop-blur-sm border border-primary-foreground/20 px-4 py-2 text-primary-foreground text-xs sm:text-sm">
-                  200+ Team Members
+                  Ultima Homes
                 </div>
                 <div className="rounded-full bg-primary-foreground/12 backdrop-blur-sm border border-primary-foreground/20 px-4 py-2 text-primary-foreground text-xs sm:text-sm">
-                  Client-First Advisory
+                  Fixoo Nova
                 </div>
               </div>
             </div>
@@ -95,18 +94,18 @@ const About = () => {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <div>
-              <p className="text-gold font-medium tracking-[0.2em] uppercase text-sm mb-2">Our Story</p>
+              <p className="text-gold font-medium tracking-[0.2em] uppercase text-sm mb-2">Who We Are</p>
               <h2 className="font-serif text-3xl font-bold text-foreground mb-6">
-                Building Dreams in Dubai
+                A Real Estate Company Built on Trust
               </h2>
               <p className="text-muted-foreground leading-relaxed mb-4">
-                Founded in 2010, KeeGo Properties has grown to become one of Dubai's most trusted real estate agencies. With a team of over 200 dedicated professionals, we have helped thousands of clients find their perfect home in the UAE.
+                Driven by market expertise and a passion for delivering exceptional real estate solutions, Keego Properties is a dynamic real estate company operating in Dubai's fast-evolving property market. Built on trust, professionalism, and a client-first approach, we support homeowners, investors, and businesses through strategic real estate services designed to create long-term value and lasting relationships.
               </p>
               <p className="text-muted-foreground leading-relaxed mb-4">
-                Our deep understanding of the Dubai market, combined with our commitment to personalized service, sets us apart. We don't just sell properties — we build lasting relationships.
+                From residential and commercial brokerage to investment advisory, asset management, and specialized property services, our focus is centered on understanding every client's unique objectives and delivering solutions with clarity, precision, and confidence.
               </p>
               <p className="text-muted-foreground leading-relaxed">
-                Whether you're a first-time buyer, a seasoned investor, or looking for your dream rental, our expert team is here to guide you every step of the way.
+                As a RERA-licensed real estate company, Keego Properties operates with a strong commitment to integrity, service excellence, and long-term partnerships. Our goal is not simply to facilitate transactions, but to create meaningful property experiences built on trust, performance, and sustainable growth.
               </p>
             </div>
             <div className="rounded-2xl overflow-hidden shadow-[var(--shadow-elevated)]">
