@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, Timestamp } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import {
   Trash2,
   X,
@@ -16,7 +17,7 @@ import {
   FaLandmark,
   FaListUl,
 } from "react-icons/fa6";
-import { db } from "@/lib/firebase";
+import { db, storage } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -54,6 +55,7 @@ interface ServiceItem {
   title: string;
   description: string;
   icon: IconName;
+  image?: string;
   status: "published" | "draft";
   displayOrder: number;
   createdAt?: Timestamp;
@@ -63,6 +65,8 @@ type FormState = {
   title: string;
   description: string;
   icon: IconName;
+  image: string;
+  imageFile: File | null;
   status: "published" | "draft";
   displayOrder: string;
 };
@@ -71,6 +75,8 @@ const emptyForm: FormState = {
   title: "",
   description: "",
   icon: "fa-house",
+  image: "",
+  imageFile: null,
   status: "draft",
   displayOrder: "0",
 };
@@ -117,10 +123,20 @@ const ServicesManager = () => {
 
     setLoading(true);
     try {
+      let imageUrl = form.image.trim();
+
+      if (form.imageFile) {
+        const fileName = `services/${Date.now()}_${form.imageFile.name}`;
+        const storageRef = ref(storage, fileName);
+        await uploadBytes(storageRef, form.imageFile);
+        imageUrl = await getDownloadURL(storageRef);
+      }
+
       const payload = {
         title: form.title.trim(),
         description: form.description.trim(),
         icon: form.icon,
+        image: imageUrl,
         status: form.status,
         displayOrder: Number(form.displayOrder) || 0,
         updatedAt: Timestamp.now(),
@@ -155,6 +171,8 @@ const ServicesManager = () => {
       title: service.title,
       description: service.description,
       icon: service.icon || "fa-house",
+      image: service.image || "",
+      imageFile: null,
       status: service.status || "draft",
       displayOrder: String(service.displayOrder ?? 0),
     });
@@ -289,6 +307,34 @@ const ServicesManager = () => {
               />
             </div>
 
+            <div className="space-y-2 md:col-span-2">
+              <Label>Service Image URL</Label>
+              <Input
+                value={form.image}
+                onChange={(e) => setForm({ ...form, image: e.target.value })}
+                placeholder="https://..."
+              />
+            </div>
+
+            <div className="space-y-2 md:col-span-2">
+              <Label>Or Upload Service Image</Label>
+              <Input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setForm({ ...form, imageFile: e.target.files?.[0] || null })}
+                className="file:mr-4 file:rounded-full file:border-0 file:bg-primary file:px-4 file:py-2 file:text-sm file:font-semibold file:text-primary-foreground hover:file:bg-primary/90"
+              />
+              {(form.imageFile || form.image) && (
+                <div className="rounded-lg border border-border bg-muted/20 p-2 w-fit">
+                  <img
+                    src={form.imageFile ? URL.createObjectURL(form.imageFile) : form.image}
+                    alt="Service preview"
+                    className="h-20 w-32 rounded-md object-cover"
+                  />
+                </div>
+              )}
+            </div>
+
             <div className="md:col-span-2 flex gap-2">
               <Button type="submit" disabled={loading}>
                 {loading ? "Saving..." : editId ? "Update Service" : "Add Service"}
@@ -311,6 +357,7 @@ const ServicesManager = () => {
                 <tr>
                   <th className="px-4 py-3 text-left font-medium text-muted-foreground">Order</th>
                   <th className="px-4 py-3 text-left font-medium text-muted-foreground">Title</th>
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Image</th>
                   <th className="px-4 py-3 text-left font-medium text-muted-foreground">Icon</th>
                   <th className="px-4 py-3 text-left font-medium text-muted-foreground">Status</th>
                   <th className="px-4 py-3 text-right font-medium text-muted-foreground">Actions</th>
@@ -325,6 +372,13 @@ const ServicesManager = () => {
                       <td className="px-4 py-3">
                         <p className="font-medium text-foreground">{service.title}</p>
                         <p className="mt-1 max-w-md truncate text-xs text-muted-foreground">{service.description}</p>
+                      </td>
+                      <td className="px-4 py-3">
+                        {service.image ? (
+                          <img src={service.image} alt={service.title} className="h-10 w-16 rounded object-cover" />
+                        ) : (
+                          <span className="text-xs text-muted-foreground">No image</span>
+                        )}
                       </td>
                       <td className="px-4 py-3">
                         <div className="inline-flex items-center gap-2 rounded-full bg-muted px-3 py-1 text-xs text-foreground">

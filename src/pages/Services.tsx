@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { db } from "@/lib/firebase";
 import { defaultServices, iconMap, serviceContentMap, ServiceItem } from "@/lib/servicesData";
+import heroImage from "@/assets/hero-dubai.jpg";
 
 const Services = () => {
   const [services, setServices] = useState<ServiceItem[]>([]);
@@ -37,8 +38,12 @@ const Services = () => {
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
 
-      <section className="bg-navy-dark pb-16 pt-32">
-        <div className="container mx-auto px-4">
+      <section className="relative flex min-h-[70vh] flex-col justify-center overflow-hidden pb-20 pt-40">
+        <div className="absolute inset-0">
+          <img src={heroImage} alt="Dubai skyline services banner" className="h-full w-full object-cover" />
+          <div className="absolute inset-0 bg-navy-dark/75" />
+        </div>
+        <div className="container relative z-10 mx-auto px-4">
           <p className="mb-3 text-sm font-medium uppercase tracking-[0.2em] text-gold">Our Services</p>
           <h1 className="max-w-3xl font-serif text-4xl font-bold text-primary-foreground md:text-5xl">
             Service divisions built for every stage of your Dubai property journey.
@@ -58,7 +63,7 @@ const Services = () => {
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {visibleServices.map((service) => {
-                const Icon = iconMap[service.icon];
+                const Icon = iconMap[service.icon] ?? iconMap["fa-house"];
                 const content = serviceContentMap[service.id];
                 return (
               <article
@@ -66,6 +71,16 @@ const Services = () => {
                 id={service.id}
                 className="group rounded-[1.75rem] border border-border bg-card p-7 shadow-[var(--shadow-card)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-elevated)]"
               >
+                {service.image && (
+                  <div className="mb-5 overflow-hidden rounded-2xl border border-border/60">
+                    <img
+                      src={service.image}
+                      alt={service.title}
+                      className="h-40 w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                  </div>
+                )}
                 <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gold/10 text-gold transition-colors duration-300 group-hover:bg-gold/20">
                   <Icon className="h-6 w-6" />
                 </div>

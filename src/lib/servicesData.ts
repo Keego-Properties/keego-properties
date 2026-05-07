@@ -27,6 +27,7 @@ export interface ServiceItem {
   title: string;
   description: string;
   icon: IconName;
+  image?: string;
   status?: "published" | "draft";
   displayOrder?: number;
 }
