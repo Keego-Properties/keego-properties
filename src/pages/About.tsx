@@ -12,6 +12,39 @@ const values = [
   { icon: Heart, title: "Client First", description: "Your satisfaction is our top priority." },
 ];
 
+const missionVision = [
+  {
+    icon: Target,
+    title: "Our Mission",
+    description:
+      "To simplify real estate in Dubai through trusted advice, transparent service, and tailored solutions that help every client make confident property decisions.",
+  },
+  {
+    icon: Globe,
+    title: "Our Vision",
+    description:
+      "To be the most client-centric real estate brand in the UAE, known for market expertise, long-term relationships, and measurable value creation.",
+  },
+];
+
+const highlights = [
+  {
+    icon: Building2,
+    title: "Full-Service Property Support",
+    description: "Buying, selling, renting, off-plan advisory, and investment strategy under one trusted team.",
+  },
+  {
+    icon: Users,
+    title: "Local Experts, Global Perspective",
+    description: "A multilingual team that understands both Dubai neighborhoods and international investor expectations.",
+  },
+  {
+    icon: Award,
+    title: "Results You Can Measure",
+    description: "Data-driven pricing, faster deal cycles, and client-first negotiation to protect your returns.",
+  },
+];
+
 const About = () => {
   return (
     <div className="min-h-screen">
@@ -54,6 +87,42 @@ const About = () => {
       </section>
 
       <section className="py-16 bg-cream">
+        <div className="container mx-auto px-4 mb-14">
+          <div className="text-center mb-10">
+            <p className="text-gold font-medium tracking-[0.2em] uppercase text-sm mb-2">Our Direction</p>
+            <h2 className="font-serif text-3xl font-bold text-foreground">Mission & Vision</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {missionVision.map((item, index) => (
+              <div key={index} className="bg-card rounded-2xl p-8 shadow-[var(--shadow-card)]">
+                <div className="w-12 h-12 rounded-xl bg-gold/10 flex items-center justify-center mb-4">
+                  <item.icon className="w-6 h-6 text-gold" />
+                </div>
+                <h3 className="font-serif text-2xl font-bold text-foreground mb-3">{item.title}</h3>
+                <p className="text-muted-foreground leading-relaxed">{item.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="container mx-auto px-4 mb-14">
+          <div className="text-center mb-10">
+            <p className="text-gold font-medium tracking-[0.2em] uppercase text-sm mb-2">Why Clients Choose Us</p>
+            <h2 className="font-serif text-3xl font-bold text-foreground">What We Deliver</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {highlights.map((item, index) => (
+              <div key={index} className="bg-card rounded-2xl p-6 shadow-[var(--shadow-card)]">
+                <div className="w-11 h-11 rounded-lg bg-gold/10 flex items-center justify-center mb-4">
+                  <item.icon className="w-5 h-5 text-gold" />
+                </div>
+                <h3 className="font-serif text-lg font-bold text-foreground mb-2">{item.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{item.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <p className="text-gold font-medium tracking-[0.2em] uppercase text-sm mb-2">What Drives Us</p>
