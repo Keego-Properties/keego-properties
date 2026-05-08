@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, Phone, ChevronDown, ArrowUpRight, Building2, MapPin, Sparkles, MessageSquareHeart, ListPlus, PhoneCall } from "lucide-react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -41,6 +41,7 @@ const Navbar = () => {
   const [developers, setDevelopers] = useState<Developer[]>([]);
   const [showTopHeader, setShowTopHeader] = useState(true);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const buyTimeoutRef = useRef<NodeJS.Timeout>();
   const rentTimeoutRef = useRef<NodeJS.Timeout>();
@@ -356,6 +357,7 @@ const Navbar = () => {
             >
                 <button
                   type="button"
+                  onClick={() => navigate("/properties?type=buy")}
                   className={`min-w-[4.75rem] justify-center text-sm font-medium inline-flex items-center gap-1 transition-colors duration-200 pb-1 ${
                     isBuyActive
                       ? "text-gold shadow-[0_2px_0_0_#FFD700]"
@@ -374,6 +376,7 @@ const Navbar = () => {
             >
                 <button
                   type="button"
+                  onClick={() => navigate("/properties?type=rent")}
                   className={`min-w-[4.75rem] justify-center text-sm font-medium inline-flex items-center gap-1 transition-colors duration-200 pb-1 ${
                     isRentActive
                       ? "text-gold shadow-[0_2px_0_0_#FFD700]"
@@ -403,6 +406,7 @@ const Navbar = () => {
             >
               <button
                 type="button"
+                onClick={() => navigate("/services")}
                 className={`min-w-[5.75rem] justify-center text-sm font-medium inline-flex items-center gap-1 transition-colors duration-200 pb-1 ${
                   isServicesActive || servicesMenuOpen
                     ? "text-gold shadow-[0_2px_0_0_#FFD700]"
@@ -421,6 +425,7 @@ const Navbar = () => {
             >
               <button
                 type="button"
+                onClick={() => navigate("/communities")}
                 className={`min-w-[6.75rem] justify-center text-sm font-medium inline-flex items-center gap-1 transition-colors duration-200 pb-1 ${
                   isCommunitiesActive || communitiesMenuOpen
                     ? "text-gold shadow-[0_2px_0_0_#FFD700]"
@@ -439,6 +444,7 @@ const Navbar = () => {
             >
               <button
                 type="button"
+                onClick={() => navigate("/developers")}
                 className={`min-w-[6.75rem] justify-center text-sm font-medium inline-flex items-center gap-1 transition-colors duration-200 pb-1 ${
                   isDevelopersActive || developersMenuOpen
                     ? "text-gold shadow-[0_2px_0_0_#FFD700]"
