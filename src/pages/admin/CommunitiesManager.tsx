@@ -20,17 +20,19 @@ interface Community {
   propertiesCount: number;
   avgPrice: string;
   propertyIds: string[];
+  featured: boolean;
   createdAt: Timestamp;
 }
 
 type FormState = {
   name: string; description: string; image: string; location: string;
   highlights: string; propertiesCount: number; avgPrice: string; imageFile: File | null; propertyIds: string[];
+  featured: boolean;
 };
 
 const emptyForm: FormState = {
   name: "", description: "", image: "", location: "",
-  highlights: "", propertiesCount: 0, avgPrice: "", imageFile: null, propertyIds: [],
+  highlights: "", propertiesCount: 0, avgPrice: "", imageFile: null, propertyIds: [], featured: false,
 };
 
 const CommunitiesManager = () => {
@@ -104,7 +106,7 @@ const CommunitiesManager = () => {
       name: c.name, description: c.description, image: c.image,
       location: c.location || "", highlights: c.highlights || "",
       propertiesCount: c.propertiesCount || 0, avgPrice: c.avgPrice || "",
-      imageFile: null, propertyIds: c.propertyIds || [],
+      imageFile: null, propertyIds: c.propertyIds || [], featured: c.featured || false,
     });
     setEditId(c.id);
     setShowForm(true);
@@ -221,6 +223,16 @@ const CommunitiesManager = () => {
               <Label>Description</Label>
               <Textarea value={form.description} onChange={e => setForm({...form, description: e.target.value})} rows={3} />
             </div>
+            <div className="flex items-center gap-3 md:col-span-2">
+              <input
+                type="checkbox"
+                id="featured"
+                checked={form.featured}
+                onChange={e => setForm({...form, featured: e.target.checked})}
+                className="w-4 h-4 accent-primary cursor-pointer"
+              />
+              <Label htmlFor="featured" className="cursor-pointer">Featured on Homepage</Label>
+            </div>
             <div className="md:col-span-2 flex gap-2">
               <Button type="submit" disabled={loading || uploading}>
                 {uploading ? (
@@ -251,12 +263,13 @@ const CommunitiesManager = () => {
                 <th className="text-left p-3 font-medium text-muted-foreground">Location</th>
                 <th className="text-left p-3 font-medium text-muted-foreground">Properties</th>
                 <th className="text-left p-3 font-medium text-muted-foreground">Avg. Price</th>
+                <th className="text-left p-3 font-medium text-muted-foreground">Featured</th>
                 <th className="text-right p-3 font-medium text-muted-foreground">Actions</th>
               </tr>
             </thead>
             <tbody>
               {items.length === 0 && (
-                <tr><td colSpan={5} className="p-8 text-center text-muted-foreground">No communities yet.</td></tr>
+                <tr><td colSpan={6} className="p-8 text-center text-muted-foreground">No communities yet.</td></tr>
               )}
               {items.map(c => (
                 <tr key={c.id} className="border-b border-border last:border-0 hover:bg-muted/30">
@@ -264,6 +277,9 @@ const CommunitiesManager = () => {
                   <td className="p-3 text-muted-foreground">{c.location}</td>
                   <td className="p-3 text-muted-foreground">{c.propertiesCount}</td>
                   <td className="p-3 text-muted-foreground">{c.avgPrice}</td>
+                  <td className="p-3">
+                    {c.featured ? <Badge className="bg-amber-100 text-amber-700 border-amber-200">Featured</Badge> : <span className="text-muted-foreground text-xs">—</span>}
+                  </td>
                   <td className="p-3 text-right">
                     <div className="flex items-center justify-end gap-1">
                       <Button variant="ghost" size="icon" onClick={() => handleEdit(c)}><Pencil className="w-4 h-4" /></Button>

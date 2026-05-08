@@ -13,6 +13,7 @@ interface Community {
   highlights: string;
   propertiesCount: number;
   avgPrice: string;
+  featured: boolean;
   createdAt: Timestamp;
 }
 
@@ -24,10 +25,11 @@ const CommunitiesSection = () => {
     const fetchCommunities = async () => {
       try {
         const snap = await getDocs(collection(db, "communities"));
-        const communitiesData = snap.docs
-          .map(d => ({ id: d.id, ...d.data() } as Community))
-          .sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis()) // Sort by newest first
-          .slice(0, 4); // Show only latest 4 communities
+        const all = snap.docs.map(d => ({ id: d.id, ...d.data() } as Community));
+        const featured = all.filter(c => c.featured);
+        const communitiesData = (featured.length > 0 ? featured : all)
+          .sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis())
+          .slice(0, 4);
         setCommunities(communitiesData);
       } catch (error) {
         console.error("Error fetching communities:", error);
