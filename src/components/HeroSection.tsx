@@ -93,14 +93,14 @@ const HeroSection = () => {
       <div className="absolute inset-0" style={{ background: "var(--gradient-hero)" }} />
 
       <div className="relative z-10 container mx-auto px-4 text-center">
-        <p className="text-gold font-medium tracking-[0.3em] uppercase text-sm mb-4 animate-fade-in">
-          At the Heart of Every Home is You
-        </p>
         <h1 className="font-serif text-4xl md:text-6xl lg:text-7xl font-bold text-primary-foreground mb-8 animate-fade-in leading-tight">
-          Let's Find Your Perfect
+          Find Exceptional Properties.
           <br />
-          <span className="text-gradient-gold">Haven Together</span>
+          <span className="text-gradient-gold">Build Lasting Value.</span>
         </h1>
+        <p className="mx-auto mb-8 max-w-3xl text-sm leading-relaxed text-primary-foreground/85 md:text-base animate-fade-in" style={{ animationDelay: "0.1s" }}>
+          Luxury homes, investment opportunities, and integrated property solutions tailored for modern investors, homeowners, and businesses.
+        </p>
 
         <div className="max-w-3xl mx-auto animate-fade-in" style={{ animationDelay: "0.2s" }}>
           <div className="flex justify-center gap-1 mb-4">
