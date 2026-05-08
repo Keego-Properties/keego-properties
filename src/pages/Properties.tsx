@@ -6,7 +6,75 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PropertyCard from "@/components/PropertyCard";
 import PropertyEnquiryForm from "@/components/PropertyEnquiryForm";
-import { Search } from "lucide-react";
+import { Search, ChevronDown } from "lucide-react";
+
+const BUY_FAQS = [
+  {
+    q: "Can foreigners buy property in Dubai?",
+    a: "Yes. Foreign investors can buy freehold properties in designated areas across Dubai, with full ownership rights in approved communities.",
+  },
+  {
+    q: "What documents are required to buy property in Dubai?",
+    a: "Typically, buyers need a valid passport, proof of funds or mortgage approval, and other transaction-related documents depending on the property and financing structure.",
+  },
+  {
+    q: "Can I buy property in Dubai with a mortgage?",
+    a: "Yes. Both residents and eligible non-residents can explore mortgage options through approved financial institutions in Dubai, subject to eligibility and approval.",
+  },
+  {
+    q: "What additional costs should I consider when buying property?",
+    a: "In addition to the property price, buyers should consider registration fees, agency fees, mortgage-related charges, and other transaction costs.",
+  },
+  {
+    q: "Is Dubai a good place for property investment?",
+    a: "Dubai continues to attract global investors with strong rental demand, tax advantages, modern infrastructure, and long-term growth opportunities.",
+  },
+];
+
+const RENT_FAQS = [
+  {
+    q: "What documents are required to rent a property in Dubai?",
+    a: "Tenants usually need a valid Emirates ID or passport, visa copy, and supporting documents required for tenancy registration.",
+  },
+  {
+    q: "What is EJARI in Dubai?",
+    a: "EJARI is the official tenancy registration system in Dubai that legalizes rental agreements between landlords and tenants.",
+  },
+  {
+    q: "How much security deposit is required for renting?",
+    a: "Security deposits vary depending on the property type and landlord requirements, and are usually discussed during the leasing process.",
+  },
+  {
+    q: "Can you help with both residential and commercial rentals?",
+    a: "Yes. Keego Properties assists clients with apartments, villas, office spaces, retail units, and other leasing opportunities across Dubai.",
+  },
+  {
+    q: "Do you help with lease renewal and documentation?",
+    a: "Yes. Our team supports lease negotiations, contract preparation, tenancy registration, and renewal assistance.",
+  },
+];
+
+function FaqItem({ q, a }: { q: string; a: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="border border-border rounded-xl overflow-hidden">
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex w-full items-center justify-between px-6 py-4 text-left text-sm font-medium text-foreground hover:bg-muted/50 transition-colors"
+      >
+        <span>{q}</span>
+        <ChevronDown
+          className={`w-4 h-4 text-muted-foreground flex-shrink-0 ml-4 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+      {open && (
+        <div className="px-6 pb-5 text-sm text-muted-foreground leading-relaxed border-t border-border pt-4">
+          {a}
+        </div>
+      )}
+    </div>
+  );
+}
 
 interface Property {
   id: string;
@@ -188,6 +256,26 @@ const Properties = () => {
         </div>
       </section>
       <PropertyEnquiryForm defaultType={lockedType ?? "all"} />
+
+      {/* FAQ Section */}
+      {effectiveType !== "all" && (
+        <section className="py-16 bg-muted/30">
+          <div className="container mx-auto px-4 max-w-3xl">
+            <div className="text-center mb-10">
+              <p className="text-gold font-medium tracking-[0.2em] uppercase text-sm mb-2">Need Help?</p>
+              <h2 className="font-serif text-3xl font-bold text-foreground">
+                {effectiveType === "sale" ? "Buy Property in Dubai — FAQs" : "Rent Property in Dubai — FAQs"}
+              </h2>
+            </div>
+            <div className="space-y-3">
+              {(effectiveType === "sale" ? BUY_FAQS : RENT_FAQS).map((item) => (
+                <FaqItem key={item.q} q={item.q} a={item.a} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       <Footer />
     </div>
   );
