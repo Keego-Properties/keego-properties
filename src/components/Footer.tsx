@@ -40,8 +40,8 @@ const Footer = () => {
   ];
 
   const legalLinks = [
-    { label: "Terms & Conditions", to: "/contact" },
-    { label: "Privacy Policy", to: "/contact" }
+    { label: "Terms & Conditions", to: "/terms-and-conditions" },
+    { label: "Privacy Policy", to: "/privacy-policy" }
   ];
 
   const socialIcons = [Facebook, Instagram, XIcon, Linkedin];
