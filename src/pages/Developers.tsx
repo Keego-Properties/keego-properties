@@ -3,7 +3,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { ExternalLink, TrendingUp, Users, BarChart3, Building2 } from "lucide-react";
+import { TrendingUp, Users, BarChart3, Building2 } from "lucide-react";
 
 interface Developer {
   id: string;
@@ -147,18 +147,6 @@ const Developers = () => {
                     key={dev.id}
                     className={`group relative ${bg} aspect-[4/3] flex flex-col items-center justify-center p-8 overflow-hidden cursor-pointer`}
                   >
-                    {/* external link */}
-                    {dev.website && (
-                      <a
-                        href={dev.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/10 backdrop-blur-sm flex items-center justify-center text-foreground opacity-0 group-hover:opacity-100 hover:bg-black/20 transition-all duration-200 z-10"
-                      >
-                        <ExternalLink className="w-3.5 h-3.5" />
-                      </a>
-                    )}
-
                     {/* logo */}
                     <div className="relative z-10 w-full flex flex-col items-center gap-3">
                       {dev.logo ? (
