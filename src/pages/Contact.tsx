@@ -6,20 +6,50 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { sendEnquiryNotification } from "@/lib/emailNotifications";
 
 const Contact = () => {
   const { toast } = useToast();
+  const [sending, setSending] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", phone: "", message: "" });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({ title: "Message Sent!", description: "We'll get back to you within 24 hours." });
-    setFormData({ name: "", email: "", phone: "", message: "" });
+    setSending(true);
+
+    try {
+      const notifyResult = await sendEnquiryNotification({
+        source: "contact_form",
+        subject: "New Contact Form Submission",
+        message: formData.message.trim(),
+        customerName: formData.name.trim(),
+        customerEmail: formData.email.trim(),
+        phone: formData.phone.trim(),
+      });
+
+      toast({
+        title: "Message Sent!",
+        description: notifyResult.sent
+          ? "We'll get back to you within 24 hours."
+          : "Message received. Email notification is not configured yet.",
+      });
+
+      setFormData({ name: "", email: "", phone: "", message: "" });
+    } catch (error) {
+      console.error("Contact form submission failed:", error);
+      toast({
+        title: "Submission failed",
+        description: "Please try again or contact us directly.",
+        variant: "destructive",
+      });
+    } finally {
+      setSending(false);
+    }
   };
 
   const contactInfo = [
     { icon: Phone, label: "Phone", value: "+971 50 123 4567", href: "tel:+971501234567" },
-    { icon: Mail, label: "Email", value: "info@primeproperties.ae", href: "mailto:info@primeproperties.ae" },
+    { icon: Mail, label: "Email", value: "info@keegoproperties.in", href: "mailto:info@keegoproperties.in" },
     { icon: MapPin, label: "Office", value: "Business Bay, Dubai, UAE" },
     { icon: Clock, label: "Hours", value: "Sun-Thu: 9AM-6PM" },
   ];
@@ -113,9 +143,13 @@ const Contact = () => {
                     className="rounded-xl resize-none"
                   />
                 </div>
-                <Button type="submit" className="w-full bg-navy hover:bg-navy-light text-primary-foreground rounded-xl h-12 text-base font-medium transition-all duration-300">
+                <Button
+                  type="submit"
+                  disabled={sending}
+                  className="w-full bg-navy hover:bg-navy-light text-primary-foreground rounded-xl h-12 text-base font-medium transition-all duration-300"
+                >
                   <Send className="w-4 h-4 mr-2" />
-                  Send Message
+                  {sending ? "Sending..." : "Send Message"}
                 </Button>
               </form>
             </div>

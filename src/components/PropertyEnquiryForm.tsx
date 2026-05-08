@@ -3,6 +3,7 @@ import { Send, CheckCircle2, Loader2 } from "lucide-react";
 import { addDoc, collection, Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
+import { sendEnquiryNotification } from "@/lib/emailNotifications";
 
 interface PropertyEnquiryFormProps {
   defaultType?: "buy" | "rent" | "all";
@@ -55,6 +56,28 @@ const PropertyEnquiryForm = ({ defaultType = "all", propertyName }: PropertyEnqu
         source: "property_detail",
         createdAt: Timestamp.now(),
       });
+
+      const notifyResult = await sendEnquiryNotification({
+        source: "property_enquiry",
+        subject: `New Property Enquiry${propertyName ? ` - ${propertyName}` : ""}`,
+        message: fields.message.trim() || "No message provided.",
+        customerName: `${fields.firstName.trim()} ${fields.lastName.trim()}`.trim(),
+        customerEmail: fields.email.trim(),
+        phone: fields.phone.trim(),
+        budget: fields.budget.trim(),
+        propertyName: propertyName ?? "",
+        lookingTo,
+        category,
+        subCategory,
+      });
+
+      if (!notifyResult.sent) {
+        toast({
+          title: "Enquiry saved",
+          description: "Your enquiry was submitted, but email notification is not configured yet.",
+        });
+      }
+
       setSubmitted(true);
     } catch (err) {
       console.error("Enquiry submission failed:", err);
