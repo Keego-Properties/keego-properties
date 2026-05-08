@@ -20,12 +20,14 @@ interface Property {
   status: "available" | "sold" | "rented";
   image: string;
   category?: string;
+  subCategory?: string;
 }
 
 const Properties = () => {
   const location = useLocation();
   const [activeType, setActiveType] = useState("all");
   const [activeCategory, setActiveCategory] = useState("all");
+  const [activeBeds, setActiveBeds] = useState<number | null>(null);
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -40,6 +42,7 @@ const Properties = () => {
     const typeParam = params.get("type");
     const categoryParam = params.get("category");
     const searchParam = params.get("search");
+    const bedsParam = params.get("beds");
 
     setActiveType(
       typeParam === "buy"
@@ -50,6 +53,7 @@ const Properties = () => {
     );
     setActiveCategory(categoryParam ? decodeURIComponent(categoryParam) : "all");
     setSearchQuery(searchParam ? decodeURIComponent(searchParam) : "");
+    setActiveBeds(bedsParam !== null && bedsParam !== "" ? parseInt(bedsParam, 10) : null);
   }, [location.search]);
 
   useEffect(() => {
@@ -71,12 +75,17 @@ const Properties = () => {
   const filtered = properties.filter((p) => {
     const typeMatches = effectiveType === "all" || p.type === effectiveType;
     const categoryMatches =
-      activeCategory === "all" || (p.category?.toLowerCase() === activeCategory.toLowerCase());
+      activeCategory === "all" ||
+      p.subCategory?.toLowerCase() === activeCategory.toLowerCase() ||
+      p.category?.toLowerCase() === activeCategory.toLowerCase();
+    const bedsMatches =
+      activeBeds === null ||
+      (activeBeds === 5 ? p.beds >= 5 : p.beds === activeBeds);
     const searchMatches =
       !searchQuery ||
       p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.location.toLowerCase().includes(searchQuery.toLowerCase());
-    return typeMatches && categoryMatches && searchMatches;
+    return typeMatches && categoryMatches && bedsMatches && searchMatches;
   });
 
   return (
