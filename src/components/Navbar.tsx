@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, Phone, ChevronDown, ArrowUpRight, Building2, MapPin, Sparkles, MessageSquareHeart, ListPlus, PhoneCall } from "lucide-react";
+import { Menu, X, Phone, ChevronDown, ArrowUpRight, Building2, MapPin, Sparkles, MessageSquareHeart, ListPlus, PhoneCall, Home } from "lucide-react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import logoImage from "@/assets/eagb.png";
@@ -269,8 +269,8 @@ const Navbar = () => {
 
   const topLinks = [
     { name: "Your Voice Matters", path: "/your-voice-matters", icon: MessageSquareHeart },
+    { name: "Holiday Homes", path: "/holiday-homes", icon: Home },
     { name: "List Property", path: "/list-property", highlight: true, icon: ListPlus },
-    { name: "Contact Us", path: "/contact", icon: PhoneCall },
   ];
 
   const propertyMenu = [
@@ -309,8 +309,8 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-slate-200/80 bg-white/95 shadow-[0_10px_30px_rgba(15,23,42,0.08)] backdrop-blur-md">
       <div className="container mx-auto px-4">
         <div className={`flex flex-wrap items-center justify-between gap-3 overflow-hidden text-xs uppercase tracking-[0.24em] text-slate-600 transition-[max-height,opacity,transform,padding,border-color] duration-500 ease-in-out ${showTopHeader ? "max-h-20 translate-y-0 border-b border-slate-200 py-2 opacity-100" : "pointer-events-none max-h-0 -translate-y-full border-b border-transparent py-0 opacity-0"}`}>
-          <div className="flex-1 flex justify-center">
-            <div className="grid grid-cols-3 items-center gap-2">
+          <div className="flex-1 flex gap-4 justify-center">
+            <div className="flex gap-4 items-center gap-2">
               {topLinks.map((link) => (
                 <Link
                   key={link.name}

@@ -38,6 +38,7 @@ import BlogDetail from "./pages/BlogDetail.tsx";
 import Careers from "./pages/Careers.tsx";
 import PrivacyPolicy from "./pages/PrivacyPolicy.tsx";
 import TermsAndConditions from "./pages/TermsAndConditions.tsx";
+import HolidayHomes from "./pages/HolidayHomes.tsx";
 import ProtectedRoute from "./components/admin/ProtectedRoute.tsx";
 
 const queryClient = new QueryClient();
@@ -73,6 +74,7 @@ const App = () => (
             <Route path="/blog/:id" element={<BlogDetail />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+            <Route path="/holiday-homes" element={<HolidayHomes />} />
 
             {/* Admin routes */}
             <Route path="/admin/login" element={<AdminLogin />} />
