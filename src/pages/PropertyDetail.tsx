@@ -396,7 +396,7 @@ const PropertyDetail = () => {
               <div className="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_16px_rgba(0,0,0,0.04)] p-8">
                 <p className="text-[10px] font-bold tracking-widest uppercase text-[#D4AF37] mb-3">Specifications</p>
                 <h2 className="font-serif text-2xl font-bold text-[#0b1628] mb-6">Property Details</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-0 divide-y sm:divide-y-0 sm:divide-x-0">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-[30px] gap-y-0 divide-y sm:divide-y-0 sm:divide-x-0">
                   {[
                     property.year && { icon: Calendar, label: "Year Built", value: property.year },
                     property.parking && { icon: Car, label: "Parking", value: `${property.parking} Spaces` },
@@ -473,6 +473,31 @@ const PropertyDetail = () => {
                   className="absolute top-0 left-0 right-0 h-px rounded-t-2xl"
                   style={{ background: "linear-gradient(90deg, transparent, rgba(212,175,55,0.6), transparent)" }}
                 />
+                {/* Agent avatar */}
+                {(() => {
+                  const firstMember = property.assignedStaff?.length
+                    ? staff.find((s) => s.id === property.assignedStaff![0])
+                    : null;
+                  return (
+                    <div className="flex items-center gap-3 mb-5 pb-5 border-b border-white/10">
+                      <div className="relative shrink-0">
+                        <img
+                          src={firstMember?.photo || "https://ui-avatars.com/api/?name=Keego+Agent&background=D4AF37&color=0b1628&bold=true"}
+                          alt={firstMember?.name || "Keego Agent"}
+                          className="w-12 h-12 rounded-full object-cover border-2 border-[#D4AF37]/40"
+                        />
+                        <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-400 border-2 border-[#0b1628]" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-white font-semibold text-sm leading-tight truncate">
+                          {firstMember?.name || "Keego Properties"}
+                        </p>
+                        <p className="text-white/45 text-xs">{firstMember?.role || "Property Specialist"}</p>
+                        <p className="text-emerald-400 text-[10px] font-medium mt-0.5">● Available now</p>
+                      </div>
+                    </div>
+                  );
+                })()}
                 <p className="text-white/50 text-xs uppercase tracking-widest mb-1">
                   {property.type === "sale" ? "Sale Price" : "Monthly Rent"}
                 </p>
