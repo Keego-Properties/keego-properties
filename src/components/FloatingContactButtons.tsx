@@ -11,8 +11,8 @@ const WhatsAppIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const phoneNumber = "+971501234567";
-const whatsappNumber = "971501234567";
+const phoneNumber = "+971543912231";
+const whatsappNumber = "971543912231";
 
 const FloatingContactButtons = () => {
   return (

@@ -104,7 +104,7 @@ const Footer = () => {
         {/* Contact Info — horizontal strip */}
         <div className="border-t border-primary-foreground/15 py-6">
             <div className="flex flex-wrap gap-x-10 gap-y-2 justify-center text-center">
-              <a href="tel:+971501234567" className="text-sm text-primary-foreground/55 transition-colors duration-200 hover:text-gold">+971 50 123 4567</a>
+              <a href="tel:+971543912231" className="text-sm text-primary-foreground/55 transition-colors duration-200 hover:text-gold">+971 54 391 2231</a>
               <a href="mailto:info@keegoproperties.com" className="text-sm text-primary-foreground/55 transition-colors duration-200 hover:text-gold">info@keegoproperties.com</a>
               <Link to="/contact" className="text-sm text-primary-foreground/55 transition-colors duration-200 hover:text-gold">Business Bay, Dubai, UAE</Link>
             </div>

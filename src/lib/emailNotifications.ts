@@ -16,7 +16,7 @@
 import { addDoc, collection, Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
-const TO_EMAIL = "info@keegoproperties.in";
+const TO_EMAIL = "info@keegoproperties.com";
 
 export interface NotificationPayload {
   source: "property_enquiry" | "contact_form";

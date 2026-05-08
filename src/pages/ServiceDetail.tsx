@@ -8,8 +8,8 @@ import { Button } from "@/components/ui/button";
 import { db } from "@/lib/firebase";
 import { defaultServices, iconMap, serviceContentMap, ServiceItem, ServicePageContent } from "@/lib/servicesData";
 
-const callHref = "tel:+971501234567";
-const whatsappHref = "https://wa.me/971501234567";
+const callHref = "tel:+971543912231";
+const whatsappHref = "https://wa.me/971543912231";
 
 const ServiceDetail = () => {
   const { id } = useParams();
@@ -131,10 +131,10 @@ const ServiceDetail = () => {
 
             <div className="mt-8 flex flex-wrap gap-3">
               <Button asChild className="rounded-full bg-gold px-7 py-2.5 text-navy-dark font-semibold hover:bg-gold/90">
-                <a href={`tel:+971501234567`}><Phone className="mr-2 h-4 w-4" />Call Now</a>
+                <a href={callHref}><Phone className="mr-2 h-4 w-4" />Call Now</a>
               </Button>
               <Button asChild variant="outline" className="rounded-full border-white/30 bg-white/10 px-7 text-white backdrop-blur-sm hover:bg-white/20">
-                <a href="https://wa.me/971501234567" target="_blank" rel="noopener noreferrer">
+                <a href={whatsappHref} target="_blank" rel="noopener noreferrer">
                   <MessageCircle className="mr-2 h-4 w-4" />WhatsApp Us
                 </a>
               </Button>
@@ -263,10 +263,10 @@ const ServiceDetail = () => {
                   </p>
                   <div className="flex flex-col gap-3">
                     <Button asChild className="w-full rounded-full bg-gold font-semibold text-navy-dark hover:bg-gold/90">
-                      <a href="tel:+971501234567"><Phone className="mr-2 h-4 w-4" />Call Now</a>
+                      <a href={callHref}><Phone className="mr-2 h-4 w-4" />Call Now</a>
                     </Button>
                     <Button asChild variant="outline" className="w-full rounded-full border-white/25 bg-white/10 text-white hover:bg-white/20">
-                      <a href="https://wa.me/971501234567" target="_blank" rel="noopener noreferrer">
+                      <a href={whatsappHref} target="_blank" rel="noopener noreferrer">
                         <MessageCircle className="mr-2 h-4 w-4" />WhatsApp Us
                       </a>
                     </Button>

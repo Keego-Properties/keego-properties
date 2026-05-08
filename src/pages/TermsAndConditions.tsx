@@ -165,7 +165,7 @@ const sections = [
         body: "If you have any questions about these Terms and Conditions, please contact us:",
         list: [
           { term: "By email", def: "info@keegoproperties.com" },
-          { term: "By phone", def: "+971 50 123 4567" },
+          { term: "By phone", def: "+971 54 391 2231" },
           { term: "By address", def: "Business Bay, Dubai, UAE" },
         ],
       },

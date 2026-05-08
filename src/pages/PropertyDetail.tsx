@@ -479,7 +479,7 @@ const PropertyDetail = () => {
                 <p className="font-serif text-3xl font-bold text-[#D4AF37] mb-5">{property.price}</p>
                 <div className="space-y-3">
                   <a
-                    href="tel:+971000000000"
+                    href="tel:+971543912231"
                     className="flex items-center justify-center gap-2 w-full bg-[#D4AF37] hover:bg-[#c9a72f] text-[#0b1628] font-semibold py-3 rounded-xl transition-colors text-sm shadow-[0_4px_16px_rgba(212,175,55,0.3)]"
                   >
                     <Phone className="w-4 h-4" /> Call Now

@@ -48,8 +48,8 @@ const Contact = () => {
   };
 
   const contactInfo = [
-    { icon: Phone, label: "Phone", value: "+971 50 123 4567", href: "tel:+971501234567" },
-    { icon: Mail, label: "Email", value: "info@keegoproperties.in", href: "mailto:info@keegoproperties.in" },
+    { icon: Phone, label: "Phone", value: "+971 54 391 2231", href: "tel:+971543912231" },
+    { icon: Mail, label: "Email", value: "info@keegoproperties.com", href: "mailto:info@keegoproperties.com" },
     { icon: MapPin, label: "Office", value: "Business Bay, Dubai, UAE" },
     { icon: Clock, label: "Hours", value: "Sun-Thu: 9AM-6PM" },
   ];
