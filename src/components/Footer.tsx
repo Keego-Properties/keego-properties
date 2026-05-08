@@ -6,6 +6,7 @@ import {
   Send,
 } from "lucide-react";
 import logoImage from "@/assets/KeeGo Logo.png";
+import qrCode from "@/assets/qr-code.png";
 
 const XIcon = ({ className }: { className?: string }) => (
   <svg
@@ -49,7 +50,7 @@ const Footer = () => {
   return (
     <footer className="bg-black pt-16 pb-8">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 gap-10 pb-12 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_1fr]">
+        <div className="grid grid-cols-1 gap-10 pb-12 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_auto_1fr]">
           <div className="flex flex-col justify-start">
             <img src={logoImage} alt="KeeGo Properties" className="h-48 w-auto object-contain" />
           </div>
@@ -98,6 +99,12 @@ const Footer = () => {
                 <Send className="h-3.5 w-3.5" />
               </button>
             </form>
+          </div>
+
+          {/* QR Code */}
+          <div className="flex flex-col items-center justify-start gap-2">
+            <img src={qrCode} alt="Scan to visit Keego Properties" className="w-28 h-28 rounded-lg border border-primary-foreground/20 bg-white p-1 object-contain" />
+            <span className="text-xs text-primary-foreground/45 text-center leading-snug">Scan and verify</span>
           </div>
         </div>
 
