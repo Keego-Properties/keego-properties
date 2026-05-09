@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Search, SlidersHorizontal } from "lucide-react";
+import { Search, SlidersHorizontal, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 import heroImage from "@/assets/hero-dubai.jpg";
 import communityMarinaImage from "@/assets/community-marina.jpg";
 import communityDowntownImage from "@/assets/community-downtown.jpg";
@@ -25,24 +27,40 @@ const slides = [
 
 const FALLBACK_DURATION = 5000; // ms to display image-only slides before advancing
 
+interface Community {
+  id: string;
+  name: string;
+}
+
 const HeroSection = () => {
-  const [activeTab, setActiveTab] = useState("buy");
   const [propertyType, setPropertyType] = useState("");
   const [bedrooms, setBedrooms] = useState("");
-  const [searchText, setSearchText] = useState("");
+  const [community, setCommunity] = useState("");
+  const [communities, setCommunities] = useState<Community[]>([]);
   const [currentSlide, setCurrentSlide] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
   const fallbackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const tabs = [
-    { label: "Buy", value: "buy" },
-    { label: "Rent", value: "rent" },
-    { label: "Off-Plan", value: "offplan" },
-    { label: "Sell", value: "sell" },
-  ];
   const navigate = useNavigate();
 
   const goToNext = useCallback(() => {
     setCurrentSlide((prev) => (prev + 1) % slides.length);
+  }, []);
+
+  useEffect(() => {
+    const fetchCommunities = async () => {
+      try {
+        const snap = await getDocs(collection(db, "communities"));
+        const fetched = snap.docs
+          .map((doc) => ({ id: doc.id, ...(doc.data() as Omit<Community, "id">) }))
+          .filter((item) => Boolean(item.name))
+          .sort((a, b) => a.name.localeCompare(b.name));
+        setCommunities(fetched);
+      } catch (error) {
+        console.error("Error fetching communities:", error);
+      }
+    };
+
+    fetchCommunities();
   }, []);
 
   useEffect(() => {
@@ -63,17 +81,10 @@ const HeroSection = () => {
   }, [currentSlide, goToNext]);
 
   const handleSearch = () => {
-    if (activeTab === "sell") {
-      navigate("/list-property");
-      return;
-    }
     const params = new URLSearchParams();
-    if (activeTab === "buy") params.set("type", "buy");
-    else if (activeTab === "rent") params.set("type", "rent");
-    else if (activeTab === "offplan") { params.set("type", "buy"); params.set("status", "off-plan"); }
     if (propertyType) params.set("category", propertyType);
     if (bedrooms) params.set("beds", bedrooms);
-    if (searchText.trim()) params.set("search", searchText.trim());
+    if (community) params.set("search", community);
     navigate(`/properties?${params.toString()}`);
   };
 
@@ -115,25 +126,6 @@ const HeroSection = () => {
         </p>
 
         <div className="max-w-4xl mx-auto animate-fade-in" style={{ animationDelay: "0.2s" }}>
-          {/* Tabs */}
-          <div className="flex justify-center mb-4">
-            <div className="inline-flex bg-white/10 backdrop-blur-sm rounded-full p-1 gap-0.5">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.value}
-                  onClick={() => setActiveTab(tab.value)}
-                  className={`px-6 py-2.5 rounded-full text-sm font-semibold tracking-wide transition-all duration-300 ${
-                    activeTab === tab.value
-                      ? "bg-white text-navy-dark shadow-lg"
-                      : "text-white/80 hover:text-white hover:bg-white/10"
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
           {/* Search bar */}
           <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
             <div className="flex items-stretch">
@@ -143,18 +135,21 @@ const HeroSection = () => {
                   <label className="block text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-0.5 leading-none">
                     Property Type
                   </label>
-                  <select
-                    value={propertyType}
-                    onChange={(e) => setPropertyType(e.target.value)}
-                    className="w-full bg-transparent text-foreground text-sm font-medium outline-none cursor-pointer py-1 pr-6 appearance-none"
-                  >
-                    <option value="">Any Type</option>
-                    <option value="Apartments">Apartments</option>
-                    <option value="Villas">Villas</option>
-                    <option value="Town House">Town House</option>
-                    <option value="Penthouse">Penthouse</option>
-                    <option value="Office">Office</option>
-                  </select>
+                  <div className="relative">
+                    <select
+                      value={propertyType}
+                      onChange={(e) => setPropertyType(e.target.value)}
+                      className="w-full bg-transparent text-center [text-align-last:center] text-foreground text-sm font-medium outline-none cursor-pointer py-1 pr-6 appearance-none"
+                    >
+                      <option value="">Any Type</option>
+                      <option value="Apartments">Apartments</option>
+                      <option value="Villas">Villas</option>
+                      <option value="Town House">Town House</option>
+                      <option value="Penthouse">Penthouse</option>
+                      <option value="Office">Office</option>
+                    </select>
+                    <ChevronDown className="pointer-events-none absolute right-0 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  </div>
                 </div>
               </div>
 
@@ -164,43 +159,53 @@ const HeroSection = () => {
                   <label className="block text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-0.5 leading-none">
                     Bedrooms
                   </label>
-                  <select
-                    value={bedrooms}
-                    onChange={(e) => setBedrooms(e.target.value)}
-                    className="w-full bg-transparent text-foreground text-sm font-medium outline-none cursor-pointer py-1 pr-6 appearance-none"
-                  >
-                    <option value="">Any</option>
-                    <option value="0">Studio</option>
-                    <option value="1">1 BR</option>
-                    <option value="2">2 BR</option>
-                    <option value="3">3 BR</option>
-                    <option value="4">4 BR</option>
-                    <option value="5">5+ BR</option>
-                  </select>
+                  <div className="relative">
+                    <select
+                      value={bedrooms}
+                      onChange={(e) => setBedrooms(e.target.value)}
+                      className="w-full bg-transparent text-center [text-align-last:center] text-foreground text-sm font-medium outline-none cursor-pointer py-1 pr-6 appearance-none"
+                    >
+                      <option value="">Any</option>
+                      <option value="0">Studio</option>
+                      <option value="1">1 BR</option>
+                      <option value="2">2 BR</option>
+                      <option value="3">3 BR</option>
+                      <option value="4">4 BR</option>
+                      <option value="5">5+ BR</option>
+                    </select>
+                    <ChevronDown className="pointer-events-none absolute right-0 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  </div>
                 </div>
               </div>
 
-              {/* Location / keyword */}
+              {/* Community */}
               <div className="flex-[2] flex items-center border-r border-gray-100 px-4 py-1 min-w-0">
                 <div className="w-full">
                   <label className="block text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-0.5 leading-none">
-                    Location
+                    Community
                   </label>
-                  <input
-                    type="text"
-                    value={searchText}
-                    onChange={(e) => setSearchText(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                    placeholder="Community or Building..."
-                    className="w-full bg-transparent text-foreground text-sm font-medium outline-none placeholder:text-muted-foreground/60 py-1"
-                  />
+                  <div className="relative">
+                    <select
+                      value={community}
+                      onChange={(e) => setCommunity(e.target.value)}
+                      className="w-full bg-transparent text-center [text-align-last:center] text-foreground text-sm font-medium outline-none cursor-pointer py-1 pr-6 appearance-none"
+                    >
+                      <option value="">Any Community</option>
+                      {communities.map((item) => (
+                        <option key={item.id} value={item.name}>
+                          {item.name}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="pointer-events-none absolute right-0 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  </div>
                 </div>
               </div>
 
               {/* Search button */}
               <button
                 onClick={handleSearch}
-                className="flex items-center gap-2 bg-gold hover:bg-gold/90 text-navy-dark font-bold text-sm px-7 py-5 transition-colors duration-200 shrink-0"
+                className="flex items-center gap-2 rounded-full bg-gold hover:bg-gold/90 text-navy-dark font-bold text-sm px-7 py-5 transition-colors duration-200 shrink-0"
               >
                 <Search className="w-5 h-5" />
                 <span className="hidden sm:inline">Search</span>
@@ -216,19 +221,6 @@ const HeroSection = () => {
               </button>
             </div>
 
-            {/* Quick chips */}
-            <div className="flex items-center gap-2 px-4 py-2.5 border-t border-gray-50 flex-wrap">
-              <span className="text-[11px] text-muted-foreground font-medium">Popular:</span>
-              {["Downtown Dubai", "Dubai Marina", "Palm Jumeirah", "Business Bay", "JVC"].map((loc) => (
-                <button
-                  key={loc}
-                  onClick={() => { setSearchText(loc); }}
-                  className="text-[11px] px-3 py-1 rounded-full bg-muted hover:bg-gold/10 hover:text-gold text-muted-foreground transition-colors duration-150"
-                >
-                  {loc}
-                </button>
-              ))}
-            </div>
           </div>
         </div>
       </div>
