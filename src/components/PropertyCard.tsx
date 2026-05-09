@@ -1,10 +1,8 @@
 import { Bed, Bath, Maximize, MapPin, ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const generateSlug = (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-
 interface PropertyCardProps {
-  id?: string;
+  id: string;
   image: string;
   title: string;
   price: string;
@@ -17,10 +15,9 @@ interface PropertyCardProps {
 }
 
 const PropertyCard = ({ id, image, title, price, location, beds, baths, area, type, category }: PropertyCardProps) => {
-  const propertyPath = id ?? generateSlug(title);
   return (
     <Link
-      to={`/property/${propertyPath}`}
+      to={`/property/${id}`}
       className="block group relative bg-card rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-white/10"
     >
       {/* Image */}

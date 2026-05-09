@@ -6,7 +6,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PropertyCard from "@/components/PropertyCard";
 import PropertyEnquiryForm from "@/components/PropertyEnquiryForm";
-import { Heart, Bed, Bath, Maximize, MapPin, Phone, Mail, Share2, ChevronLeft, ChevronRight, Check, Building, Calendar, Layers, Car, Trees, Dumbbell, Waves, ShieldCheck, Users, Camera } from "lucide-react";
+import { Heart, Bed, Bath, Maximize, MapPin, Phone, MessageCircle, Share2, ChevronLeft, ChevronRight, Check, Building, Calendar, Layers, Car, Trees, Dumbbell, Waves, ShieldCheck, Users, Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 
@@ -173,15 +173,30 @@ const PropertyDetail = () => {
   const nextImage = () => setCurrentImage((prev) => (prev + 1) % images.length);
   const prevImage = () => setCurrentImage((prev) => (prev - 1 + images.length) % images.length);
 
-  const shareProperty = () => {
-    navigator.share?.({
-      title: property.title,
-      text: `Check out this property: ${property.title}`,
-      url: window.location.href,
-    }).catch(() => {
-      navigator.clipboard.writeText(window.location.href);
-      toast({ title: "Link copied to clipboard" });
-    });
+  const firstMember = property.assignedStaff?.length
+    ? staff.find((s) => s.id === property.assignedStaff![0])
+    : null;
+  const contactPhone = (firstMember?.phone || "+971543912231").trim();
+  const callHref = `tel:${contactPhone.replace(/\s+/g, "")}`;
+  const whatsappNumber = contactPhone.replace(/[^\d]/g, "") || "971543912231";
+  const whatsappHref = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`Hi, I'm interested in ${property.title}`)}`;
+
+  const shareProperty = async () => {
+    const currentPropertyUrl = window.location.href;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          url: currentPropertyUrl,
+        });
+        return;
+      } catch {
+        // Fall back to copying the URL if native share is canceled or fails.
+      }
+    }
+
+    await navigator.clipboard.writeText(currentPropertyUrl);
+    toast({ title: "Link copied to clipboard" });
   };
 
   return (
@@ -468,54 +483,70 @@ const PropertyDetail = () => {
             {/* Right: Sticky Sidebar */}
             <div className="space-y-6">
               {/* Price card */}
-              <div className="bg-[#0b1628] rounded-2xl p-6 shadow-[0_8px_32px_rgba(11,22,40,0.2)]">
+              <div className="relative overflow-hidden bg-[#0b1628] rounded-2xl p-6 shadow-[0_8px_32px_rgba(11,22,40,0.2)]">
+                <div className="absolute -right-12 -top-12 h-36 w-36 rounded-full bg-[#D4AF37]/10 blur-2xl" />
                 <div
                   className="absolute top-0 left-0 right-0 h-px rounded-t-2xl"
                   style={{ background: "linear-gradient(90deg, transparent, rgba(212,175,55,0.6), transparent)" }}
                 />
                 {/* Agent avatar */}
-                {(() => {
-                  const firstMember = property.assignedStaff?.length
-                    ? staff.find((s) => s.id === property.assignedStaff![0])
-                    : null;
-                  return (
-                    <div className="flex items-center gap-3 mb-5 pb-5 border-b border-white/10">
-                      <div className="relative shrink-0">
-                        <img
-                          src={firstMember?.photo || "https://ui-avatars.com/api/?name=Keego+Agent&background=D4AF37&color=0b1628&bold=true"}
-                          alt={firstMember?.name || "Keego Agent"}
-                          className="w-12 h-12 rounded-full object-cover border-2 border-[#D4AF37]/40"
-                        />
-                        <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-400 border-2 border-[#0b1628]" />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-white font-semibold text-sm leading-tight truncate">
-                          {firstMember?.name || "Keego Properties"}
-                        </p>
-                        <p className="text-white/45 text-xs">{firstMember?.role || "Property Specialist"}</p>
-                        <p className="text-emerald-400 text-[10px] font-medium mt-0.5">● Available now</p>
-                      </div>
-                    </div>
-                  );
-                })()}
-                <p className="text-white/50 text-xs uppercase tracking-widest mb-1">
-                  {property.type === "sale" ? "Sale Price" : "Monthly Rent"}
-                </p>
-                <p className="font-serif text-3xl font-bold text-[#D4AF37] mb-5">{property.price}</p>
-                <div className="space-y-3">
+                <div className="relative z-10 flex items-center gap-3 mb-5 pb-5 border-b border-white/10">
+                  <div className="relative shrink-0">
+                    <img
+                      src={firstMember?.photo || "https://ui-avatars.com/api/?name=Keego+Agent&background=D4AF37&color=0b1628&bold=true"}
+                      alt={firstMember?.name || "Keego Agent"}
+                      className="w-14 h-14 rounded-full object-cover border-2 border-[#D4AF37]/40"
+                    />
+                    <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-400 border-2 border-[#0b1628]" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-white font-semibold text-sm leading-tight truncate">
+                      {firstMember?.name || "Keego Properties"}
+                    </p>
+                    <p className="text-white/45 text-xs">{firstMember?.role || "Property Specialist"}</p>
+                    <p className="text-emerald-400 text-[10px] font-medium mt-0.5">● Available now</p>
+                  </div>
+                </div>
+                <div className="space-y-3 relative z-10">
                   <a
-                    href="tel:+971543912231"
+                    href={callHref}
                     className="flex items-center justify-center gap-2 w-full bg-[#D4AF37] hover:bg-[#c9a72f] text-[#0b1628] font-semibold py-3 rounded-xl transition-colors text-sm shadow-[0_4px_16px_rgba(212,175,55,0.3)]"
                   >
                     <Phone className="w-4 h-4" /> Call Now
                   </a>
                   <a
-                    href={`mailto:info@keegoproperties.com?subject=Enquiry: ${encodeURIComponent(property.title)}`}
+                    href={whatsappHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="flex items-center justify-center gap-2 w-full border border-white/20 hover:border-white/40 text-white hover:text-white font-medium py-3 rounded-xl transition-colors text-sm"
                   >
-                    <Mail className="w-4 h-4" /> Send Email
+                    <MessageCircle className="w-4 h-4" /> WhatsApp
                   </a>
+                  <button
+                    onClick={shareProperty}
+                    className="flex items-center justify-center gap-2 w-full border border-white/20 hover:border-white/40 text-white hover:text-white font-medium py-3 rounded-xl transition-colors text-sm"
+                  >
+                    <Share2 className="w-4 h-4" /> Share Property
+                  </button>
+                  <p className="text-center text-[11px] text-white/45 pt-1">
+                    Direct line: {contactPhone}
+                  </p>
                 </div>
+              </div>
+
+              {/* Existing CTA moved below contact card */}
+              <div className="bg-white rounded-2xl border border-slate-100 p-6 shadow-[0_2px_16px_rgba(0,0,0,0.04)]">
+                <p className="text-[10px] font-bold tracking-widest uppercase text-[#D4AF37] mb-2">Need More Details?</p>
+                <h3 className="font-serif text-xl font-bold text-[#0b1628] mb-3">Get Personalized Assistance</h3>
+                <p className="text-slate-500 text-sm leading-relaxed">
+                  Request a callback and our specialists will guide you through pricing, financing, and availability.
+                </p>
+                <a
+                  href={callHref}
+                  className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[#0b1628] hover:text-[#D4AF37] transition-colors"
+                >
+                  <Phone className="w-4 h-4" /> Speak with an agent
+                </a>
               </div>
 
               {/* Assigned Staff */}
@@ -544,14 +575,6 @@ const PropertyDetail = () => {
                                 className="w-8 h-8 rounded-lg bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20 flex items-center justify-center text-[#D4AF37] transition-colors"
                               >
                                 <Phone className="w-3.5 h-3.5" />
-                              </a>
-                            )}
-                            {member.email && (
-                              <a
-                                href={`mailto:${member.email}`}
-                                className="w-8 h-8 rounded-lg bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20 flex items-center justify-center text-[#D4AF37] transition-colors"
-                              >
-                                <Mail className="w-3.5 h-3.5" />
                               </a>
                             )}
                           </div>
