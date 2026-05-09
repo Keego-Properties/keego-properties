@@ -121,8 +121,17 @@ const Footer = () => {
           <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
             <div className="flex items-center gap-3">
               <img src={logoImage} alt="KeeGo Properties" className="h-7 w-auto rounded-md object-contain" />
-              <span className="text-xs text-primary-foreground/45">
-                Copyright © 2026 KeeGo Properties. All rights reserved.
+              <span className="text-xs text-center text-primary-foreground/45">
+                Copyright © 2026 KeeGo Properties. All rights reserved. <br></br>Design and Developed by{" "}
+                <a
+                  href="https://www.mentecode.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary-foreground/70 underline underline-offset-2 transition-colors hover:text-gold"
+                >
+                  Mentecode
+                </a>
+                .
               </span>
             </div>
             <div className="flex items-center gap-3">
