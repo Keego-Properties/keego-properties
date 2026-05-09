@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, Phone, ChevronDown, ArrowUpRight, Building2, MapPin, Sparkles, MessageSquareHeart, ListPlus, PhoneCall, Home } from "lucide-react";
+import { Menu, X, Phone, ChevronDown, ArrowUpRight, Building2, MapPin, Sparkles, MessageSquareHeart, ListPlus, PhoneCall } from "lucide-react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import logoImage from "@/assets/eagb.png";
@@ -270,7 +270,6 @@ const Navbar = () => {
 
   const topLinks = [
     { name: "Your Voice Matters", path: "/your-voice-matters", icon: MessageSquareHeart },
-    { name: "Holiday Homes", path: "/holiday-homes", icon: Home },
     { name: "List Property", path: "/list-property", highlight: true, icon: ListPlus },
   ];
 
@@ -303,7 +302,11 @@ const Navbar = () => {
   const isServicesActive = location.pathname === "/services";
   const isCommunitiesActive = location.pathname === "/communities" || location.pathname.startsWith("/community/");
   const isDevelopersActive = location.pathname === "/developers";
-  const isMoreActive = location.pathname === "/about" || location.pathname === "/careers";
+  const isMoreActive =
+    location.pathname === "/about" ||
+    location.pathname === "/careers" ||
+    location.pathname === "/holiday-homes" ||
+    location.pathname === "/contact";
   const openMegaMenuType = buyMenuOpen ? "buy" : rentMenuOpen ? "rent" : null;
 
   return (
@@ -497,6 +500,20 @@ const Navbar = () => {
                     className="block rounded-lg px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
                   >
                     Careers
+                  </Link>
+                  <Link
+                    to="/holiday-homes"
+                    onClick={() => setMoreMenuOpen(false)}
+                    className="block rounded-lg px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
+                  >
+                    Holiday Homes
+                  </Link>
+                  <Link
+                    to="/contact"
+                    onClick={() => setMoreMenuOpen(false)}
+                    className="block rounded-lg px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
+                  >
+                    Contact
                   </Link>
                 </div>
               )}
