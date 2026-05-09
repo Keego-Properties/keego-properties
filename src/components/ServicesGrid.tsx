@@ -1,4 +1,5 @@
 import { Home, TrendingDown, MapPin, CreditCard, Shield, Key, Building, Truck, Train, Eye } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const services = [
   { icon: Home, label: "Newly Constructed", desc: "Brand new builds" },
@@ -67,8 +68,10 @@ const ServicesGrid = () => {
 };
 
 const ServiceCard = ({ service }: { service: typeof services[number] }) => (
-  <div
-    className="flex-shrink-0 w-[180px] rounded-2xl p-5 text-center select-none"
+  <Link
+    to="/contact"
+    aria-label={`Contact us about ${service.label}`}
+    className="flex-shrink-0 w-[180px] rounded-2xl p-5 text-center select-none transition-transform duration-200 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-gold/50"
     style={{
       background: "linear-gradient(160deg, #f5f2ec 0%, #e8e3d8 100%)",
       border: "1px solid rgba(0,0,0,0.07)",
@@ -83,7 +86,7 @@ const ServiceCard = ({ service }: { service: typeof services[number] }) => (
     </div>
     <p className="text-sm font-bold text-[#1a2744] leading-tight mb-1">{service.label}</p>
     <p className="text-[11px] text-slate-500 tracking-wide">{service.desc}</p>
-  </div>
+  </Link>
 );
 
 export default ServicesGrid;
