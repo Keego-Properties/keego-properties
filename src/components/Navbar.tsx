@@ -262,7 +262,8 @@ const Navbar = () => {
     { name: "Developers", path: "/developers", mobileOnly: true },
     { name: "Services", path: "/services", mobileOnly: true },
     { name: "Home", path: "/" },
-    { name: "Communities", path: "/communities", mobileOnly: true },
+    { name: "Sell", path: "/list-property" },
+    { name: "Community", path: "/communities", mobileOnly: true },
     { name: "About", path: "/about" },
     { name: "Careers", path: "/careers" },
   ];
@@ -350,6 +351,17 @@ const Navbar = () => {
           </Link>
 
           <div className="hidden lg:flex items-center gap-5">
+            <Link
+              to="/"
+              className={`text-sm font-medium transition-colors duration-200 pb-1 ${
+                isActive("/")
+                  ? "text-gold"
+                  : "text-slate-700 hover:text-slate-900"
+              }`}
+            >
+              Home
+            </Link>
+
             <div
               className="flex"
               onMouseEnter={handleBuyMouseEnter}
@@ -389,14 +401,14 @@ const Navbar = () => {
             </div>
 
             <Link
-              to="/"
+              to="/list-property"
               className={`text-sm font-medium transition-colors duration-200 pb-1 ${
-                isActive("/")
+                isActive("/list-property")
                   ? "text-gold"
                   : "text-slate-700 hover:text-slate-900"
               }`}
             >
-              Home
+              Sell
             </Link>
 
             <div
@@ -432,7 +444,7 @@ const Navbar = () => {
                     : "text-slate-700 shadow-[0_2px_0_0_transparent] hover:text-slate-900 hover:shadow-[0_2px_0_0_#FFD700]"
                 }`}
               >
-                Communities
+                Community
                 <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${communitiesMenuOpen ? "rotate-180" : ""}`} />
               </button>
             </div>
@@ -455,28 +467,6 @@ const Navbar = () => {
                 <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${developersMenuOpen ? "rotate-180" : ""}`} />
               </button>
             </div>
-
-            {navLinks
-              .filter(
-                (link) =>
-                  !link.mobileOnly &&
-                  link.path !== "/" &&
-                  link.path !== "/about" &&
-                  link.path !== "/careers",
-              )
-              .map((link) => (
-              <Link
-                key={link.name}
-                to={link.path}
-                className={`text-sm font-medium transition-colors duration-200 pb-1 ${
-                  isActive(link.path)
-                    ? "text-gold"
-                    : "text-slate-700 hover:text-slate-900"
-                }`}
-              >
-                {link.name}
-              </Link>
-            ))}
 
             <div className="relative">
               <button
