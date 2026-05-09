@@ -338,15 +338,17 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center justify-around h-20 py-3">
-          <Link to="/" className="flex items-center gap-1">
+          <Link to="/" className="flex items-end gap-1">
             <img src={logoImage} alt="KeeGo Properties" className="h-16 w-auto rounded-xl object-contain" />
             <div>
-              <span className="font-serif text-xl font-bold text-slate-900">
-                KeeGo
-              </span>
-              <span className="font-serif text-xl font-bold text-gold ml-1">
-                Properties
-              </span>
+              <div className="font-brand leading-none tracking-tight">
+                <span className="text-xl font-extrabold text-slate-900">
+                  KeeGo
+                </span>
+                <span className="ml-1 text-xl font-bold text-gold">
+                  Properties
+                </span>
+              </div>
               <p className="text-slate-500 text-[10px] tracking-[0.2em] uppercase">
                 Dubai & Beyond
               </p>
