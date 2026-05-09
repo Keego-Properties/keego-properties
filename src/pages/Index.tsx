@@ -9,10 +9,12 @@ import ReviewsSection from "@/components/ReviewsSection";
 import CTASection from "@/components/CTASection";
 import PromoBanner from "@/components/PromoBanner";
 import Footer from "@/components/Footer";
+import FirstVisitCallbackPopup from "@/components/FirstVisitCallbackPopup";
 
 const Index = () => {
   return (
     <div className="min-h-screen">
+      <FirstVisitCallbackPopup />
       <Navbar />
       <HeroSection />
       <FeaturedProperties />

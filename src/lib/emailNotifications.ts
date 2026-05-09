@@ -19,11 +19,11 @@ import { db } from "@/lib/firebase";
 const TO_EMAIL = "info@keegoproperties.com";
 
 export interface NotificationPayload {
-  source: "property_enquiry" | "contact_form";
+  source: "property_enquiry" | "contact_form" | "callback_popup";
   subject: string;
   message: string;
   customerName: string;
-  customerEmail: string;
+  customerEmail?: string;
   phone?: string;
   budget?: string;
   propertyName?: string;
@@ -41,12 +41,21 @@ export const sendEnquiryNotification = async (
   payload: NotificationPayload,
 ): Promise<NotificationResult> => {
   try {
+    const sourceTitle =
+      payload.source === "property_enquiry"
+        ? "Property Enquiry"
+        : payload.source === "callback_popup"
+        ? "Callback Request"
+        : "Contact Message";
+
     const rows = [
       payload.source === "property_enquiry"
         ? `<tr><th>Property</th><td>${payload.propertyName || "—"}</td></tr>`
         : "",
       `<tr><th>Name</th><td>${payload.customerName}</td></tr>`,
-      `<tr><th>Email</th><td><a href="mailto:${payload.customerEmail}">${payload.customerEmail}</a></td></tr>`,
+      payload.customerEmail
+        ? `<tr><th>Email</th><td><a href="mailto:${payload.customerEmail}">${payload.customerEmail}</a></td></tr>`
+        : `<tr><th>Email</th><td>—</td></tr>`,
       `<tr><th>Phone</th><td>${payload.phone || "—"}</td></tr>`,
       payload.budget ? `<tr><th>Budget</th><td>AED ${payload.budget}</td></tr>` : "",
       payload.lookingTo ? `<tr><th>Looking to</th><td>${payload.lookingTo}</td></tr>` : "",
@@ -58,7 +67,7 @@ export const sendEnquiryNotification = async (
 
     const html = `
       <div style="font-family:sans-serif;max-width:600px;margin:auto;padding:24px;border:1px solid #e5e7eb;border-radius:8px;">
-        <h2 style="color:#1a2744;margin-bottom:4px;">New ${payload.source === "contact_form" ? "Contact Message" : "Property Enquiry"}</h2>
+        <h2 style="color:#1a2744;margin-bottom:4px;">New ${sourceTitle}</h2>
         <p style="color:#6b7280;margin-top:0;">Submitted via Keego Properties website</p>
         <table style="width:100%;border-collapse:collapse;font-size:14px;">
           <tbody style="color:#111827;">
@@ -72,7 +81,7 @@ export const sendEnquiryNotification = async (
 
     await addDoc(collection(db, "mail"), {
       to: [TO_EMAIL],
-      replyTo: payload.customerEmail,
+      ...(payload.customerEmail ? { replyTo: payload.customerEmail } : {}),
       message: {
         subject: payload.subject,
         html,
