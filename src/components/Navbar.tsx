@@ -613,27 +613,14 @@ const Navbar = () => {
               ) : (
                 <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
                   {developers.map((developer) => (
-                    developer.website ? (
-                      <a
-                        key={developer.id}
-                        href={developer.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
-                      >
-                        <Building2 className="h-4 w-4 text-gold" />
-                        <span>{developer.name}</span>
-                      </a>
-                    ) : (
-                      <Link
-                        key={developer.id}
-                        to="/developers"
-                        className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
-                      >
-                        <Building2 className="h-4 w-4 text-gold" />
-                        <span>{developer.name}</span>
-                      </Link>
-                    )
+                    <Link
+                      key={developer.id}
+                      to={`/developers/${developer.id}`}
+                      className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
+                    >
+                      <Building2 className="h-4 w-4 text-gold" />
+                      <span>{developer.name}</span>
+                    </Link>
                   ))}
                 </div>
               )}

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
+import { Link } from "react-router-dom";
 import { db } from "@/lib/firebase";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -143,8 +144,9 @@ const Developers = () => {
                 ];
                 const bg = palettes[i % palettes.length];
                 return (
-                  <div
+                  <Link
                     key={dev.id}
+                    to={`/developers/${dev.id}`}
                     className={`group relative ${bg} aspect-[4/3] flex flex-col items-center justify-center p-8 overflow-hidden cursor-pointer`}
                   >
                     {/* logo */}
@@ -161,7 +163,7 @@ const Developers = () => {
                         </>
                       )}
                     </div>
-                  </div>
+                  </Link>
                 );
               })}
             </div>

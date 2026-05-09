@@ -19,6 +19,7 @@ import ListProperty from "./pages/ListProperty.tsx";
 import PropertyValuation from "./pages/PropertyValuation.tsx";
 import YourVoiceMatters from "./pages/YourVoiceMatters.tsx";
 import Developers from "./pages/Developers.tsx";
+import DeveloperDetail from "./pages/DeveloperDetail";
 import Services from "./pages/Services.tsx";
 import ServiceDetail from "./pages/ServiceDetail.tsx";
 import NotFound from "./pages/NotFound.tsx";
@@ -77,6 +78,7 @@ const App = () => (
             <Route path="/property-valuation" element={<PropertyValuation />} />
             <Route path="/your-voice-matters" element={<YourVoiceMatters />} />
             <Route path="/developers" element={<Developers />} />
+            <Route path="/developers/:id" element={<DeveloperDetail />} />
             <Route path="/services" element={<Services />} />
             <Route path="/services/:id" element={<ServiceDetail />} />
             <Route path="/careers" element={<Careers />} />
