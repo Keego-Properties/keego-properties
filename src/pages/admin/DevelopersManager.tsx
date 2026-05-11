@@ -15,6 +15,7 @@ interface Developer {
   description: string;
   logo: string;
   website: string;
+  highlights?: string[];
   createdAt: Timestamp;
 }
 
@@ -23,6 +24,7 @@ type FormState = {
   description: string;
   logo: string;
   website: string;
+  highlights: string;
   logoFile: File | null;
 };
 
@@ -31,6 +33,7 @@ const emptyForm: FormState = {
   description: "",
   logo: "",
   website: "",
+  highlights: "",
   logoFile: null,
 };
 
@@ -72,6 +75,10 @@ const DevelopersManager = () => {
         description: form.description,
         logo: logoUrl,
         website: form.website,
+        highlights: form.highlights
+          .split(",")
+          .map((item) => item.trim())
+          .filter(Boolean),
         updatedAt: Timestamp.now(),
       };
 
@@ -102,6 +109,7 @@ const DevelopersManager = () => {
       description: dev.description || "",
       logo: dev.logo || "",
       website: dev.website || "",
+      highlights: dev.highlights?.join(", ") || "",
       logoFile: null,
     });
     setEditId(dev.id);
@@ -166,6 +174,14 @@ const DevelopersManager = () => {
                 onChange={(e) => setForm({ ...form, website: e.target.value })}
                 placeholder="https://example.com"
                 type="url"
+              />
+            </div>
+            <div>
+              <Label>Developer Highlights (comma separated)</Label>
+              <Input
+                value={form.highlights}
+                onChange={(e) => setForm({ ...form, highlights: e.target.value })}
+                placeholder="Trusted developer, Premium communities, Flexible payment plans"
               />
             </div>
             <div>

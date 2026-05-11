@@ -12,7 +12,23 @@ interface Developer {
   description?: string;
   logo?: string;
   website?: string;
+  highlights?: string[] | string;
 }
+
+const normalizeHighlights = (value: Developer["highlights"]) => {
+  if (Array.isArray(value)) {
+    return value.map((item) => item.trim()).filter(Boolean);
+  }
+
+  if (typeof value === "string") {
+    return value
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }
+
+  return [];
+};
 
 const DeveloperDetail = () => {
   const { id } = useParams();
@@ -84,6 +100,8 @@ const DeveloperDetail = () => {
     );
   }
 
+  const highlights = normalizeHighlights(developer.highlights);
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -125,6 +143,22 @@ const DeveloperDetail = () => {
             <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
               {developer.description?.trim() || "More information about this developer will be available soon."}
             </p>
+
+            {highlights.length > 0 && (
+              <div className="mt-6">
+                <h3 className="font-serif text-lg font-bold text-foreground mb-3">Developer Highlights</h3>
+                <div className="flex flex-wrap gap-2">
+                  {highlights.map((highlight) => (
+                    <span
+                      key={highlight}
+                      className="inline-flex items-center rounded-full border border-gold/30 bg-gold/10 px-3 py-1 text-xs font-medium text-foreground"
+                    >
+                      {highlight}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="rounded-3xl border border-border bg-card p-7 shadow-[var(--shadow-card)]">
