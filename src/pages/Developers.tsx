@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { db } from "@/lib/firebase";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { TrendingUp, Users, BarChart3, Building2 } from "lucide-react";
+import { TrendingUp, Users, BarChart3, Building2, ChevronDown } from "lucide-react";
 
 interface Developer {
   id: string;
@@ -40,6 +40,52 @@ const features = [
       "Track listing visibility, enquiry rates, and conversion metrics with our dedicated dashboard.",
   },
 ];
+
+const developerFaqs = [
+  {
+    q: "Why Invest in Off-Plan Properties?",
+    a: "Dubai's off-plan market offers flexible payment plans, competitive pricing, and strong long-term investment potential. Partnering with trusted developers gives buyers access to premium communities and future growth opportunities. With Keego Properties, clients receive expert guidance on project selection, location, and investment strategy to make confident property decisions.",
+  },
+  {
+    q: "What is an off-plan property?",
+    a: "An off-plan property is a property purchased directly from a developer before construction is completed. Buyers often benefit from flexible payment plans and early investment opportunities.",
+  },
+  {
+    q: "Can foreigners buy off-plan property in Dubai?",
+    a: "Yes. Foreign investors can purchase freehold properties in designated areas across Dubai, subject to the developer's terms and Dubai property regulations.",
+  },
+  {
+    q: "How do I choose the right developer in Dubai?",
+    a: "Choosing the right developer depends on project quality, delivery history, location, payment plans, and long-term investment potential. Our team helps clients evaluate each opportunity with confidence.",
+  },
+  {
+    q: "Are off-plan properties a good investment?",
+    a: "Off-plan properties in Dubai continue to attract investors through strong capital appreciation potential, flexible payment options, and access to premium upcoming communities.",
+  },
+];
+
+function FaqItem({ q, a }: { q: string; a: string }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="border border-border rounded-xl overflow-hidden bg-card">
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex w-full items-center justify-between px-6 py-4 text-left text-sm font-medium text-foreground hover:bg-muted/40 transition-colors"
+      >
+        <span>{q}</span>
+        <ChevronDown
+          className={`w-4 h-4 text-muted-foreground flex-shrink-0 ml-4 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+      {open && (
+        <div className="px-6 pb-5 text-sm text-muted-foreground leading-relaxed border-t border-border pt-4">
+          {a}
+        </div>
+      )}
+    </div>
+  );
+}
 
 const Developers = () => {
   const [developers, setDevelopers] = useState<Developer[]>([]);
@@ -79,6 +125,26 @@ const Developers = () => {
             qualified buyers, and access premium marketing support across Dubai's
             finest communities.
           </p>
+        </div>
+      </section>
+
+      {/* ── Developers in Dubai Intro ── */}
+      <section className="py-20 bg-muted/20">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <p className="text-gold uppercase tracking-[0.2em] text-xs mb-2">Developers in Dubai</p>
+            <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-5">
+              Explore Dubai's Leading Real Estate Developers
+            </h2>
+            <div className="space-y-4 text-muted-foreground leading-relaxed">
+              <p>
+                At Keego Properties, we connect homebuyers and investors with trusted real estate developers across Dubai, offering access to premium residences, off-plan opportunities, and high-potential investment projects.
+              </p>
+              <p>
+                Through our developer network and market expertise, we help clients discover projects that align with their lifestyle goals, investment strategy, and long-term growth plans in Dubai's evolving real estate market.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -168,6 +234,24 @@ const Developers = () => {
               })}
             </div>
           )}
+        </div>
+      </section>
+
+      {/* ── FAQ ── */}
+      <section className="py-20 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <p className="text-gold uppercase tracking-[0.2em] text-xs mb-2">Frequently Asked Questions</p>
+            <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-8">
+              Frequently Asked Questions
+            </h2>
+
+            <div className="space-y-4">
+              {developerFaqs.map((item) => (
+                <FaqItem key={item.q} q={item.q} a={item.a} />
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
