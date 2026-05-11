@@ -29,7 +29,7 @@ const NewsSection = () => {
           .map(d => ({ id: d.id, ...d.data() } as NewsPost))
           .filter(post => post.status === "published" && (post.featured === true))
           .sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis())
-          .slice(0, 3);
+          .slice(0, 4);
 
         setNewsPosts(newsData);
       } catch (error) {
@@ -61,9 +61,9 @@ const NewsSection = () => {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {newsPosts.length === 0 ? (
-            <div className="col-span-3 text-center py-8">
+            <div className="col-span-1 md:col-span-2 lg:col-span-4 text-center py-8">
               <p className="text-muted-foreground">No news articles available at the moment.</p>
             </div>
           ) : (

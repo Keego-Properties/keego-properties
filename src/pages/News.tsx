@@ -29,7 +29,8 @@ const News = () => {
       const newsData = snap.docs
         .map(d => ({ id: d.id, ...d.data() } as NewsPost))
         .filter(post => post.status === "published") // Only show published posts
-        .sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis()); // Sort by newest first
+        .sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis()) // Sort by newest first
+        .slice(0, 4); // Show latest 4 news cards
       setNewsPosts(newsData);
     } catch (error) {
       console.error("Error fetching news:", error);
@@ -84,7 +85,7 @@ const News = () => {
               <p className="text-muted-foreground">No news articles available at the moment.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {newsPosts.map((post) => {
                 return (
                   <article key={post.id} className="group bg-card rounded-2xl overflow-hidden shadow-[var(--shadow-card)] hover-lift block">
