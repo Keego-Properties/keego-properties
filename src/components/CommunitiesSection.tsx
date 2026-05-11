@@ -17,6 +17,26 @@ interface Community {
   createdAt: Timestamp;
 }
 
+const isFeaturedCommunity = (value: unknown) => {
+  if (typeof value === "boolean") return value;
+  if (typeof value === "string") return value.toLowerCase() === "true";
+  if (typeof value === "number") return value === 1;
+  return false;
+};
+
+const getCreatedAtMillis = (value: unknown) => {
+  if (value && typeof value === "object" && "toMillis" in value && typeof (value as { toMillis?: unknown }).toMillis === "function") {
+    return (value as { toMillis: () => number }).toMillis();
+  }
+  if (value instanceof Date) return value.getTime();
+  if (typeof value === "number") return value;
+  if (typeof value === "string") {
+    const parsed = Date.parse(value);
+    return Number.isNaN(parsed) ? 0 : parsed;
+  }
+  return 0;
+};
+
 const CommunitiesSection = () => {
   const [communities, setCommunities] = useState<Community[]>([]);
   const [loading, setLoading] = useState(true);
@@ -25,12 +45,16 @@ const CommunitiesSection = () => {
     const fetchCommunities = async () => {
       try {
         const snap = await getDocs(collection(db, "communities"));
-        const all = snap.docs.map(d => ({ id: d.id, ...d.data() } as Community));
-        const featured = all.filter(c => c.featured);
+        const all = snap.docs
+          .map((d) => ({ id: d.id, ...d.data() } as Partial<Community>))
+          .filter((community) => Boolean(community.name && community.image));
+
+        const featured = all.filter((community) => isFeaturedCommunity(community.featured));
         const communitiesData = (featured.length > 0 ? featured : all)
-          .sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis())
+          .sort((a, b) => getCreatedAtMillis(b.createdAt) - getCreatedAtMillis(a.createdAt))
           .slice(0, 4);
-        setCommunities(communitiesData);
+
+        setCommunities(communitiesData as Community[]);
       } catch (error) {
         console.error("Error fetching communities:", error);
       } finally {
@@ -40,7 +64,7 @@ const CommunitiesSection = () => {
 
     fetchCommunities();
   }, []);
-  const generateSlug = (name: string) => name.toLowerCase().replace(/\s+/g, "-");
+  const generateSlug = (name: string) => name.toLowerCase().trim().replace(/\s+/g, "-");
 
   return (
     <section className="py-20">
