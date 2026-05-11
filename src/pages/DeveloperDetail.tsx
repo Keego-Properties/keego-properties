@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { collection, doc, getDoc, getDocs } from "firebase/firestore";
-import { ArrowLeft, Building2, ExternalLink, Globe } from "lucide-react";
+import { ArrowLeft, Building2, Globe, Phone, Mail, MapPin } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { db } from "@/lib/firebase";
@@ -162,32 +162,37 @@ const DeveloperDetail = () => {
           </div>
 
           <div className="rounded-3xl border border-border bg-card p-7 shadow-[var(--shadow-card)]">
-            <h3 className="font-serif text-xl font-bold text-foreground mb-4">Developer Info</h3>
-            <div className="space-y-3 text-sm">
-              <div className="flex items-center justify-between border-b border-border pb-3">
-                <span className="text-muted-foreground">Name</span>
-                <span className="font-medium text-foreground text-right">{developer.name}</span>
-              </div>
-              <div className="flex items-center justify-between pb-1">
-                <span className="text-muted-foreground">Website</span>
-                {developer.website ? (
-                  <a
-                    href={developer.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 font-medium text-gold hover:underline"
-                  >
-                    Visit
-                    <ExternalLink className="h-3.5 w-3.5" />
+            <h3 className="font-serif text-xl font-bold text-foreground mb-4">Contact Our Team</h3>
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <Phone className="w-5 h-5 text-gold flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Phone</p>
+                  <a href="tel:+971543912231" className="text-sm font-medium text-foreground hover:text-gold transition-colors">
+                    +971 54 391 2231
                   </a>
-                ) : (
-                  <span className="text-muted-foreground">N/A</span>
-                )}
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <Mail className="w-5 h-5 text-gold flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Email</p>
+                  <a href="mailto:info@keegoproperties.com" className="text-sm font-medium text-foreground hover:text-gold transition-colors break-all">
+                    info@keegoproperties.com
+                  </a>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <MapPin className="w-5 h-5 text-gold flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Address</p>
+                  <p className="text-sm font-medium text-foreground">Wafi Residence Office Block : LHEU -FF-06, Al Razi Street, Dubai Health Care City, Dubai, UAE</p>
+                </div>
               </div>
             </div>
             <Link
               to="/contact"
-              className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-gold px-4 py-2.5 text-sm font-semibold text-navy-dark transition-colors hover:bg-gold/90"
+              className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-gold px-4 py-2.5 text-sm font-semibold text-navy-dark transition-colors hover:bg-gold/90"
             >
               <Globe className="h-4 w-4" />
               Contact Our Team
