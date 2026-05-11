@@ -21,7 +21,7 @@ const sections = [
         heading: null,
         body: null,
         list: [
-          { term: "Company", def: '(referred to as "We", "Us" or "Our") refers to Keego Properties, Business Bay, Dubai, UAE.' },
+          { term: "Company", def: '(referred to as "We", "Us" or "Our") refers to Keego Properties LLC, Wafi Residence Office Block : LHEU -FF-06, Al Razi Street, Dubai Health Care City, Dubai, UAE.' },
           { term: "Service", def: "refers to the Website and all related property services offered by Keego Properties." },
           { term: "You / User", def: "means any individual or entity accessing or using our Service." },
           { term: "Content", def: "refers to all text, images, data, information, and other material available on the Service." },
@@ -166,7 +166,7 @@ const sections = [
         list: [
           { term: "By email", def: "info@keegoproperties.com" },
           { term: "By phone", def: "+971 54 391 2231" },
-          { term: "By address", def: "Business Bay, Dubai, UAE" },
+          { term: "By address", def: "Wafi Residence Office Block : LHEU -FF-06, Al Razi Street, Dubai Health Care City, Dubai, UAE" },
         ],
       },
     ],

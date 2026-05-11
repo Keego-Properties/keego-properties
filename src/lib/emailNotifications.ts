@@ -75,7 +75,7 @@ export const sendEnquiryNotification = async (
           </tbody>
         </table>
         <hr style="margin:24px 0;border:none;border-top:1px solid #e5e7eb;" />
-        <p style="font-size:12px;color:#9ca3af;">Keego Properties · Business Bay, Dubai, UAE · info@keegoproperties.in</p>
+        <p style="font-size:12px;color:#9ca3af;">Keego Properties LLC · Wafi Residence Office Block : LHEU -FF-06, Al Razi Street, Dubai Health Care City, Dubai, UAE · info@keegoproperties.in</p>
       </div>
     `;
 
