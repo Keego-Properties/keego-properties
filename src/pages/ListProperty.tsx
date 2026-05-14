@@ -91,7 +91,6 @@ const ListProperty = () => {
 
       {/* Hero */}
       <section className="relative pt-32 pb-24 bg-navy-dark overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(212,175,55,0.15),transparent_60%)]" />
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
         <div className="container mx-auto px-4">
           <div className="max-w-3xl">
@@ -109,7 +108,7 @@ const ListProperty = () => {
                 </Button>
               </a>
               <a href="tel:+971543912231">
-                <Button variant="outline" className="rounded-full border-white/30 text-white hover:bg-white/10 px-8 py-3 h-auto">
+                <Button variant="outline" className="rounded-full border-gold text-white bg-transparent hover:bg-gold/10 px-8 py-3 h-auto">
                   <Phone className="mr-2 w-4 h-4" /> Call Us
                 </Button>
               </a>
