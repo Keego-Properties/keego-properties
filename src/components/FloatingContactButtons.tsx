@@ -1,4 +1,5 @@
 import { Phone } from "lucide-react";
+import { useLocation } from "react-router-dom";
 
 const WhatsAppIcon = ({ className }: { className?: string }) => (
   <svg
@@ -15,6 +16,13 @@ const phoneNumber = "+971543912231";
 const whatsappNumber = "971543912231";
 
 const FloatingContactButtons = () => {
+  const location = useLocation();
+  
+  // Hide buttons on admin pages
+  if (location.pathname.startsWith("/admin")) {
+    return null;
+  }
+
   return (
     <div className="fixed bottom-6 right-4 z-[70] flex flex-col gap-2.5 items-end sm:bottom-8 sm:right-6">
       <a
