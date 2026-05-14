@@ -203,14 +203,15 @@ const HeroSection = () => {
               </div>
 
               {/* Search button */}
-              <button
-                onClick={handleSearch}
-                className="flex items-center gap-2 rounded-full bg-gold hover:bg-gold/90 text-navy-dark font-bold text-sm px-7 py-5 transition-colors duration-200 shrink-0"
-              >
-                <Search className="w-5 h-5" />
-                <span className="hidden sm:inline">Search</span>
-              </button>
-
+              <div className="flex items-center justify-center">
+                <button
+                  onClick={handleSearch}
+                  className="flex items-center gap-2 rounded py-2 px-4 bg-gold hover:bg-gold/90 text-navy-dark font-bold text-sm  transition-colors duration-200 shrink-0"
+                >
+                  <Search className="w-5 h-5" />
+                  <span className="hidden sm:inline">Search</span>
+                </button>
+              </div>
               {/* Advanced filters */}
               <button
                 className="flex items-center gap-2 text-muted-foreground hover:text-foreground px-5 border-l border-gray-100 transition-colors duration-200 shrink-0"
