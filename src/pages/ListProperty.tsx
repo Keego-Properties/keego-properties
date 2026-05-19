@@ -5,6 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+import { addDoc, collection, Timestamp } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { useToast } from "@/hooks/use-toast";
 
 const stats = [
   { label: "Active Listings", value: "1,240+" },
@@ -85,6 +88,64 @@ function FaqItem({ q, a }: { q: string; a: string }) {
 }
 
 const ListProperty = () => {
+  const { toast } = useToast();
+  const [submitting, setSubmitting] = useState(false);
+  const [form, setForm] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    propertyAddress: "",
+    propertyType: "",
+    listingPurpose: "",
+    message: "",
+  });
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSubmitting(true);
+
+    try {
+      await addDoc(collection(db, "submissions"), {
+        source: "list_property",
+        firstName: form.firstName.trim(),
+        lastName: form.lastName.trim(),
+        email: form.email.trim(),
+        phone: form.phone.trim(),
+        propertyName: form.propertyAddress.trim(),
+        category: form.propertyType,
+        lookingTo: form.listingPurpose,
+        message: form.message.trim(),
+        createdAt: Timestamp.now(),
+      });
+
+      toast({
+        title: "Request submitted",
+        description: "Our listing specialist will contact you within 24 hours.",
+      });
+
+      setForm({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        propertyAddress: "",
+        propertyType: "",
+        listingPurpose: "",
+        message: "",
+      });
+    } catch (error) {
+      console.error("List property form submission failed:", error);
+      toast({
+        title: "Submission failed",
+        description: "Please try again in a moment.",
+        variant: "destructive",
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
@@ -200,16 +261,47 @@ const ListProperty = () => {
               <p className="text-muted-foreground text-sm mb-7 leading-relaxed">
                 Fill in your details and a dedicated specialist will reach out within 24 hours.
               </p>
-              <form className="space-y-4">
+              <form className="space-y-4" onSubmit={handleSubmit}>
                 <div className="grid grid-cols-2 gap-4">
-                  <Input placeholder="First name" />
-                  <Input placeholder="Last name" />
+                  <Input
+                    placeholder="First name"
+                    value={form.firstName}
+                    onChange={(e) => setForm((prev) => ({ ...prev, firstName: e.target.value }))}
+                    required
+                  />
+                  <Input
+                    placeholder="Last name"
+                    value={form.lastName}
+                    onChange={(e) => setForm((prev) => ({ ...prev, lastName: e.target.value }))}
+                    required
+                  />
                 </div>
-                <Input type="email" placeholder="Email address" />
-                <Input placeholder="Phone number" />
-                <Input placeholder="Property community or address" />
+                <Input
+                  type="email"
+                  placeholder="Email address"
+                  value={form.email}
+                  onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))}
+                  required
+                />
+                <Input
+                  placeholder="Phone number"
+                  value={form.phone}
+                  onChange={(e) => setForm((prev) => ({ ...prev, phone: e.target.value }))}
+                  required
+                />
+                <Input
+                  placeholder="Property community or address"
+                  value={form.propertyAddress}
+                  onChange={(e) => setForm((prev) => ({ ...prev, propertyAddress: e.target.value }))}
+                  required
+                />
                 <div className="grid grid-cols-2 gap-4">
-                  <select className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm text-muted-foreground focus:outline-none focus:ring-1 focus:ring-gold">
+                  <select
+                    className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm text-muted-foreground focus:outline-none focus:ring-1 focus:ring-gold"
+                    value={form.propertyType}
+                    onChange={(e) => setForm((prev) => ({ ...prev, propertyType: e.target.value }))}
+                    required
+                  >
                     <option value="">Property type</option>
                     <option>Apartment</option>
                     <option>Villa</option>
@@ -218,15 +310,29 @@ const ListProperty = () => {
                     <option>Office</option>
                     <option>Other</option>
                   </select>
-                  <select className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm text-muted-foreground focus:outline-none focus:ring-1 focus:ring-gold">
+                  <select
+                    className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm text-muted-foreground focus:outline-none focus:ring-1 focus:ring-gold"
+                    value={form.listingPurpose}
+                    onChange={(e) => setForm((prev) => ({ ...prev, listingPurpose: e.target.value }))}
+                    required
+                  >
                     <option value="">Listing purpose</option>
                     <option>For Sale</option>
                     <option>For Rent</option>
                   </select>
                 </div>
-                <Textarea placeholder="Any additional details about the property (size, floors, features...)" rows={4} />
-                <Button className="w-full rounded-full bg-gold text-navy-dark font-semibold hover:bg-gold/90 h-11">
-                  Submit Listing Request <ArrowRight className="ml-2 w-4 h-4" />
+                <Textarea
+                  placeholder="Any additional details about the property (size, floors, features...)"
+                  rows={4}
+                  value={form.message}
+                  onChange={(e) => setForm((prev) => ({ ...prev, message: e.target.value }))}
+                />
+                <Button
+                  type="submit"
+                  disabled={submitting}
+                  className="w-full rounded-full bg-gold text-navy-dark font-semibold hover:bg-gold/90 h-11"
+                >
+                  {submitting ? "Submitting..." : "Submit Listing Request"} <ArrowRight className="ml-2 w-4 h-4" />
                 </Button>
                 <p className="text-center text-xs text-muted-foreground">
                   By submitting, you agree to our{" "}

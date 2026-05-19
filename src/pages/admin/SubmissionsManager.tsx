@@ -39,6 +39,8 @@ const SOURCE_LABELS: Record<string, string> = {
   callback_popup: "Callback Request",
   property_enquiry: "Property Enquiry",
   property_detail: "Property Enquiry",
+  list_property: "List Property",
+  holiday_homes: "Holiday Homes",
 };
 
 const SOURCE_COLORS: Record<string, string> = {
@@ -46,6 +48,8 @@ const SOURCE_COLORS: Record<string, string> = {
   callback_popup: "bg-amber-100 text-amber-800 border-amber-200",
   property_enquiry: "bg-green-100 text-green-800 border-green-200",
   property_detail: "bg-green-100 text-green-800 border-green-200",
+  list_property: "bg-purple-100 text-purple-800 border-purple-200",
+  holiday_homes: "bg-teal-100 text-teal-800 border-teal-200",
 };
 
 const getDisplayName = (s: Submission) => {

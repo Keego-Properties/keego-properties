@@ -8,6 +8,9 @@ import {
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { addDoc, collection, Timestamp } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { useToast } from "@/hooks/use-toast";
 
 const steps = [
   {
@@ -171,6 +174,61 @@ function FaqItem({ q, a }: { q: string; a: string }) {
 }
 
 const HolidayHomes = () => {
+  const { toast } = useToast();
+  const [submitting, setSubmitting] = useState(false);
+  const [form, setForm] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    propertyAddress: "",
+    propertyType: "",
+    message: "",
+  });
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSubmitting(true);
+
+    try {
+      await addDoc(collection(db, "submissions"), {
+        source: "holiday_homes",
+        firstName: form.firstName.trim(),
+        lastName: form.lastName.trim(),
+        email: form.email.trim(),
+        phone: form.phone.trim(),
+        propertyName: form.propertyAddress.trim(),
+        category: form.propertyType,
+        message: form.message.trim(),
+        createdAt: Timestamp.now(),
+      });
+
+      toast({
+        title: "Consultation requested",
+        description: "Our holiday homes team will contact you within 24 hours.",
+      });
+
+      setForm({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        propertyAddress: "",
+        propertyType: "",
+        message: "",
+      });
+    } catch (error) {
+      console.error("Holiday homes form submission failed:", error);
+      toast({
+        title: "Submission failed",
+        description: "Please try again in a moment.",
+        variant: "destructive",
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
@@ -346,15 +404,51 @@ const HolidayHomes = () => {
               <p className="text-muted-foreground text-sm mb-7 leading-relaxed">
                 Tell us about your property and we'll get back to you within 24 hours with a realistic earnings estimate.
               </p>
-              <form className="space-y-4">
+              <form className="space-y-4" onSubmit={handleSubmit}>
                 <div className="grid grid-cols-2 gap-4">
-                  <input placeholder="First name" className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-gold" />
-                  <input placeholder="Last name" className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-gold" />
+                  <input
+                    placeholder="First name"
+                    value={form.firstName}
+                    onChange={(e) => setForm((prev) => ({ ...prev, firstName: e.target.value }))}
+                    required
+                    className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-gold"
+                  />
+                  <input
+                    placeholder="Last name"
+                    value={form.lastName}
+                    onChange={(e) => setForm((prev) => ({ ...prev, lastName: e.target.value }))}
+                    required
+                    className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-gold"
+                  />
                 </div>
-                <input type="email" placeholder="Email address" className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-gold" />
-                <input placeholder="Phone number" className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-gold" />
-                <input placeholder="Property community or address" className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-gold" />
-                <select className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm text-muted-foreground focus:outline-none focus:ring-1 focus:ring-gold">
+                <input
+                  type="email"
+                  placeholder="Email address"
+                  value={form.email}
+                  onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))}
+                  required
+                  className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-gold"
+                />
+                <input
+                  placeholder="Phone number"
+                  value={form.phone}
+                  onChange={(e) => setForm((prev) => ({ ...prev, phone: e.target.value }))}
+                  required
+                  className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-gold"
+                />
+                <input
+                  placeholder="Property community or address"
+                  value={form.propertyAddress}
+                  onChange={(e) => setForm((prev) => ({ ...prev, propertyAddress: e.target.value }))}
+                  required
+                  className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-gold"
+                />
+                <select
+                  className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm text-muted-foreground focus:outline-none focus:ring-1 focus:ring-gold"
+                  value={form.propertyType}
+                  onChange={(e) => setForm((prev) => ({ ...prev, propertyType: e.target.value }))}
+                  required
+                >
                   <option value="">Property type</option>
                   <option>Apartment</option>
                   <option>Villa</option>
@@ -362,9 +456,19 @@ const HolidayHomes = () => {
                   <option>Penthouse</option>
                   <option>Other</option>
                 </select>
-                <textarea placeholder="Any additional details (size, current rental status, any questions...)" rows={3} className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-gold resize-none" />
-                <Button className="w-full rounded-full bg-gold text-navy-dark font-semibold hover:bg-gold/90 h-11">
-                  Request Free Consultation <ArrowRight className="ml-2 w-4 h-4" />
+                <textarea
+                  placeholder="Any additional details (size, current rental status, any questions...)"
+                  rows={3}
+                  value={form.message}
+                  onChange={(e) => setForm((prev) => ({ ...prev, message: e.target.value }))}
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-gold resize-none"
+                />
+                <Button
+                  type="submit"
+                  disabled={submitting}
+                  className="w-full rounded-full bg-gold text-navy-dark font-semibold hover:bg-gold/90 h-11"
+                >
+                  {submitting ? "Submitting..." : "Request Free Consultation"} <ArrowRight className="ml-2 w-4 h-4" />
                 </Button>
                 <p className="text-center text-xs text-muted-foreground">
                   By submitting, you agree to our{" "}
