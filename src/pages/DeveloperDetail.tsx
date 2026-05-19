@@ -103,7 +103,7 @@ const DeveloperDetail = () => {
   const highlights = normalizeHighlights(developer.highlights);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-gold/35 via-gold/20 to-cream">
       <Navbar />
 
       <section className="pt-36 pb-12 bg-navy-dark">

@@ -57,7 +57,7 @@ const RENT_FAQS = [
 function FaqItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border border-border rounded-xl overflow-hidden">
+    <div className="border-2 border-black rounded-xl overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
         className="flex w-full items-center justify-between px-6 py-4 text-left text-sm font-medium text-foreground hover:bg-muted/50 transition-colors"
@@ -68,7 +68,7 @@ function FaqItem({ q, a }: { q: string; a: string }) {
         />
       </button>
       {open && (
-        <div className="px-6 pb-5 text-sm text-muted-foreground leading-relaxed border-t border-border pt-4">
+        <div className="px-6 pb-5 text-sm text-muted-foreground leading-relaxed border-t-2 border-black pt-4">
           {a}
         </div>
       )}
@@ -103,6 +103,8 @@ const Properties = () => {
   const typeParam = params.get("type");
   const lockedType = typeParam === "buy" ? "sale" : typeParam === "rent" ? "rent" : null;
   const effectiveType = lockedType ?? activeType;
+  const enquiryType: "buy" | "rent" | "all" =
+    lockedType === "sale" ? "buy" : lockedType === "rent" ? "rent" : "all";
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
@@ -157,7 +159,7 @@ const Properties = () => {
   });
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-cream">
       <Navbar />
       <section className="pt-32 pb-8 bg-navy-dark">
         <div className="container mx-auto px-4 text-center">
@@ -175,7 +177,7 @@ const Properties = () => {
         </div>
       </section>
 
-      <section className="py-8 border-b border-border">
+      <section className="py-8 border-b border-border bg-gradient-to-br from-gold/35 via-gold/20 to-cream">
         <div className="container mx-auto px-4">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex gap-2 flex-wrap">
@@ -218,7 +220,7 @@ const Properties = () => {
         </div>
       </section>
 
-      <section className="py-12">
+      <section className="py-12 bg-gradient-to-br from-gold/35 via-gold/20 to-cream">
         <div className="container mx-auto px-4">
           <p className="text-muted-foreground text-sm mb-6">
             {loading ? "Loading properties..." : `${filtered.length} properties found`}
@@ -255,11 +257,11 @@ const Properties = () => {
           )}
         </div>
       </section>
-      <PropertyEnquiryForm defaultType={lockedType ?? "all"} />
+      <PropertyEnquiryForm defaultType={enquiryType} />
 
       {/* FAQ Section */}
       {effectiveType !== "all" && (
-        <section className="py-16 bg-muted/30">
+        <section className="py-16 bg-muted/30 bg-gradient-to-br from-gold/35 via-gold/20 to-cream">
           <div className="container mx-auto px-4 max-w-3xl">
             <div className="text-center mb-10">
               <p className="text-gold font-medium tracking-[0.2em] uppercase text-sm mb-2">Need Help?</p>

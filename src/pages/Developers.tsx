@@ -97,7 +97,7 @@ const Developers = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-gold/35 via-gold/20 to-cream">
       <Navbar />
 
       {/* ── Hero Banner ── */}
@@ -149,7 +149,7 @@ const Developers = () => {
       </section>
 
       {/* ── Why Partner ── */}
-      <section className="py-20 bg-background">
+      <section className="py-20 bg-gradient-to-br from-gold/35 via-gold/20 to-cream">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <p className="text-gold uppercase tracking-[0.2em] text-xs mb-2">Why partner with us</p>

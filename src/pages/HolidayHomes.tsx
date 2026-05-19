@@ -231,7 +231,7 @@ const HolidayHomes = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-gradient-to-br from-gold/35 via-gold/20 to-cream text-foreground">
       <Navbar />
 
       {/* Hero */}

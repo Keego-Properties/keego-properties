@@ -78,7 +78,7 @@ const News = () => {
         </div>
       </section>
 
-      <section className="py-16">
+      <section className="py-16 bg-gradient-to-br from-gold/35 via-gold/20 to-cream">
         <div className="container mx-auto px-4">
           {newsPosts.length === 0 ? (
             <div className="text-center py-16">

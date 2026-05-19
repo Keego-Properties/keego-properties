@@ -19,7 +19,7 @@ const valuationReasons = [
 
 const PropertyValuation = () => {
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-gradient-to-br from-gold/35 via-gold/20 to-cream text-foreground">
       <Navbar />
 
       <section className="pt-32 pb-12 bg-navy-dark">

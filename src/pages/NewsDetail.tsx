@@ -4,7 +4,7 @@ import { collection, getDocs, getDoc, doc, Timestamp } from "firebase/firestore"
 import { db } from "@/lib/firebase";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Calendar, User, ArrowLeft, Share2 } from "lucide-react";
+import { Calendar, User, ArrowLeft, ArrowRight, Share2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";

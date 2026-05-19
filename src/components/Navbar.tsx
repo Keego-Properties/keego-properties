@@ -310,9 +310,9 @@ const Navbar = () => {
   const openMegaMenuType = buyMenuOpen ? "buy" : rentMenuOpen ? "rent" : null;
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-slate-200/80 bg-white/95 shadow-[0_10px_30px_rgba(15,23,42,0.08)] backdrop-blur-md">
+    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/20 bg-navy-dark shadow-[0_10px_30px_rgba(15,23,42,0.08)] backdrop-blur-md">
       <div className="container mx-auto px-4">
-        <div className={`flex flex-wrap items-center justify-between gap-3 overflow-hidden text-xs uppercase tracking-[0.24em] text-slate-600 transition-[max-height,opacity,transform,padding,border-color] duration-500 ease-in-out ${showTopHeader ? "max-h-20 translate-y-0 border-b border-slate-200 py-2 opacity-100" : "pointer-events-none max-h-0 -translate-y-full border-b border-transparent py-0 opacity-0"}`}>
+        <div className={`flex flex-wrap items-center justify-between gap-3 overflow-hidden text-xs uppercase tracking-[0.24em] text-white/70 transition-[max-height,opacity,transform,padding,border-color] duration-500 ease-in-out ${showTopHeader ? "max-h-20 translate-y-0 border-b border-white/20 py-2 opacity-100" : "pointer-events-none max-h-0 -translate-y-full border-b border-transparent py-0 opacity-0"}`}>
           <div className="flex-1 flex gap-4 justify-center">
             <div className="flex gap-4 items-center gap-2">
               {topLinks.map((link) => (
@@ -322,7 +322,7 @@ const Navbar = () => {
                   className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 transition-all duration-200 ${
                     link.highlight
                       ? "bg-gold text-navy-dark shadow-[0_10px_24px_rgba(212,175,55,0.3)] hover:bg-gold/90"
-                      : "hover:text-slate-900"
+                      : "text-white hover:text-white/80"
                   }`}
                 >
                   <link.icon className="h-3 w-3 shrink-0" />
@@ -330,7 +330,7 @@ const Navbar = () => {
                 </Link>
               ))}
             </div>
-              <a href="tel:+971543912231" className="hidden lg:inline-flex items-center gap-2 text-slate-700 hover:text-slate-900 transition-colors text-sm">
+              <a href="tel:+971543912231" className="hidden lg:inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors text-sm">
                   <Phone className="w-4 h-4" />
                   +971 54 391 2231
               </a>
@@ -342,14 +342,14 @@ const Navbar = () => {
             <img src={logoImage} alt="KeeGo Properties" className="h-16 w-auto rounded-xl object-contain" />
             <div>
               <div className="font-brand leading-none tracking-tight">
-                <span className="text-xl font-extrabold text-slate-900">
+                <span className="text-xl font-extrabold text-white">
                   KeeGo
                 </span>
                 <span className="ml-1 text-xl font-bold text-gold">
                   Properties
                 </span>
               </div>
-              <p className="text-slate-500 text-[10px] tracking-[0.2em] uppercase">
+              <p className="text-white/60 text-[10px] tracking-[0.2em] uppercase">
                 Dubai & Beyond
               </p>
             </div>
@@ -361,7 +361,7 @@ const Navbar = () => {
               className={`text-sm font-medium transition-colors duration-200 pb-1 ${
                 isActive("/")
                   ? "text-gold"
-                  : "text-slate-700 hover:text-slate-900"
+                  : "text-white/70 hover:text-white"
               }`}
             >
               Home
@@ -378,7 +378,7 @@ const Navbar = () => {
                   className={`min-w-[4.75rem] justify-center text-sm font-medium inline-flex items-center gap-1 transition-colors duration-200 pb-1 ${
                     isBuyActive
                       ? "text-gold shadow-[0_2px_0_0_#FFD700]"
-                      : "text-slate-700 shadow-[0_2px_0_0_transparent] hover:text-slate-900 hover:shadow-[0_2px_0_0_#FFD700]"
+                      : "text-white/70 shadow-[0_2px_0_0_transparent] hover:text-white hover:shadow-[0_2px_0_0_#FFD700]"
                   }`}
                 >
                   Buy
@@ -397,7 +397,7 @@ const Navbar = () => {
                   className={`min-w-[4.75rem] justify-center text-sm font-medium inline-flex items-center gap-1 transition-colors duration-200 pb-1 ${
                     isRentActive
                       ? "text-gold shadow-[0_2px_0_0_#FFD700]"
-                      : "text-slate-700 shadow-[0_2px_0_0_transparent] hover:text-slate-900 hover:shadow-[0_2px_0_0_#FFD700]"
+                      : "text-white/70 shadow-[0_2px_0_0_transparent] hover:text-white hover:shadow-[0_2px_0_0_#FFD700]"
                   }`}
                 >
                   Rent
@@ -410,7 +410,7 @@ const Navbar = () => {
               className={`text-sm font-medium transition-colors duration-200 pb-1 ${
                 isActive("/list-property")
                   ? "text-gold"
-                  : "text-slate-700 hover:text-slate-900"
+                  : "text-white/70 hover:text-white"
               }`}
             >
               Sell
@@ -427,7 +427,7 @@ const Navbar = () => {
                 className={`min-w-[5.75rem] justify-center text-sm font-medium inline-flex items-center gap-1 transition-colors duration-200 pb-1 ${
                   isServicesActive || servicesMenuOpen
                     ? "text-gold shadow-[0_2px_0_0_#FFD700]"
-                    : "text-slate-700 shadow-[0_2px_0_0_transparent] hover:text-slate-900 hover:shadow-[0_2px_0_0_#FFD700]"
+                    : "text-white/70 shadow-[0_2px_0_0_transparent] hover:text-white hover:shadow-[0_2px_0_0_#FFD700]"
                 }`}
               >
                 Services
@@ -446,7 +446,7 @@ const Navbar = () => {
                 className={`min-w-[6.75rem] justify-center text-sm font-medium inline-flex items-center gap-1 transition-colors duration-200 pb-1 ${
                   isCommunitiesActive || communitiesMenuOpen
                     ? "text-gold shadow-[0_2px_0_0_#FFD700]"
-                    : "text-slate-700 shadow-[0_2px_0_0_transparent] hover:text-slate-900 hover:shadow-[0_2px_0_0_#FFD700]"
+                    : "text-white/70 shadow-[0_2px_0_0_transparent] hover:text-white hover:shadow-[0_2px_0_0_#FFD700]"
                 }`}
               >
                 Community
@@ -465,7 +465,7 @@ const Navbar = () => {
                 className={`min-w-[6.75rem] justify-center text-sm font-medium inline-flex items-center gap-1 transition-colors duration-200 pb-1 ${
                   isDevelopersActive || developersMenuOpen
                     ? "text-gold shadow-[0_2px_0_0_#FFD700]"
-                    : "text-slate-700 shadow-[0_2px_0_0_transparent] hover:text-slate-900 hover:shadow-[0_2px_0_0_#FFD700]"
+                    : "text-white/70 shadow-[0_2px_0_0_transparent] hover:text-white hover:shadow-[0_2px_0_0_#FFD700]"
                 }`}
               >
                 Developers
@@ -480,7 +480,7 @@ const Navbar = () => {
                 className={`inline-flex items-center gap-1 text-sm font-medium transition-colors duration-200 pb-1 ${
                   isMoreActive || moreMenuOpen
                     ? "text-gold shadow-[0_2px_0_0_#FFD700]"
-                    : "text-slate-700 shadow-[0_2px_0_0_transparent] hover:text-slate-900 hover:shadow-[0_2px_0_0_#FFD700]"
+                    : "text-white/70 shadow-[0_2px_0_0_transparent] hover:text-white hover:shadow-[0_2px_0_0_#FFD700]"
                 }`}
               >
                 More
@@ -488,32 +488,32 @@ const Navbar = () => {
               </button>
 
               {moreMenuOpen && (
-                <div className="absolute right-0 mt-2 w-44 rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
+                <div className="absolute right-0 mt-2 w-44 rounded-xl border border-white/20 bg-navy-dark/95 p-2 shadow-lg backdrop-blur-md">
                   <Link
                     to="/about"
                     onClick={() => setMoreMenuOpen(false)}
-                    className="block rounded-lg px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
+                    className="block rounded-lg px-3 py-2 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                   >
                     About
                   </Link>
                   <Link
                     to="/careers"
                     onClick={() => setMoreMenuOpen(false)}
-                    className="block rounded-lg px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
+                    className="block rounded-lg px-3 py-2 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                   >
                     Careers
                   </Link>
                   <Link
                     to="/holiday-homes"
                     onClick={() => setMoreMenuOpen(false)}
-                    className="block rounded-lg px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
+                    className="block rounded-lg px-3 py-2 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                   >
                     Holiday Homes
                   </Link>
                   <Link
                     to="/contact"
                     onClick={() => setMoreMenuOpen(false)}
-                    className="block rounded-lg px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
+                    className="block rounded-lg px-3 py-2 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                   >
                     Contact
                   </Link>
@@ -523,7 +523,7 @@ const Navbar = () => {
           </div>
 
           <button
-            className="lg:hidden text-slate-900"
+            className="lg:hidden text-white"
             onClick={() => setIsOpen(!isOpen)}
           >
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -533,17 +533,17 @@ const Navbar = () => {
 
       {servicesMenuOpen && (
         <div
-          className="hidden lg:block w-full border-t border-slate-200 bg-white/95"
+          className="hidden lg:block w-full border-t border-white/20 bg-navy-dark/95 backdrop-blur-md"
           onMouseEnter={handleServicesMouseEnter}
           onMouseLeave={handleServicesMouseLeave}
         >
           <div className="container mx-auto px-4 py-5">
-            <div className="rounded-2xl border border-slate-200 bg-white p-4">
+            <div className="rounded-2xl border border-white/20 bg-navy-dark/80 p-4">
               <div className="mb-4 flex items-center justify-between">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gold">Services</p>
                 <Link
                   to="/services"
-                  className="inline-flex items-center gap-1 text-sm font-medium text-slate-700 transition-colors hover:text-slate-900"
+                  className="inline-flex items-center gap-1 text-sm font-medium text-white/70 transition-colors hover:text-white"
                 >
                   View all
                   <ArrowUpRight className="h-3.5 w-3.5" />
@@ -557,7 +557,7 @@ const Navbar = () => {
                     <Link
                       key={service.id}
                       to={`/services/${service.id}`}
-                      className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
+                      className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                     >
                       <Sparkles className="h-4 w-4 text-gold" />
                       <span>{service.title}</span>
@@ -572,17 +572,17 @@ const Navbar = () => {
 
       {communitiesMenuOpen && (
         <div
-          className="hidden lg:block w-full border-t border-slate-200 bg-white/95"
+          className="hidden lg:block w-full border-t border-white/20 bg-navy-dark/95 backdrop-blur-md"
           onMouseEnter={handleCommunitiesMouseEnter}
           onMouseLeave={handleCommunitiesMouseLeave}
         >
           <div className="container mx-auto px-4 py-5">
-            <div className="rounded-2xl border border-slate-200 bg-white p-4">
+            <div className="rounded-2xl border border-white/20 bg-navy-dark/80 p-4">
               <div className="mb-4 flex items-center justify-between">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gold">Communities</p>
                 <Link
                   to="/communities"
-                  className="inline-flex items-center gap-1 text-sm font-medium text-slate-700 transition-colors hover:text-slate-900"
+                  className="inline-flex items-center gap-1 text-sm font-medium text-white/70 transition-colors hover:text-white"
                 >
                   View all
                   <ArrowUpRight className="h-3.5 w-3.5" />
@@ -596,7 +596,7 @@ const Navbar = () => {
                     <Link
                       key={community.id}
                       to={`/community/${generateSlug(community.name)}`}
-                      className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
+                      className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                     >
                       <MapPin className="h-4 w-4 text-gold" />
                       <span>{community.name}</span>
@@ -611,17 +611,17 @@ const Navbar = () => {
 
       {developersMenuOpen && (
         <div
-          className="hidden lg:block w-full border-t border-slate-200 bg-white/95"
+          className="hidden lg:block w-full border-t border-white/20 bg-navy-dark/95 backdrop-blur-md"
           onMouseEnter={handleDevelopersMouseEnter}
           onMouseLeave={handleDevelopersMouseLeave}
         >
           <div className="container mx-auto px-4 py-5">
-            <div className="rounded-2xl border border-slate-200 bg-white p-4">
+            <div className="rounded-2xl border border-white/20 bg-navy-dark/80 p-4">
               <div className="mb-4 flex items-center justify-between">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gold">Developers</p>
                 <Link
                   to="/developers"
-                  className="inline-flex items-center gap-1 text-sm font-medium text-slate-700 transition-colors hover:text-slate-900"
+                  className="inline-flex items-center gap-1 text-sm font-medium text-white/70 transition-colors hover:text-white"
                 >
                   View all
                   <ArrowUpRight className="h-3.5 w-3.5" />
@@ -635,7 +635,7 @@ const Navbar = () => {
                     <Link
                       key={developer.id}
                       to={`/developers/${developer.id}`}
-                      className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
+                      className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                     >
                       <Building2 className="h-4 w-4 text-gold" />
                       <span>{developer.name}</span>
@@ -650,7 +650,7 @@ const Navbar = () => {
 
       {openMegaMenuType && (
         <div
-          className="hidden lg:block w-full border-t border-slate-200 bg-white/95"
+          className="hidden lg:block w-full border-t border-white/20 bg-navy-dark/95 backdrop-blur-md"
           onMouseEnter={openMegaMenuType === "buy" ? handleBuyMouseEnter : handleRentMouseEnter}
           onMouseLeave={openMegaMenuType === "buy" ? handleBuyMouseLeave : handleRentMouseLeave}
         >
@@ -676,7 +676,7 @@ const Navbar = () => {
                     <Link
                       key={`${openMegaMenuType}-${group.title}-${item}`}
                       to={`/properties?type=${openMegaMenuType}${item ? `&category=${encodeURIComponent(item)}` : ""}`}
-                      className="block rounded-sm px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
+                      className="block rounded-sm px-3 py-2 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                     >
                       {item === "Office" ? "Offices" : item}
                     </Link>
@@ -685,7 +685,7 @@ const Navbar = () => {
                     <Link
                       key={`${openMegaMenuType}-${group.title}-${footer.label}`}
                       to={`/properties?type=${openMegaMenuType}`}
-                      className="block rounded-sm px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
+                      className="block rounded-sm px-3 py-2 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                     >
                       {footer.label}
                     </Link>
@@ -698,7 +698,7 @@ const Navbar = () => {
       )}
 
       {isOpen && (
-        <div className="lg:hidden border-t border-slate-200 bg-white">
+        <div className="lg:hidden border-t border-white/20 bg-navy-dark">
           <div className="container mx-auto px-4 py-4 space-y-3">
             {topLinks.map((action) => (
               <Link
@@ -708,7 +708,7 @@ const Navbar = () => {
                 className={`block rounded-full px-4 py-3 text-center text-sm font-medium transition-colors ${
                   action.highlight
                     ? "bg-gold text-navy-dark"
-                    : "border border-slate-200 text-slate-700 hover:border-slate-300 hover:text-slate-900"
+                    : "border border-white/20 text-white/70 hover:border-white/30 hover:text-white"
                 }`}
               >
                 {action.name}
@@ -720,7 +720,7 @@ const Navbar = () => {
                 to={link.path}
                 onClick={() => setIsOpen(false)}
                 className={`block py-2 text-sm font-medium ${
-                  isActive(link.path) ? "text-gold" : "text-slate-700"
+                  isActive(link.path) ? "text-gold" : "text-white/70"
                 }`}
               >
                 {link.name}

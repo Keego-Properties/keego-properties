@@ -43,20 +43,20 @@ const FeaturedProperties = () => {
     fetchProperties();
   }, []);
   return (
-    <section id="featured-properties" className="py-20 bg-cream">
+    <section id="featured-properties" className="py-20 bg-gradient-to-br from-gold/35 via-gold/20 to-cream">
       <div className="container mx-auto px-4">
         <div className="flex items-end justify-between mb-12">
           <div>
-            <p className="text-gold font-medium tracking-[0.2em] uppercase text-sm mb-2">
+            <p className="text-navy/70 font-medium tracking-[0.2em] uppercase text-sm mb-2">
               Handpicked for You
             </p>
-            <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground">
+            <h2 className="font-serif text-3xl md:text-4xl font-bold text-navy-dark">
               Ready Properties
             </h2>
           </div>
           <Link
             to="/properties"
-            className="hidden md:flex items-center gap-2 text-gold font-medium hover:gap-3 transition-all duration-300"
+            className="hidden md:flex items-center gap-2 text-navy-dark font-semibold hover:gap-3 transition-all duration-300"
           >
             View All Properties
             <ArrowRight className="w-4 h-4" />
@@ -85,7 +85,7 @@ const FeaturedProperties = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {properties.length === 0 ? (
               <div className="col-span-4 text-center py-8">
-                <p className="text-muted-foreground">No properties available at the moment.</p>
+                <p className="text-navy/80">No properties available at the moment.</p>
               </div>
             ) : (
               properties.map((property) => (
@@ -97,7 +97,7 @@ const FeaturedProperties = () => {
 
         <Link
           to="/properties"
-          className="md:hidden flex items-center justify-center gap-2 text-gold font-medium mt-8"
+          className="md:hidden flex items-center justify-center gap-2 text-navy-dark font-semibold mt-8"
         >
           View All Properties
           <ArrowRight className="w-4 h-4" />

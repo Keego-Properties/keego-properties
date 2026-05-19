@@ -19,7 +19,7 @@ const ServicesGrid = () => {
   const track = [...services, ...services];
 
   return (
-    <section className="py-20 bg-cream overflow-hidden">
+    <section className="py-20 bg-navy-dark overflow-hidden">
       <style>{`
         @keyframes marquee-left {
           0%   { transform: translateX(0); }
@@ -40,7 +40,7 @@ const ServicesGrid = () => {
           <p className="text-gold font-medium tracking-[0.2em] uppercase text-sm mb-2">
             Made to Suit You
           </p>
-          <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground">
+          <h2 className="font-serif text-3xl md:text-4xl font-bold text-primary-foreground">
             Refined Living, Tailored to You
           </h2>
         </div>

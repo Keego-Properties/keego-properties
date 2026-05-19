@@ -73,7 +73,7 @@ const Careers = () => {
   const toggle = (id: string) => setExpandedId(expandedId === id ? null : id);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-gold/35 via-gold/20 to-cream">
       <Navbar />
 
       {/* ── Hero ── */}
@@ -171,7 +171,7 @@ const Careers = () => {
       </section>
 
       {/* ── Job Openings ── */}
-      <section id="openings" className="py-24 bg-white">
+      <section id="openings" className="py-24 bg-gradient-to-br from-gold/35 via-gold/20 to-cream">
         <div className="container mx-auto px-4">
           <div className="text-center mb-14">
             <p className="text-[#D4AF37] font-medium tracking-[0.2em] uppercase text-xs mb-3">Opportunities</p>

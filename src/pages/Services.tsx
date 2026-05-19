@@ -54,7 +54,7 @@ const Services = () => {
         </div>
       </section>
 
-      <section className="bg-cream py-16">
+      <section className="bg-gradient-to-br from-gold/35 via-gold/20 to-cream py-16">
         <div className="container mx-auto px-4">
           {loading ? (
             <div className="py-12 text-center text-muted-foreground">Loading services...</div>

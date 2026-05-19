@@ -67,20 +67,20 @@ const CommunitiesSection = () => {
   const generateSlug = (name: string) => name.toLowerCase().trim().replace(/\s+/g, "-");
 
   return (
-    <section className="py-20">
+    <section className="py-20 bg-gradient-to-br from-gold/35 via-gold/20 to-cream">
       <div className="container mx-auto px-4">
         <div className="flex items-end justify-between mb-12">
           <div>
-            <p className="text-gold font-medium tracking-[0.2em] uppercase text-sm mb-2">
+            <p className="text-navy/70 font-medium tracking-[0.2em] uppercase text-sm mb-2">
               Explore Dubai
             </p>
-            <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground">
+            <h2 className="font-serif text-3xl md:text-4xl font-bold text-navy-dark">
               Featured Communities
             </h2>
           </div>
           <Link
             to="/communities"
-            className="hidden md:flex items-center gap-2 text-gold font-medium hover:gap-3 transition-all duration-300"
+            className="hidden md:flex items-center gap-2 text-navy-dark font-semibold hover:gap-3 transition-all duration-300"
           >
             View All Communities
             <ArrowRight className="w-4 h-4" />
@@ -99,7 +99,7 @@ const CommunitiesSection = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {communities.length === 0 ? (
               <div className="col-span-4 text-center py-8">
-                <p className="text-muted-foreground">No communities available at the moment.</p>
+                <p className="text-navy/80">No communities available at the moment.</p>
               </div>
             ) : (
               communities.map((community) => {

@@ -200,7 +200,7 @@ const PropertyDetail = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-gold/35 via-gold/20 to-cream">
       <Navbar />
 
       {/* ── Lightbox ── */}
@@ -259,7 +259,7 @@ const PropertyDetail = () => {
       )}
 
       {/* ── Hero Gallery ── */}
-      <section className="pt-20 bg-white">
+      <section className="pt-20 bg-gradient-to-br from-gold/35 via-gold/20 to-cream">
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-4">
 
           {/* Breadcrumb */}
@@ -391,7 +391,7 @@ const PropertyDetail = () => {
       </div>
 
       {/* ── Main Content ── */}
-      <section className="py-16 bg-[#fafaf9]">
+      <section className="py-16 bg-gradient-to-br from-gold/35 via-gold/20 to-cream">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
 
@@ -614,7 +614,7 @@ const PropertyDetail = () => {
 
       {/* ── Similar Properties ── */}
       {otherProperties.length > 0 && (
-        <section className="py-16 bg-white">
+        <section className="py-16 bg-gradient-to-br from-gold/35 via-gold/20 to-cream">
           <div className="max-w-7xl mx-auto px-6 md:px-12">
             <div className="flex items-end justify-between mb-10">
               <div>

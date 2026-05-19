@@ -4,10 +4,10 @@ import { Link } from "react-router-dom";
 
 const CTASection = () => {
   return (
-    <section className="py-20 bg-cream">
+    <section className="py-20 bg-navy-dark">
       <div className="container mx-auto px-4">
         <div className="bg-navy-dark rounded-3xl p-12 md:p-16 text-center relative overflow-hidden">
-          <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0 opacity-10 border-4 border-gold rounded-3xl animate-pulse">
             <div className="absolute top-0 right-1/4 w-64 h-64 bg-gold rounded-full blur-[100px]" />
           </div>
           <div className="relative z-10">

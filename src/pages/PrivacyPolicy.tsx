@@ -155,7 +155,7 @@ const sections = [
 
 const PrivacyPolicy = () => {
   return (
-    <div className="min-h-screen bg-[#F8F6F1]">
+    <div className="min-h-screen bg-gradient-to-br from-gold/35 via-gold/20 to-cream">
       <Navbar />
 
       {/* Hero */}
