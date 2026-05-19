@@ -35,6 +35,7 @@ import ServicesManager from "./pages/admin/ServicesManager.tsx";
 import CareersManager from "./pages/admin/CareersManager.tsx";
 import ReviewsManager from "./pages/admin/ReviewsManager.tsx";
 import BlogsManager from "./pages/admin/BlogsManager.tsx";
+import SubmissionsManager from "./pages/admin/SubmissionsManager.tsx";
 import Blog from "./pages/Blog.tsx";
 import BlogDetail from "./pages/BlogDetail.tsx";
 import Careers from "./pages/Careers.tsx";
@@ -103,6 +104,7 @@ const App = () => (
               <Route path="careers" element={<CareersManager />} />
               <Route path="reviews" element={<ReviewsManager />} />
               <Route path="blog" element={<BlogsManager />} />
+              <Route path="submissions" element={<SubmissionsManager />} />
             </Route>
 
             <Route path="*" element={<NotFound />} />

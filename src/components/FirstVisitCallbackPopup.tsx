@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { X, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import { sendEnquiryNotification } from "@/lib/emailNotifications";
+import { addDoc, collection, Timestamp } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 import logoImage from "@/assets/eagb.png";
 
 const FIRST_VISIT_POPUP_KEY = "keego:first-visit-popup-shown";
@@ -52,19 +53,17 @@ const FirstVisitCallbackPopup = () => {
 
     setSubmitting(true);
     try {
-      const notifyResult = await sendEnquiryNotification({
+      await addDoc(collection(db, "submissions"), {
         source: "callback_popup",
-        subject: "New Callback Request",
-        customerName: form.name.trim(),
+        name: form.name.trim(),
         phone: normalizedPhone,
         message: "Customer requested an immediate callback from first-visit popup.",
+        createdAt: Timestamp.now(),
       });
 
       toast({
         title: "Request received",
-        description: notifyResult.sent
-          ? "Our team will call you shortly."
-          : "Request saved. Email notification is not configured yet.",
+        description: "Our team will call you shortly.",
       });
 
       localStorage.setItem(FIRST_VISIT_POPUP_KEY, "1");

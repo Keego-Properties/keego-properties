@@ -6,7 +6,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { sendEnquiryNotification } from "@/lib/emailNotifications";
+import { addDoc, collection, Timestamp } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 const Contact = () => {
   const { toast } = useToast();
@@ -26,22 +27,21 @@ const Contact = () => {
     setSending(true);
 
     try {
-      const notifyResult = await sendEnquiryNotification({
+      await addDoc(collection(db, "submissions"), {
         source: "contact_form",
-        subject: "New Contact Form Submission",
-        message: formData.message.trim(),
-        customerName: `${formData.firstName.trim()} ${formData.lastName.trim()}`.trim(),
-        customerEmail: formData.email.trim(),
+        firstName: formData.firstName.trim(),
+        lastName: formData.lastName.trim(),
+        email: formData.email.trim(),
         phone: formData.phone.trim(),
         lookingTo: formData.lookingTo,
         category: formData.category,
+        message: formData.message.trim(),
+        createdAt: Timestamp.now(),
       });
 
       toast({
         title: "Message Sent!",
-        description: notifyResult.sent
-          ? "We'll get back to you within 24 hours."
-          : "Message received. Email notification is not configured yet.",
+        description: "We'll get back to you within 24 hours.",
       });
 
       setFormData({
