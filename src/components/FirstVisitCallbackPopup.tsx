@@ -67,8 +67,13 @@ const FirstVisitCallbackPopup = () => {
     try {
       await addDoc(collection(db, "submissions"), {
         source: "callback_popup",
+        firstName: form.name.trim(),
+        lastName: "",
         name: form.name.trim(),
+        email: "",
         phone: normalizedPhone,
+        lookingTo: "",
+        category: "",
         message: "Customer requested an immediate callback from first-visit popup.",
         read: false,
         createdAt: Timestamp.now(),
