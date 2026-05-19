@@ -36,6 +36,7 @@ const Contact = () => {
         lookingTo: formData.lookingTo,
         category: formData.category,
         message: formData.message.trim(),
+        read: false,
         createdAt: Timestamp.now(),
       });
 

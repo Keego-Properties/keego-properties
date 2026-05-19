@@ -200,6 +200,7 @@ const HolidayHomes = () => {
         propertyName: form.propertyAddress.trim(),
         category: form.propertyType,
         message: form.message.trim(),
+        read: false,
         createdAt: Timestamp.now(),
       });
 

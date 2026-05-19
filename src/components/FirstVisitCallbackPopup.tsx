@@ -58,6 +58,7 @@ const FirstVisitCallbackPopup = () => {
         name: form.name.trim(),
         phone: normalizedPhone,
         message: "Customer requested an immediate callback from first-visit popup.",
+        read: false,
         createdAt: Timestamp.now(),
       });
 

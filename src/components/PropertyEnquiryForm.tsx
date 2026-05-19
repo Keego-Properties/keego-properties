@@ -53,6 +53,7 @@ const PropertyEnquiryForm = ({ defaultType = "all", propertyName }: PropertyEnqu
         subCategory,
         propertyName: propertyName ?? "",
         source: "property_detail",
+        read: false,
         createdAt: Timestamp.now(),
       });
 

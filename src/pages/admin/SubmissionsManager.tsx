@@ -4,15 +4,15 @@ import {
   getDocs,
   deleteDoc,
   doc,
+  updateDoc,
   orderBy,
   query,
   Timestamp,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
-import { Trash2, Phone, Mail, MessageSquare, RefreshCw, ChevronDown, ChevronUp } from "lucide-react";
+import { Trash2, Phone, Mail, RefreshCw, ChevronDown, ChevronUp, MailOpen, MailPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 
 type SubmissionSource = "contact_form" | "callback_popup" | "property_enquiry" | string;
 
@@ -31,6 +31,7 @@ interface Submission {
   subCategory?: string;
   budget?: string;
   propertyName?: string;
+  read?: boolean;
   createdAt?: Timestamp;
 }
 
@@ -138,6 +139,19 @@ const SubmissionsManager = () => {
     }
   };
 
+  const updateReadStatus = async (submission: Submission, read: boolean) => {
+    try {
+      const isEnquiry = submission.id.startsWith("enq_");
+      const realId = isEnquiry ? submission.id.replace("enq_", "") : submission.id;
+      const collectionName = isEnquiry ? "enquiries" : "submissions";
+      await updateDoc(doc(db, collectionName, realId), { read });
+      setSubmissions((prev) => prev.map((s) => (s.id === submission.id ? { ...s, read } : s)));
+    } catch (err) {
+      console.error("Read status update failed:", err);
+      toast({ title: "Failed to update read status", variant: "destructive" });
+    }
+  };
+
   const sources = ["all", ...Array.from(new Set(submissions.map((s) => s.source)))];
   const filtered =
     filter === "all" ? submissions : submissions.filter((s) => s.source === filter);
@@ -201,15 +215,24 @@ const SubmissionsManager = () => {
         <div className="space-y-3">
           {filtered.map((sub) => {
             const isExpanded = expandedId === sub.id;
+            const isRead = Boolean(sub.read);
             return (
               <div
                 key={sub.id}
-                className="bg-card border border-border rounded-xl overflow-hidden shadow-sm"
+                className={`border border-border rounded-xl overflow-hidden shadow-sm ${
+                  isRead ? "bg-card" : "bg-amber-50/60"
+                }`}
               >
                 {/* Row header */}
                 <div
                   className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-muted/40 transition-colors"
-                  onClick={() => setExpandedId(isExpanded ? null : sub.id)}
+                  onClick={() => {
+                    const nextExpanded = isExpanded ? null : sub.id;
+                    setExpandedId(nextExpanded);
+                    if (nextExpanded && !isRead) {
+                      updateReadStatus(sub, true);
+                    }
+                  }}
                 >
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-2 mb-1">
@@ -225,6 +248,11 @@ const SubmissionsManager = () => {
                           {sub.propertyName}
                         </span>
                       )}
+                      {!isRead && (
+                        <span className="inline-flex items-center rounded-full border border-amber-300 bg-amber-100 px-2 py-0.5 text-[11px] font-medium text-amber-800">
+                          New
+                        </span>
+                      )}
                     </div>
                     <p className="text-sm font-medium text-foreground truncate">
                       {getDisplayName(sub)}
@@ -235,6 +263,16 @@ const SubmissionsManager = () => {
                   </div>
 
                   <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        updateReadStatus(sub, !isRead);
+                      }}
+                      className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                      title={isRead ? "Mark as unread" : "Mark as read"}
+                    >
+                      {isRead ? <MailPlus className="w-4 h-4" /> : <MailOpen className="w-4 h-4" />}
+                    </button>
                     {sub.phone && (
                       <a
                         href={`tel:${sub.phone}`}

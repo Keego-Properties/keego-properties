@@ -116,6 +116,7 @@ const ListProperty = () => {
         category: form.propertyType,
         lookingTo: form.listingPurpose,
         message: form.message.trim(),
+        read: false,
         createdAt: Timestamp.now(),
       });
 
