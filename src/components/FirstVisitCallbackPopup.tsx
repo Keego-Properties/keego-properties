@@ -1,18 +1,32 @@
 import { useEffect, useState } from "react";
 import { X, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
+import { getCountries, getCountryCallingCode } from "libphonenumber-js";
 import { useToast } from "@/hooks/use-toast";
 import { addDoc, collection, Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import logoImage from "@/assets/eagb.png";
 
 const FIRST_VISIT_POPUP_KEY = "keego:first-visit-popup-shown";
+const REGION_NAMES = new Intl.DisplayNames(["en"], { type: "region" });
+const COUNTRY_DIAL_CODES = getCountries()
+  .map((countryCode) => {
+    const dialCode = `+${getCountryCallingCode(countryCode)}`;
+    const countryName = REGION_NAMES.of(countryCode) || countryCode;
+
+    return {
+      countryCode,
+      dialCode,
+      label: `${countryName} (${dialCode})`,
+    };
+  })
+  .sort((a, b) => a.label.localeCompare(b.label));
 
 const FirstVisitCallbackPopup = () => {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [form, setForm] = useState({ name: "", phone: "", agreed: false });
+  const [form, setForm] = useState({ name: "", countryCode: "+971", phone: "", agreed: false });
 
   useEffect(() => {
     const alreadyShown = localStorage.getItem(FIRST_VISIT_POPUP_KEY) === "1";
@@ -47,9 +61,7 @@ const FirstVisitCallbackPopup = () => {
     e.preventDefault();
     if (!form.name.trim() || !form.phone.trim() || !form.agreed) return;
 
-    const normalizedPhone = form.phone.trim().startsWith("+")
-      ? form.phone.trim()
-      : `+971 ${form.phone.trim()}`;
+    const normalizedPhone = `${form.countryCode} ${form.phone.trim()}`.replace(/\s+/g, " ").trim();
 
     setSubmitting(true);
     try {
@@ -118,23 +130,34 @@ const FirstVisitCallbackPopup = () => {
           />
 
           <label className="mb-1 block text-sm font-semibold text-[#121d46]">Enter your number</label>
-          <div className="mb-3 flex gap-2">
-            <div className="flex h-10 items-center gap-1 rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-700">
-              <Phone className="h-4 w-4 text-[#121d46]" />
-              +971
+          <div className="mb-3 flex flex-col gap-2 sm:flex-row">
+            <div className="relative h-10 w-full sm:w-[230px]">
+              <Phone className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#121d46]" />
+              <select
+                value={form.countryCode}
+                onChange={(e) => setForm((prev) => ({ ...prev, countryCode: e.target.value }))}
+                className="h-10 w-full appearance-none rounded-md border border-slate-300 bg-white pl-9 pr-8 text-sm text-slate-800 focus:border-gold focus:outline-none"
+                aria-label="Country code"
+              >
+                {COUNTRY_DIAL_CODES.map(({ countryCode, dialCode, label }) => (
+                  <option key={`${countryCode}-${dialCode}`} value={dialCode}>
+                    {label}
+                  </option>
+                ))}
+              </select>
             </div>
             <input
               type="tel"
               required
               value={form.phone}
               onChange={(e) => setForm((prev) => ({ ...prev, phone: e.target.value }))}
-              className="h-10 flex-1 rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-800 focus:border-gold focus:outline-none"
+              className="h-10 w-full flex-1 rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-800 focus:border-gold focus:outline-none"
               placeholder="54 391 2231"
             />
             <button
               type="submit"
               disabled={submitting || !form.agreed}
-              className="h-10 rounded-md bg-[#121d46] px-4 text-sm font-semibold text-white transition-colors hover:bg-[#1a2a63] disabled:cursor-not-allowed disabled:opacity-60"
+              className="h-10 w-full rounded-md bg-[#121d46] px-4 text-sm font-semibold text-white transition-colors hover:bg-[#1a2a63] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
             >
               {submitting ? "Sending..." : "Call me!"}
             </button>
