@@ -1,0 +1,82 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Properties
+    match /properties/{document=**} {
+      allow read: if true; // ✅ public
+      allow write: if request.auth != null; // 🔐 admin
+    }
+
+    // Communities
+    match /communities/{document=**} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // News
+    match /news/{document=**} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Staff
+    match /staff/{document=**} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Developers
+    match /developers/{doc} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Users (keep as is)
+    match /users/{userId} {
+      allow read, write: if request.auth.uid == userId;
+    }
+
+    // Services
+    match /services/{serviceId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Careers
+    match /careers/{docId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Reviews
+    match /reviews/{docId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Blogs
+    match /blogs/{doc} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Form Submissions (contact form + callback popup)
+    match /submissions/{docId} {
+      allow create: if true;
+      allow read, update, delete: if request.auth != null;
+    }
+
+    // Property Enquiries
+    match /enquiries/{docId} {
+      allow create: if true;
+      allow read, update, delete: if request.auth != null;
+    }
+
+    // Mail queue (Trigger Email extension)
+    match /mail/{docId} {
+      allow create: if true;
+      allow read, update, delete: if request.auth != null;
+    }
+  }
+}
