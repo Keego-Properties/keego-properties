@@ -45,7 +45,11 @@ const Footer = () => {
     { label: "Privacy Policy", to: "/privacy-policy" }
   ];
 
-  const socialIcons = [Facebook, Instagram, XIcon, Linkedin];
+  const socialLinks = [
+    { Icon: Facebook, href: "https://www.facebook.com/profile.php?id=61589446539778", label: "Facebook" },
+    { Icon: Instagram, href: "https://www.instagram.com/keego_luxury/", label: "Instagram" },
+    { Icon: Linkedin, href: "https://www.linkedin.com/company/keego-properties", label: "LinkedIn" },
+  ];
 
   return (
     <footer className="bg-black pt-16 pb-8">
@@ -135,8 +139,8 @@ const Footer = () => {
               </span>
             </div>
             <div className="flex items-center gap-3">
-                {socialIcons.map((Icon, idx) => (
-                  <a key={idx} href="#" className="text-primary-foreground/55 transition-colors hover:text-gold">
+                {socialLinks.map(({ Icon, href, label }) => (
+                  <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={label} className="text-primary-foreground/55 transition-colors hover:text-gold">
                     <Icon className="h-4 w-4" />
                   </a>
                 ))}
