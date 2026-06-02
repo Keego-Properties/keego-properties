@@ -127,19 +127,19 @@ const HeroSection = () => {
 
         <div className="max-w-4xl mx-auto animate-fade-in" style={{ animationDelay: "0.2s" }}>
           {/* Search bar */}
-          <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
-            <div className="flex items-stretch">
+          <div className="bg-white rounded-2xl shadow-2xl overflow-visible sm:overflow-hidden p-2 sm:p-0">
+            <div className="grid grid-cols-2 gap-2 sm:gap-0 sm:flex sm:items-stretch">
               {/* Property Type */}
-              <div className="flex-1 flex items-center border-r border-gray-100 px-4 py-1 min-w-0">
+              <div className="col-span-1 rounded-xl border border-gray-100 px-3 py-2 min-w-0 sm:flex-1 sm:flex sm:items-center sm:rounded-none sm:border-0 sm:border-r sm:px-4 sm:py-1">
                 <div className="w-full">
-                  <label className="block text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-0.5 leading-none">
+                  <label className="block text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-1 leading-none sm:tracking-widest sm:mb-0.5">
                     Property Type
                   </label>
                   <div className="relative">
                     <select
                       value={propertyType}
                       onChange={(e) => setPropertyType(e.target.value)}
-                      className="w-full bg-transparent text-center [text-align-last:center] text-foreground text-sm font-medium outline-none cursor-pointer py-1 pr-6 appearance-none"
+                      className="w-full bg-transparent text-left sm:text-center [text-align-last:left] sm:[text-align-last:center] text-foreground text-sm font-medium outline-none cursor-pointer py-1 pr-6 appearance-none"
                     >
                       <option value="">Any Type</option>
                       <option value="Apartments">Apartments</option>
@@ -154,16 +154,16 @@ const HeroSection = () => {
               </div>
 
               {/* Bedrooms */}
-              <div className="flex-1 flex items-center border-r border-gray-100 px-4 py-1 min-w-0">
+              <div className="col-span-1 rounded-xl border border-gray-100 px-3 py-2 min-w-0 sm:flex-1 sm:flex sm:items-center sm:rounded-none sm:border-0 sm:border-r sm:px-4 sm:py-1">
                 <div className="w-full">
-                  <label className="block text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-0.5 leading-none">
+                  <label className="block text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-1 leading-none sm:tracking-widest sm:mb-0.5">
                     Bedrooms
                   </label>
                   <div className="relative">
                     <select
                       value={bedrooms}
                       onChange={(e) => setBedrooms(e.target.value)}
-                      className="w-full bg-transparent text-center [text-align-last:center] text-foreground text-sm font-medium outline-none cursor-pointer py-1 pr-6 appearance-none"
+                      className="w-full bg-transparent text-left sm:text-center [text-align-last:left] sm:[text-align-last:center] text-foreground text-sm font-medium outline-none cursor-pointer py-1 pr-6 appearance-none"
                     >
                       <option value="">Any</option>
                       <option value="0">Studio</option>
@@ -179,16 +179,16 @@ const HeroSection = () => {
               </div>
 
               {/* Community */}
-              <div className="flex-[2] flex items-center border-r border-gray-100 px-4 py-1 min-w-0">
+              <div className="col-span-2 rounded-xl border border-gray-100 px-3 py-2 min-w-0 sm:flex-[2] sm:flex sm:items-center sm:rounded-none sm:border-0 sm:border-r sm:px-4 sm:py-1">
                 <div className="w-full">
-                  <label className="block text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-0.5 leading-none">
+                  <label className="block text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-1 leading-none sm:tracking-widest sm:mb-0.5">
                     Community
                   </label>
                   <div className="relative">
                     <select
                       value={community}
                       onChange={(e) => setCommunity(e.target.value)}
-                      className="w-full bg-transparent text-center [text-align-last:center] text-foreground text-sm font-medium outline-none cursor-pointer py-1 pr-6 appearance-none"
+                      className="w-full bg-transparent text-left sm:text-center [text-align-last:left] sm:[text-align-last:center] text-foreground text-sm font-medium outline-none cursor-pointer py-1 pr-6 appearance-none"
                     >
                       <option value="">Any Community</option>
                       {communities.map((item) => (
@@ -202,24 +202,24 @@ const HeroSection = () => {
                 </div>
               </div>
 
-              {/* Search button */}
-              <div className="flex items-center justify-center">
+              {/* Search + advanced filters (second row on mobile) */}
+              <div className="col-span-2 flex items-center gap-2 sm:col-span-1 sm:gap-0 sm:justify-center">
                 <button
                   onClick={handleSearch}
-                  className="flex items-center gap-2 rounded py-2 px-4 bg-gold hover:bg-gold/90 text-navy-dark font-bold text-sm  transition-colors duration-200 shrink-0"
+                  className="flex-1 sm:flex-initial flex items-center justify-center gap-2 rounded-xl sm:rounded py-2 px-4 bg-gold hover:bg-gold/90 text-navy-dark font-bold text-sm transition-colors duration-200 shrink-0"
                 >
                   <Search className="w-5 h-5" />
-                  <span className="hidden sm:inline">Search</span>
+                  <span>Search</span>
+                </button>
+                {/* Advanced filters */}
+                <button
+                  className="h-10 w-10 sm:h-auto sm:w-auto sm:px-5 rounded-xl sm:rounded sm:border-l sm:border-gray-100 text-muted-foreground hover:text-foreground border border-gray-100 sm:border-y-0 sm:border-r-0 transition-colors duration-200 shrink-0 flex items-center justify-center"
+                  title="Advanced Filters"
+                  onClick={() => navigate("/properties")}
+                >
+                  <SlidersHorizontal className="w-5 h-5" />
                 </button>
               </div>
-              {/* Advanced filters */}
-              <button
-                className="flex items-center gap-2 text-muted-foreground hover:text-foreground px-5 border-l border-gray-100 transition-colors duration-200 shrink-0"
-                title="Advanced Filters"
-                onClick={() => navigate("/properties")}
-              >
-                <SlidersHorizontal className="w-5 h-5" />
-              </button>
             </div>
 
           </div>
