@@ -152,7 +152,7 @@ const ListProperty = () => {
       <Navbar />
 
       {/* Hero */}
-      <section className="relative pt-32 pb-24 bg-navy-dark overflow-hidden">
+      <section className="relative pt-40 pb-24 sm:pt-32 bg-navy-dark overflow-hidden">
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
         <div className="container mx-auto px-4">
           <div className="max-w-3xl">
