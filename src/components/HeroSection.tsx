@@ -130,7 +130,7 @@ const HeroSection = () => {
           <div className="bg-white rounded-2xl shadow-2xl overflow-visible sm:overflow-hidden p-2 sm:p-0">
             <div className="grid grid-cols-2 gap-2 sm:gap-0 sm:flex sm:items-stretch">
               {/* Property Type */}
-              <div className="col-span-1 rounded-xl border border-gray-100 px-3 py-2 min-w-0 sm:flex-1 sm:flex sm:items-center sm:rounded-none sm:border-0 sm:border-r sm:px-4 sm:py-1">
+              <div className="col-span-1 rounded-xl border border-gray-100 px-3 py-2 min-w-0 sm:flex-1 sm:flex sm:items-center sm:rounded-none sm:border-0 sm:border-r sm:px-4 sm:pt-3 sm:pb-1">
                 <div className="w-full">
                   <label className="block text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-1 leading-none sm:tracking-widest sm:mb-0.5">
                     Property Type
@@ -154,7 +154,7 @@ const HeroSection = () => {
               </div>
 
               {/* Bedrooms */}
-              <div className="col-span-1 rounded-xl border border-gray-100 px-3 py-2 min-w-0 sm:flex-1 sm:flex sm:items-center sm:rounded-none sm:border-0 sm:border-r sm:px-4 sm:py-1">
+              <div className="col-span-1 rounded-xl border border-gray-100 px-3 py-2 min-w-0 sm:flex-1 sm:flex sm:items-center sm:rounded-none sm:border-0 sm:border-r sm:px-4 sm:pt-3 sm:pb-1">
                 <div className="w-full">
                   <label className="block text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-1 leading-none sm:tracking-widest sm:mb-0.5">
                     Bedrooms
@@ -179,7 +179,7 @@ const HeroSection = () => {
               </div>
 
               {/* Community */}
-              <div className="col-span-2 rounded-xl border border-gray-100 px-3 py-2 min-w-0 sm:flex-[2] sm:flex sm:items-center sm:rounded-none sm:border-0 sm:border-r sm:px-4 sm:py-1">
+              <div className="col-span-2 rounded-xl border border-gray-100 px-3 py-2 min-w-0 sm:flex-[2] sm:flex sm:items-center sm:rounded-none sm:border-0 sm:border-r sm:px-4 sm:pt-3 sm:pb-1">
                 <div className="w-full">
                   <label className="block text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-1 leading-none sm:tracking-widest sm:mb-0.5">
                     Community
