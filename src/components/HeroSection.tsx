@@ -91,7 +91,8 @@ const HeroSection = () => {
   const slide = slides[currentSlide];
 
   return (
-    <section className="relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden">
+    <>
+      <section className="relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden">
       {/* Poster / background image */}
       <div
         className="absolute inset-0 bg-cover bg-center transition-opacity duration-700"
@@ -125,7 +126,7 @@ const HeroSection = () => {
           Luxury homes, investment opportunities, and integrated property solutions tailored for modern investors, homeowners, and businesses.
         </p>
 
-        <div className="max-w-4xl mx-auto animate-fade-in" style={{ animationDelay: "0.2s" }}>
+        <div className="hidden md:block max-w-4xl mx-auto animate-fade-in" style={{ animationDelay: "0.2s" }}>
           {/* Search bar */}
           <div className="bg-white rounded-2xl shadow-2xl overflow-visible sm:overflow-hidden p-2 sm:p-0">
             <div className="grid grid-cols-2 gap-2 sm:gap-0 sm:flex sm:items-stretch">
@@ -246,6 +247,96 @@ const HeroSection = () => {
         </div>
       </div>
     </section>
+
+      <section className="md:hidden bg-background px-4 py-5">
+        <div className="mx-auto max-w-4xl">
+          <div className="bg-white rounded-2xl shadow-xl p-3">
+            <div className="grid grid-cols-1 gap-2">
+              <div className="rounded-xl border border-gray-100 px-3 py-2">
+                <label className="block text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-1 leading-none">
+                  Property Type
+                </label>
+                <div className="relative">
+                  <select
+                    value={propertyType}
+                    onChange={(e) => setPropertyType(e.target.value)}
+                    className="w-full bg-transparent text-left [text-align-last:left] text-foreground text-sm font-medium outline-none cursor-pointer py-1 pr-6 appearance-none"
+                  >
+                    <option value="">Any Type</option>
+                    <option value="Apartments">Apartments</option>
+                    <option value="Villas">Villas</option>
+                    <option value="Town House">Town House</option>
+                    <option value="Penthouse">Penthouse</option>
+                    <option value="Office">Office</option>
+                  </select>
+                  <ChevronDown className="pointer-events-none absolute right-0 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                </div>
+              </div>
+
+              <div className="rounded-xl border border-gray-100 px-3 py-2">
+                <label className="block text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-1 leading-none">
+                  Bedrooms
+                </label>
+                <div className="relative">
+                  <select
+                    value={bedrooms}
+                    onChange={(e) => setBedrooms(e.target.value)}
+                    className="w-full bg-transparent text-left [text-align-last:left] text-foreground text-sm font-medium outline-none cursor-pointer py-1 pr-6 appearance-none"
+                  >
+                    <option value="">Any</option>
+                    <option value="0">Studio</option>
+                    <option value="1">1 BR</option>
+                    <option value="2">2 BR</option>
+                    <option value="3">3 BR</option>
+                    <option value="4">4 BR</option>
+                    <option value="5">5+ BR</option>
+                  </select>
+                  <ChevronDown className="pointer-events-none absolute right-0 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                </div>
+              </div>
+
+              <div className="rounded-xl border border-gray-100 px-3 py-2">
+                <label className="block text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-1 leading-none">
+                  Community
+                </label>
+                <div className="relative">
+                  <select
+                    value={community}
+                    onChange={(e) => setCommunity(e.target.value)}
+                    className="w-full bg-transparent text-left [text-align-last:left] text-foreground text-sm font-medium outline-none cursor-pointer py-1 pr-6 appearance-none"
+                  >
+                    <option value="">Any Community</option>
+                    {communities.map((item) => (
+                      <option key={item.id} value={item.name}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="pointer-events-none absolute right-0 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 pt-1">
+                <button
+                  onClick={handleSearch}
+                  className="flex items-center justify-center gap-2 rounded-xl py-2 px-4 bg-gold hover:bg-gold/90 text-navy-dark font-bold text-sm transition-colors duration-200"
+                >
+                  <Search className="w-5 h-5" />
+                  <span>Search</span>
+                </button>
+                <button
+                  className="rounded-xl border border-gray-100 text-muted-foreground hover:text-foreground transition-colors duration-200 flex items-center justify-center"
+                  title="Advanced Filters"
+                  onClick={() => navigate("/properties")}
+                >
+                  <SlidersHorizontal className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </>
   );
 };
 
