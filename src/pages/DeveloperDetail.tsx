@@ -5,6 +5,8 @@ import { ArrowLeft, Building2, Globe, Phone, Mail, MapPin } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { db } from "@/lib/firebase";
+import Seo from "@/components/Seo";
+import { truncate } from "@/lib/seo";
 
 interface Developer {
   id: string;
@@ -104,6 +106,14 @@ const DeveloperDetail = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gold/35 via-gold/20 to-cream">
+      {developer && (
+        <Seo
+          title={`${developer.name} | Developer Profile | KeeGo Properties`}
+          description={truncate(developer.description?.trim() || `Explore ${developer.name}, a Dubai real estate developer featured by KeeGo Properties.`, 160)}
+          image={developer.logo}
+          path={`/developers/${id}`}
+        />
+      )}
       <Navbar />
 
       <section className="pt-36 pb-12 bg-navy-dark">

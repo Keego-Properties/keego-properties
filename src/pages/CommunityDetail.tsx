@@ -6,6 +6,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PropertyCard from "@/components/PropertyCard";
 import { MapPin, Home, TrendingUp, School, ShoppingBag, TreePine, ArrowRight } from "lucide-react";
+import Seo from "@/components/Seo";
+import { truncate } from "@/lib/seo";
 
 interface Community {
   id: string;
@@ -122,6 +124,26 @@ const CommunityDetail = () => {
 
   return (
     <div className="min-h-screen">
+      {community && (
+        <Seo
+          title={`${community.name} Community Guide | KeeGo Properties`}
+          description={truncate(community.description || `Explore ${community.name} in Dubai, including lifestyle insights, market information, and available properties.`, 160)}
+          image={community.image}
+          path={`/community/${id}`}
+          jsonLd={{
+            "@context": "https://schema.org",
+            "@type": "Place",
+            name: community.name,
+            description: community.description,
+            image: community.image,
+            address: {
+              "@type": "PostalAddress",
+              addressLocality: community.location || "Dubai",
+              addressCountry: "AE",
+            },
+          }}
+        />
+      )}
       <Navbar />
 
       {/* Hero */}

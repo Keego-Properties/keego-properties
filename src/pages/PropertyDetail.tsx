@@ -9,6 +9,8 @@ import PropertyEnquiryForm from "@/components/PropertyEnquiryForm";
 import { Heart, Bed, Bath, Maximize, MapPin, Phone, MessageCircle, Share2, ChevronLeft, ChevronRight, Check, Building, Calendar, Layers, Car, Trees, Dumbbell, Waves, ShieldCheck, Users, Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import Seo from "@/components/Seo";
+import { truncate } from "@/lib/seo";
 
 interface Property {
   id: string;
@@ -201,6 +203,29 @@ const PropertyDetail = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gold/35 via-gold/20 to-cream">
+      {property && (
+        <Seo
+          title={`${property.title} | ${property.location} | KeeGo Properties`}
+          description={truncate(property.description?.trim() || `${property.title} in ${property.location}. Explore pricing, amenities, images, and enquiry options with KeeGo Properties.`, 160)}
+          image={property.image}
+          type="article"
+          path={`/property/${id}`}
+          jsonLd={{
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: property.title,
+            description: property.description || `${property.title} in ${property.location}`,
+            image: property.images?.length ? property.images : [property.image],
+            brand: property.developer ? { "@type": "Brand", name: property.developer } : undefined,
+            offers: {
+              "@type": "Offer",
+              priceCurrency: "AED",
+              price: property.price,
+              availability: property.status === "available" ? "https://schema.org/InStock" : "https://schema.org/SoldOut",
+            },
+          }}
+        />
+      )}
       <Navbar />
 
       {/* ── Lightbox ── */}

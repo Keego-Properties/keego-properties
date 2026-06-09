@@ -8,6 +8,8 @@ import { Calendar, User, ArrowLeft, ArrowRight, Share2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import Seo from "@/components/Seo";
+import { truncate } from "@/lib/seo";
 
 interface NewsPost {
   id: string;
@@ -61,8 +63,6 @@ const NewsDetail = () => {
     fetchNewsPost();
   }, [id]);
 
-  const generateSlug = (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-
   const shareArticle = () => {
     navigator.share?.({
       title: newsPost?.title,
@@ -101,6 +101,31 @@ const NewsDetail = () => {
 
   return (
     <div className="min-h-screen">
+      <Seo
+        title={`${newsPost.title} | Dubai Property News | KeeGo Properties`}
+        description={truncate(newsPost.excerpt || newsPost.content, 160)}
+        image={newsPost.image}
+        type="article"
+        path={`/news/${id}`}
+        publishedTime={newsPost.createdAt?.toDate().toISOString()}
+        author={newsPost.author || "KeeGo Properties"}
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "NewsArticle",
+          headline: newsPost.title,
+          description: newsPost.excerpt || newsPost.content,
+          image: newsPost.image ? [newsPost.image] : undefined,
+          datePublished: newsPost.createdAt?.toDate().toISOString(),
+          author: {
+            "@type": "Organization",
+            name: newsPost.author || "KeeGo Properties",
+          },
+          publisher: {
+            "@type": "Organization",
+            name: "KeeGo Properties",
+          },
+        }}
+      />
       <Navbar />
 
       {/* Hero Image */}
@@ -195,7 +220,6 @@ const NewsDetail = () => {
             <h2 className="font-serif text-2xl font-bold text-foreground mb-8">Related Articles</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {relatedPosts.map((post) => {
-                const slug = generateSlug(post.title);
                 return (
                   <article key={post.id} className="group bg-card rounded-2xl overflow-hidden shadow-[var(--shadow-card)] hover-lift block">
                     <div className="relative aspect-[16/10] overflow-hidden">
@@ -226,7 +250,7 @@ const NewsDetail = () => {
                         {post.excerpt}
                       </p>
                       <Link
-                        to={`/news/${slug}`}
+                        to={`/news/${post.id}`}
                         className="flex items-center gap-2 text-gold text-sm font-medium group-hover:gap-3 transition-all duration-300"
                       >
                         Read More

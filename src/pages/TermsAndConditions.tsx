@@ -10,7 +10,7 @@ const sections = [
     subsections: [
       {
         heading: null,
-        body: "By accessing and using the Keego Properties website (keegoproperties.com) or any of our services, you accept and agree to be bound by these Terms and Conditions. If you do not agree to these terms, please do not use our Service. These Terms apply to all visitors, users, and others who access or use the Service.",
+        body: "By accessing and using the Keego Properties website (keego.ae) or any of our services, you accept and agree to be bound by these Terms and Conditions. If you do not agree to these terms, please do not use our Service. These Terms apply to all visitors, users, and others who access or use the Service.",
       },
     ],
   },

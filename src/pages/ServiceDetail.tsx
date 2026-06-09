@@ -7,6 +7,8 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { db } from "@/lib/firebase";
 import { defaultServices, iconMap, serviceContentMap, ServiceItem, ServicePageContent } from "@/lib/servicesData";
+import Seo from "@/components/Seo";
+import { truncate } from "@/lib/seo";
 
 const callHref = "tel:+971543912231";
 const whatsappHref = "https://wa.me/971543912231";
@@ -89,6 +91,12 @@ const ServiceDetail = () => {
 
   return (
     <div className="min-h-screen bg-[#F8F6F1] text-foreground">
+      <Seo
+        title={`${service.title} | Real Estate Services | KeeGo Properties`}
+        description={truncate(detailContent?.intro || service.description, 160)}
+        image={service.image}
+        path={`/services/${id}`}
+      />
       <Navbar />
 
       {/* ── HERO ─────────────────────────────────────────────────── */}

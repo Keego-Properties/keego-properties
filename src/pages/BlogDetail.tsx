@@ -8,6 +8,8 @@ import { Calendar, User, ArrowLeft, Share2, Tag } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import Seo from "@/components/Seo";
+import { truncate } from "@/lib/seo";
 
 interface BlogPost {
   id: string;
@@ -103,6 +105,31 @@ const BlogDetail = () => {
 
   return (
     <div className="min-h-screen">
+      <Seo
+        title={`${post.title} | Real Estate Blog | KeeGo Properties`}
+        description={truncate(post.excerpt || post.content, 160)}
+        image={post.image}
+        type="article"
+        path={`/blogs/${id}`}
+        publishedTime={post.createdAt?.toDate().toISOString()}
+        author={post.author || "KeeGo Properties"}
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "BlogPosting",
+          headline: post.title,
+          description: post.excerpt || post.content,
+          image: post.image ? [post.image] : undefined,
+          datePublished: post.createdAt?.toDate().toISOString(),
+          author: {
+            "@type": "Person",
+            name: post.author || "KeeGo Properties",
+          },
+          publisher: {
+            "@type": "Organization",
+            name: "KeeGo Properties",
+          },
+        }}
+      />
       <Navbar />
 
       {/* Hero image */}
