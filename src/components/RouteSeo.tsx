@@ -155,6 +155,12 @@ const routeDefaults: Array<{
     description: "Review the terms and conditions governing the use of KeeGo Properties and related services.",
   },
   {
+    matches: (pathname) => pathname === "/404",
+    title: `Page Not Found | ${BRAND_NAME}`,
+    description: "The page you are looking for could not be found on KeeGo Properties.",
+    noindex: true,
+  },
+  {
     matches: (pathname) => pathname.startsWith("/admin"),
     title: `Admin | ${BRAND_NAME}`,
     description: DEFAULT_DESCRIPTION,

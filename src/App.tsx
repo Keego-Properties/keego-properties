@@ -93,6 +93,8 @@ const App = () => (
             <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
             <Route path="/holiday-homes" element={<HolidayHomes />} />
 
+            <Route path="/404" element={<NotFound />} />
+
             {/* Admin routes */}
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
