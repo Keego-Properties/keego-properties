@@ -79,7 +79,7 @@ const ReviewsSection = () => {
               <div
                 key={i}
                 onClick={() => setActiveIndex(i)}
-                className="absolute cursor-pointer"
+                className="absolute cursor-pointer py-10"
                 style={{
                   transform: `translateX(${translateX}px) scale(${scale})`,
                   zIndex,
@@ -87,7 +87,7 @@ const ReviewsSection = () => {
                   transition:
                     "transform 1.1s cubic-bezier(0.16,1,0.3,1), opacity 1s cubic-bezier(0.16,1,0.3,1)",
                   willChange: "transform, opacity",
-                  width: 360,
+                  width: 340,
                 }}
               >
                 <div
