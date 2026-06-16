@@ -5,7 +5,7 @@ export const BRAND_NAME = "KeeGo Properties";
 export const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.jpg`;
 
 export const DEFAULT_DESCRIPTION =
-  "Discover luxury properties in Dubai with KeeGo Properties. Explore homes for sale, rental listings, communities, investment opportunities, and premium real estate services.";
+  "KeeGo Properties: luxury real estate in Dubai. Browse homes for sale, rentals, villas, communities, and investment properties with expert guidance.";
 
 export const DEFAULT_TITLE = `${BRAND_NAME} | Luxury Real Estate in Dubai`;
 

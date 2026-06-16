@@ -12,6 +12,18 @@ export default defineConfig(() => ({
     },
   },
   plugins: [react()],
+  build: {
+    // Ensure production bundles are minified (some deploys accidentally use dev-mode builds).
+    minify: "terser",
+    sourcemap: false,
+    cssMinify: true,
+    terserOptions: {
+      format: {
+        comments: false,
+      },
+    },
+  },
+  // (esbuild minify options intentionally omitted since we're using terser)
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
