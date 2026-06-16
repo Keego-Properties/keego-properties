@@ -200,11 +200,6 @@ const Properties = () => {
                   </button>
                 ))
               )}
-              {activeCategory !== "all" && (
-                <span className="px-4 py-2 rounded-full text-sm font-medium bg-muted text-muted-foreground">
-                  {activeCategory}
-                </span>
-              )}
             </div>
             <div className="flex items-center gap-2 bg-muted rounded-full px-4 py-2">
               <Search className="w-4 h-4 text-muted-foreground" />
