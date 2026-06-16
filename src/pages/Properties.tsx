@@ -161,7 +161,7 @@ const Properties = () => {
   return (
     <div className="min-h-screen bg-cream">
       <Navbar />
-      <section className="pt-32 pb-8 bg-navy-dark">
+      <section className="pt-56 md:pt-32 pb-8 bg-navy-dark">
         <div className="container mx-auto px-4 text-center">
           <p className="text-gold font-medium tracking-[0.2em] uppercase text-sm mb-2">Discover</p>
           <h1 className="font-serif text-4xl md:text-5xl font-bold text-primary-foreground mb-6">
