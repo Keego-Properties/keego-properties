@@ -88,6 +88,12 @@ const HeroSection = () => {
     navigate(`/properties?${params.toString()}`);
   };
 
+  const handleClearFilters = () => {
+    setPropertyType("");
+    setBedrooms("");
+    setCommunity("");
+  };
+
   const slide = slides[currentSlide];
 
   return (
@@ -215,8 +221,8 @@ const HeroSection = () => {
                 {/* Advanced filters */}
                 <button
                   className="h-10 w-10 sm:h-auto sm:w-auto sm:px-5 rounded-xl sm:rounded sm:border-l sm:border-gray-100 text-muted-foreground hover:text-foreground border border-gray-100 sm:border-y-0 sm:border-r-0 transition-colors duration-200 shrink-0 flex items-center justify-center"
-                  title="Advanced Filters"
-                  onClick={() => navigate("/properties")}
+                  title="Clear Filters"
+                  onClick={handleClearFilters}
                 >
                   <SlidersHorizontal className="w-5 h-5" />
                 </button>
@@ -326,8 +332,8 @@ const HeroSection = () => {
                 </button>
                 <button
                   className="rounded-xl border border-gray-100 text-muted-foreground hover:text-foreground transition-colors duration-200 flex items-center justify-center"
-                  title="Advanced Filters"
-                  onClick={() => navigate("/properties")}
+                  title="Clear Filters"
+                  onClick={handleClearFilters}
                 >
                   <SlidersHorizontal className="w-5 h-5" />
                 </button>
