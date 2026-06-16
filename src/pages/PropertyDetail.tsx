@@ -284,11 +284,11 @@ const PropertyDetail = () => {
       )}
 
       {/* ── Hero Gallery ── */}
-      <section className="pt-20 bg-gradient-to-br from-gold/35 via-gold/20 to-cream">
+      <section className="pt-32 bg-gradient-to-br from-gold/35 via-gold/20 to-cream">
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-4">
 
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-1.5 text-xs text-slate-400 mb-4">
+          <nav className="flex items-center gap-1.5 text-xs text-slate-400 mb-4 mt-2">
             <Link to="/" className="hover:text-slate-700 transition-colors">Home</Link>
             <span>/</span>
             <Link to="/properties" className="hover:text-slate-700 transition-colors">Properties</Link>
