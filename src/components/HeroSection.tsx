@@ -1,6 +1,8 @@
+"use client";
+
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Search, SlidersHorizontal, ChevronDown } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import heroImage from "@/assets/hero-dubai.jpg";
@@ -13,15 +15,15 @@ import communityDowntownImage from "@/assets/community-downtown.jpg";
 const slides = [
   {
     videoSrc: "https://res.cloudinary.com/dy0t4agoh/video/upload/110923-689949643_medium_gvjpcc.mp4",
-    poster: heroImage,
+    poster: heroImage.src,
   },
   {
     videoSrc: "https://res.cloudinary.com/dy0t4agoh/video/upload/q_auto/f_auto/v1776611195/265261_medium_xcl5tk.mp4",
-    poster: communityMarinaImage,
+    poster: communityMarinaImage.src,
   },
   {
     videoSrc: "https://res.cloudinary.com/dy0t4agoh/video/upload/q_auto/f_auto/v1778088269/istockphoto-1908736020-640_adpp_is_lkpijj.mp4",
-    poster: communityDowntownImage,
+    poster: communityDowntownImage.src,
   },
 ];
 
@@ -40,7 +42,7 @@ const HeroSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
   const fallbackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const goToNext = useCallback(() => {
     setCurrentSlide((prev) => (prev + 1) % slides.length);
@@ -85,7 +87,7 @@ const HeroSection = () => {
     if (propertyType) params.set("category", propertyType);
     if (bedrooms) params.set("beds", bedrooms);
     if (community) params.set("search", community);
-    navigate(`/properties?${params.toString()}`);
+    router.push(`/properties?${params.toString()}`);
   };
 
   const handleClearFilters = () => {

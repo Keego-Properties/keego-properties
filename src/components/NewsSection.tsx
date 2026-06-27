@@ -1,8 +1,10 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { collection, getDocs, Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { ArrowRight, Calendar, User } from "lucide-react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 
 interface NewsPost {
@@ -53,7 +55,7 @@ const NewsSection = () => {
             </h2>
           </div>
           <Link
-            to="/news"
+            href="/news"
             className="hidden md:flex items-center gap-2 text-navy-dark font-semibold hover:gap-3 transition-all duration-300"
           >
             View All News
@@ -104,7 +106,7 @@ const NewsSection = () => {
                       {post.excerpt}
                     </p>
                     <Link
-                      to={`/news/${post.id}`}
+                      href={`/news/${post.id}`}
                       className="flex items-center gap-2 text-gold text-sm font-medium group-hover:gap-3 transition-all duration-300"
                     >
                       Read More

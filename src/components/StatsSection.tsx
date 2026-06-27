@@ -1,3 +1,5 @@
+"use client";
+
 import { Award, Users, Building2, Globe } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 

@@ -1,5 +1,7 @@
+"use client";
+
 import { Home, TrendingDown, MapPin, CreditCard, Shield, Key, Building, Truck, Train, Eye } from "lucide-react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 
 const services = [
   { icon: Home, label: "Newly Constructed", desc: "Brand new builds" },
@@ -69,7 +71,7 @@ const ServicesGrid = () => {
 
 const ServiceCard = ({ service }: { service: typeof services[number] }) => (
   <Link
-    to="/contact"
+    href="/contact"
     aria-label={`Contact us about ${service.label}`}
     className="flex-shrink-0 w-[180px] rounded-2xl p-5 text-center select-none transition-transform duration-200 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-gold/50"
     style={{

@@ -1,8 +1,10 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { collection, getDocs, Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 
 interface Community {
   id: string;
@@ -79,7 +81,7 @@ const CommunitiesSection = () => {
             </h2>
           </div>
           <Link
-            to="/communities"
+            href="/communities"
             className="hidden md:flex items-center gap-2 text-navy-dark font-semibold hover:gap-3 transition-all duration-300"
           >
             View All Communities
@@ -107,7 +109,7 @@ const CommunitiesSection = () => {
                 return (
                   <Link
                     key={community.id}
-                    to={`/community/${slug}`}
+                    href={`/community/${slug}`}
                     className="group relative rounded-2xl overflow-hidden aspect-[3/4] hover-lift"
                   >
                     <img

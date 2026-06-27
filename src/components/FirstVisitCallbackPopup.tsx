@@ -1,6 +1,8 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { X, Phone } from "lucide-react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { getCountries, getCountryCallingCode } from "libphonenumber-js";
 import { useToast } from "@/hooks/use-toast";
 import { addDoc, collection, Timestamp } from "firebase/firestore";
@@ -179,7 +181,7 @@ const FirstVisitCallbackPopup = () => {
             <span>
               I agree with the
               {" "}
-              <Link to="/privacy-policy" className="font-medium text-[#121d46] underline hover:text-[#1a2a63]">
+              <Link href="/privacy-policy" className="font-medium text-[#121d46] underline hover:text-[#1a2a63]">
                 privacy policy
               </Link>
             </span>

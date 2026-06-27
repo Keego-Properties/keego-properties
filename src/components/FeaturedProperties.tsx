@@ -1,8 +1,10 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { collection, getDocs, Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import PropertyCard from "./PropertyCard";
 
 interface Property {
@@ -55,7 +57,7 @@ const FeaturedProperties = () => {
             </h2>
           </div>
           <Link
-            to="/properties"
+            href="/properties"
             className="hidden md:flex items-center gap-2 text-navy-dark font-semibold hover:gap-3 transition-all duration-300"
           >
             View All Properties
@@ -96,7 +98,7 @@ const FeaturedProperties = () => {
         )}
 
         <Link
-          to="/properties"
+          href="/properties"
           className="md:hidden flex items-center justify-center gap-2 text-navy-dark font-semibold mt-8"
         >
           View All Properties

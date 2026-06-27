@@ -1,5 +1,8 @@
+"use client";
+
 import { useState, useRef, useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Menu, X, Phone, ChevronDown, ArrowUpRight, Building2, MapPin, Sparkles, MessageSquareHeart, ListPlus, PhoneCall } from "lucide-react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -41,8 +44,9 @@ const Navbar = () => {
   const [communities, setCommunities] = useState<Community[]>([]);
   const [developers, setDevelopers] = useState<Developer[]>([]);
   const [showTopHeader, setShowTopHeader] = useState(true);
-  const location = useLocation();
-  const navigate = useNavigate();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   const buyTimeoutRef = useRef<NodeJS.Timeout>();
   const rentTimeoutRef = useRef<NodeJS.Timeout>();
@@ -296,18 +300,18 @@ const Navbar = () => {
     },
   ];
 
-  const isActive = (path: string) => location.pathname === path;
-  const currentType = new URLSearchParams(location.search).get("type");
-  const isBuyActive = location.pathname === "/properties" && currentType === "buy";
-  const isRentActive = location.pathname === "/properties" && currentType === "rent";
-  const isServicesActive = location.pathname === "/services";
-  const isCommunitiesActive = location.pathname === "/communities" || location.pathname.startsWith("/community/");
-  const isDevelopersActive = location.pathname === "/developers";
+  const isActive = (path: string) => pathname === path;
+  const currentType = searchParams.get("type");
+  const isBuyActive = pathname === "/properties" && currentType === "buy";
+  const isRentActive = pathname === "/properties" && currentType === "rent";
+  const isServicesActive = pathname === "/services";
+  const isCommunitiesActive = pathname === "/communities" || pathname.startsWith("/community/");
+  const isDevelopersActive = pathname === "/developers";
   const isMoreActive =
-    location.pathname === "/about" ||
-    location.pathname === "/careers" ||
-    location.pathname === "/holiday-homes" ||
-    location.pathname === "/contact";
+    pathname === "/about" ||
+    pathname === "/careers" ||
+    pathname === "/holiday-homes" ||
+    pathname === "/contact";
   const openMegaMenuType = buyMenuOpen ? "buy" : rentMenuOpen ? "rent" : null;
 
   return (
@@ -319,7 +323,7 @@ const Navbar = () => {
               {topLinks.map((link) => (
                 <Link
                   key={link.name}
-                  to={link.path}
+                  href={link.path}
                   className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 transition-all duration-200 ${
                     link.highlight
                       ? "bg-gold text-navy-dark shadow-[0_10px_24px_rgba(212,175,55,0.3)] hover:bg-gold/90"
@@ -339,7 +343,7 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center justify-around h-20 py-3">
-          <Link to="/" className="flex items-end gap-1">
+          <Link href="/" className="flex items-end gap-1">
             <img src={logoImage} alt="KeeGo Properties" className="h-16 w-auto rounded-xl object-contain" />
             <div>
               <div className="font-brand leading-none tracking-tight">
@@ -358,7 +362,7 @@ const Navbar = () => {
 
           <div className="hidden lg:flex items-center gap-5">
             <Link
-              to="/"
+              href="/"
               className={`text-sm font-medium transition-colors duration-200 pb-1 ${
                 isActive("/")
                   ? "text-gold"
@@ -375,7 +379,7 @@ const Navbar = () => {
             >
                 <button
                   type="button"
-                  onClick={() => navigate("/properties?type=buy")}
+                  onClick={() => router.push("/properties?type=buy")}
                   className={`min-w-[4.75rem] justify-center text-sm font-medium inline-flex items-center gap-1 transition-colors duration-200 pb-1 ${
                     isBuyActive
                       ? "text-gold shadow-[0_2px_0_0_#FFD700]"
@@ -394,7 +398,7 @@ const Navbar = () => {
             >
                 <button
                   type="button"
-                  onClick={() => navigate("/properties?type=rent")}
+                  onClick={() => router.push("/properties?type=rent")}
                   className={`min-w-[4.75rem] justify-center text-sm font-medium inline-flex items-center gap-1 transition-colors duration-200 pb-1 ${
                     isRentActive
                       ? "text-gold shadow-[0_2px_0_0_#FFD700]"
@@ -407,7 +411,7 @@ const Navbar = () => {
             </div>
 
             <Link
-              to="/list-property"
+              href="/list-property"
               className={`text-sm font-medium transition-colors duration-200 pb-1 ${
                 isActive("/list-property")
                   ? "text-gold"
@@ -424,7 +428,7 @@ const Navbar = () => {
             >
               <button
                 type="button"
-                onClick={() => navigate("/services")}
+                onClick={() => router.push("/services")}
                 className={`min-w-[5.75rem] justify-center text-sm font-medium inline-flex items-center gap-1 transition-colors duration-200 pb-1 ${
                   isServicesActive || servicesMenuOpen
                     ? "text-gold shadow-[0_2px_0_0_#FFD700]"
@@ -443,7 +447,7 @@ const Navbar = () => {
             >
               <button
                 type="button"
-                onClick={() => navigate("/communities")}
+                onClick={() => router.push("/communities")}
                 className={`min-w-[6.75rem] justify-center text-sm font-medium inline-flex items-center gap-1 transition-colors duration-200 pb-1 ${
                   isCommunitiesActive || communitiesMenuOpen
                     ? "text-gold shadow-[0_2px_0_0_#FFD700]"
@@ -462,7 +466,7 @@ const Navbar = () => {
             >
               <button
                 type="button"
-                onClick={() => navigate("/developers")}
+                onClick={() => router.push("/developers")}
                 className={`min-w-[6.75rem] justify-center text-sm font-medium inline-flex items-center gap-1 transition-colors duration-200 pb-1 ${
                   isDevelopersActive || developersMenuOpen
                     ? "text-gold shadow-[0_2px_0_0_#FFD700]"
@@ -491,28 +495,28 @@ const Navbar = () => {
               {moreMenuOpen && (
                 <div className="absolute right-0 mt-2 w-44 rounded-xl border border-white/20 bg-navy-dark/95 p-2 shadow-lg backdrop-blur-md">
                   <Link
-                    to="/about"
+                    href="/about"
                     onClick={() => setMoreMenuOpen(false)}
                     className="block rounded-lg px-3 py-2 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                   >
                     About
                   </Link>
                   <Link
-                    to="/careers"
+                    href="/careers"
                     onClick={() => setMoreMenuOpen(false)}
                     className="block rounded-lg px-3 py-2 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                   >
                     Careers
                   </Link>
                   <Link
-                    to="/holiday-homes"
+                    href="/holiday-homes"
                     onClick={() => setMoreMenuOpen(false)}
                     className="block rounded-lg px-3 py-2 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                   >
                     Holiday Homes
                   </Link>
                   <Link
-                    to="/contact"
+                    href="/contact"
                     onClick={() => setMoreMenuOpen(false)}
                     className="block rounded-lg px-3 py-2 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                   >
@@ -543,7 +547,7 @@ const Navbar = () => {
               <div className="mb-4 flex items-center justify-between">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gold">Services</p>
                 <Link
-                  to="/services"
+                  href="/services"
                   className="inline-flex items-center gap-1 text-sm font-medium text-white/70 transition-colors hover:text-white"
                 >
                   View all
@@ -557,7 +561,7 @@ const Navbar = () => {
                   {services.map((service) => (
                     <Link
                       key={service.id}
-                      to={`/services/${service.id}`}
+                      href={`/services/${service.id}`}
                       className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                     >
                       <Sparkles className="h-4 w-4 text-gold" />
@@ -582,7 +586,7 @@ const Navbar = () => {
               <div className="mb-4 flex items-center justify-between">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gold">Communities</p>
                 <Link
-                  to="/communities"
+                  href="/communities"
                   className="inline-flex items-center gap-1 text-sm font-medium text-white/70 transition-colors hover:text-white"
                 >
                   View all
@@ -596,7 +600,7 @@ const Navbar = () => {
                   {communities.map((community) => (
                     <Link
                       key={community.id}
-                      to={`/community/${generateSlug(community.name)}`}
+                      href={`/community/${generateSlug(community.name)}`}
                       className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                     >
                       <MapPin className="h-4 w-4 text-gold" />
@@ -621,7 +625,7 @@ const Navbar = () => {
               <div className="mb-4 flex items-center justify-between">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gold">Developers</p>
                 <Link
-                  to="/developers"
+                  href="/developers"
                   className="inline-flex items-center gap-1 text-sm font-medium text-white/70 transition-colors hover:text-white"
                 >
                   View all
@@ -635,7 +639,7 @@ const Navbar = () => {
                   {developers.map((developer) => (
                     <Link
                       key={developer.id}
-                      to={`/developers/${developer.id}`}
+                      href={`/developers/${developer.id}`}
                       className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                     >
                       <Building2 className="h-4 w-4 text-gold" />
@@ -660,7 +664,7 @@ const Navbar = () => {
               {propertyMenu.map((group) => (
                 <div key={group.title}>
                   <Link
-                    to={`/properties?type=${openMegaMenuType}`}
+                    href={`/properties?type=${openMegaMenuType}`}
                     className="group relative mb-3 block h-44 overflow-hidden rounded-xl"
                   >
                     <img
@@ -676,7 +680,7 @@ const Navbar = () => {
                   {group.items.map((item) => (
                     <Link
                       key={`${openMegaMenuType}-${group.title}-${item}`}
-                      to={`/properties?type=${openMegaMenuType}${item ? `&category=${encodeURIComponent(item)}` : ""}`}
+                      href={`/properties?type=${openMegaMenuType}${item ? `&category=${encodeURIComponent(item)}` : ""}`}
                       className="block rounded-sm px-3 py-2 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                     >
                       {item === "Office" ? "Offices" : item}
@@ -685,7 +689,7 @@ const Navbar = () => {
                   {group.footer?.map((footer) => (
                     <Link
                       key={`${openMegaMenuType}-${group.title}-${footer.label}`}
-                      to={`/properties?type=${openMegaMenuType}`}
+                      href={`/properties?type=${openMegaMenuType}`}
                       className="block rounded-sm px-3 py-2 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                     >
                       {footer.label}
@@ -704,7 +708,7 @@ const Navbar = () => {
             {topLinks.map((action) => (
               <Link
                 key={action.name}
-                to={action.path}
+                href={action.path}
                 onClick={() => setIsOpen(false)}
                 className={`block rounded-full px-4 py-3 text-center text-sm font-medium transition-colors ${
                   action.highlight
@@ -718,7 +722,7 @@ const Navbar = () => {
             {navLinks.map((link) => (
               <Link
                 key={link.name}
-                to={link.path}
+                href={link.path}
                 onClick={() => setIsOpen(false)}
                 className={`block py-2 text-sm font-medium ${
                   isActive(link.path) ? "text-gold" : "text-white/70"

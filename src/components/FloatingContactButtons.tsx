@@ -1,5 +1,7 @@
+"use client";
+
 import { Phone } from "lucide-react";
-import { useLocation } from "react-router-dom";
+import { usePathname } from "next/navigation";
 
 const WhatsAppIcon = ({ className }: { className?: string }) => (
   <svg
@@ -16,10 +18,10 @@ const phoneNumber = "+971543912231";
 const whatsappNumber = "971543912231";
 
 const FloatingContactButtons = () => {
-  const location = useLocation();
+  const pathname = usePathname();
   
   // Hide buttons on admin pages
-  if (location.pathname.startsWith("/admin")) {
+  if (pathname.startsWith("/admin")) {
     return null;
   }
 

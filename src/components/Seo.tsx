@@ -1,5 +1,7 @@
+"use client";
+
 import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { usePathname, useSearchParams } from "next/navigation";
 import { BRAND_NAME, DEFAULT_DESCRIPTION, DEFAULT_OG_IMAGE, DEFAULT_TITLE, getAbsoluteUrl } from "@/lib/seo";
 
 type JsonLdValue = Record<string, unknown> | Array<Record<string, unknown>>;
@@ -78,11 +80,13 @@ const Seo = ({
   modifiedTime,
   author,
 }: SeoProps) => {
-  const location = useLocation();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const search = searchParams.toString();
 
   useEffect(() => {
     const resolvedTitle = title || DEFAULT_TITLE;
-    const canonicalUrl = getAbsoluteUrl(path || `${location.pathname}${location.search}`);
+    const canonicalUrl = getAbsoluteUrl(path || `${pathname}${search ? `?${search}` : ""}`);
     const imageUrl = getAbsoluteUrl(image);
 
     document.title = resolvedTitle;
@@ -107,7 +111,7 @@ const Seo = ({
     setOrRemoveMeta('meta[name="twitter:title"]', "name", "twitter:title", resolvedTitle);
     setOrRemoveMeta('meta[name="twitter:description"]', "name", "twitter:description", description);
     setOrRemoveMeta('meta[name="twitter:image"]', "name", "twitter:image", imageUrl);
-  }, [author, description, image, jsonLd, keywords, location.pathname, location.search, modifiedTime, noindex, path, publishedTime, title, type]);
+  }, [author, description, image, jsonLd, keywords, pathname, search, modifiedTime, noindex, path, publishedTime, title, type]);
 
   return null;
 };

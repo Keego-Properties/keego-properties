@@ -1,4 +1,6 @@
-import { Link } from "react-router-dom";
+"use client";
+
+import Link from "next/link";
 import {
   Facebook,
   Instagram,
@@ -33,7 +35,7 @@ const Footer = () => {
     {
       title: "Quick Links",
       links: [
-        { label: "Home", to: "/home" },
+        { label: "Home", to: "/" },
         { label: "Communities", to: "/communities" },
         { label: "Developers", to: "/developers" },
         { label: "Services", to: "/services" }
@@ -66,7 +68,7 @@ const Footer = () => {
                 {column.links.map((link) => (
                   <li key={link.label}>
                     <Link
-                      to={link.to}
+                      href={link.to}
                       className="text-sm text-primary-foreground/55 transition-colors duration-200 hover:text-gold"
                     >
                       {link.label}
@@ -108,7 +110,7 @@ const Footer = () => {
 
           {/* QR Code */}
           <div className="flex flex-col items-center justify-start gap-2">
-            <img src={qrCode} alt="Scan to visit Keego Properties" className="w-28 h-28 rounded-lg border border-primary-foreground/20 bg-white p-1 object-contain" />
+            <img src={qrCode.src} alt="Scan to visit Keego Properties" className="w-28 h-28 rounded-lg border border-primary-foreground/20 bg-white p-1 object-contain" />
             <span className="text-xs text-primary-foreground/45 text-center leading-snug">Scan and verify</span>
           </div>
         </div>
@@ -118,7 +120,7 @@ const Footer = () => {
             <div className="flex flex-wrap gap-x-10 gap-y-2 justify-center text-center">
               <a href="tel:+971543912231" className="text-sm text-primary-foreground/55 transition-colors duration-200 hover:text-gold">+971 54 391 2231</a>
               <a href="mailto:info@keegoproperties.com" className="text-sm text-primary-foreground/55 transition-colors duration-200 hover:text-gold">info@keegoproperties.com</a>
-              <Link to="/contact" className="text-sm text-primary-foreground/55 transition-colors duration-200 hover:text-gold">Wafi Residence Office Block : LHEU -FF-06, Al Razi Street, Dubai Health Care City, Dubai, UAE</Link>
+              <Link href="/contact" className="text-sm text-primary-foreground/55 transition-colors duration-200 hover:text-gold">Wafi Residence Office Block : LHEU -FF-06, Al Razi Street, Dubai Health Care City, Dubai, UAE</Link>
             </div>
         </div>
 
@@ -148,7 +150,7 @@ const Footer = () => {
               </div>
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
               {legalLinks.map((link) => (
-                <Link key={link.label} to={link.to} className="text-xs text-primary-foreground/45 transition-colors hover:text-gold">
+                <Link key={link.label} href={link.to} className="text-xs text-primary-foreground/45 transition-colors hover:text-gold">
                   {link.label}
                 </Link>
               ))}

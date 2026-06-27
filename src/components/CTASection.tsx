@@ -1,6 +1,8 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 
 const CTASection = () => {
   return (
@@ -21,13 +23,13 @@ const CTASection = () => {
               Whether you're buying, selling, or renting, our expert team is here to guide you through every step of your real estate journey in Dubai.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/contact">
+              <Link href="/contact">
                 <Button className="bg-gold hover:bg-gold-dark text-primary-foreground rounded-full px-8 h-12 text-base font-medium transition-all duration-300">
                   Get Free Consultation
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </Link>
-              <Link to="/properties">
+              <Link href="/properties">
                 <Button variant="outline" className="bg-gold hover:bg-gold-dark text-primary-foreground rounded-full px-8 h-12 text-base font-medium transition-all duration-300">
                   Browse Properties
                 </Button>
