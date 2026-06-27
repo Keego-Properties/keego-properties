@@ -7,7 +7,9 @@ import { Menu, X, Phone, ChevronDown, ArrowUpRight, Building2, MapPin, Sparkles,
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
-const logoImage = "/eagb.png";
+import { brandLogoNav } from "@/lib/brand";
+
+const logoImage = brandLogoNav;
 
 interface Developer {
   id: string;

@@ -9,7 +9,9 @@ import {
 } from "lucide-react";
 import qrCode from "@/assets/qr-code.png";
 
-const logoImage = "/keego-logo.png";
+import { brandLogo } from "@/lib/brand";
+
+const logoImage = brandLogo;
 
 const XIcon = ({ className }: { className?: string }) => (
   <svg

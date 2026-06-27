@@ -8,7 +8,9 @@ import { useToast } from "@/hooks/use-toast";
 import { addDoc, collection, Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
-const logoImage = "/eagb.png";
+import { brandLogoNav } from "@/lib/brand";
+
+const logoImage = brandLogoNav;
 
 const FIRST_VISIT_POPUP_KEY = "keego:first-visit-popup-shown";
 const REGION_NAMES = new Intl.DisplayNames(["en"], { type: "region" });
