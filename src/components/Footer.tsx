@@ -5,8 +5,9 @@ import {
   Linkedin,
   Send,
 } from "lucide-react";
-import logoImage from "@/assets/KeeGo Logo.png";
 import qrCode from "@/assets/qr-code.png";
+
+const logoImage = "/keego-logo.png";
 
 const XIcon = ({ className }: { className?: string }) => (
   <svg

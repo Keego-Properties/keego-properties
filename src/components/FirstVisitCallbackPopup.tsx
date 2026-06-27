@@ -5,7 +5,8 @@ import { getCountries, getCountryCallingCode } from "libphonenumber-js";
 import { useToast } from "@/hooks/use-toast";
 import { addDoc, collection, Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import logoImage from "@/assets/eagb.png";
+
+const logoImage = "/eagb.png";
 
 const FIRST_VISIT_POPUP_KEY = "keego:first-visit-popup-shown";
 const REGION_NAMES = new Intl.DisplayNames(["en"], { type: "region" });
