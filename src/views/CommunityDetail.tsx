@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useRouteId } from "@/hooks/use-route-id";
 import { collection, getDocs, query, where, doc, getDoc, Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import Navbar from "@/components/Navbar";
@@ -11,7 +11,6 @@ import PropertyCard from "@/components/PropertyCard";
 import { MapPin, Home, TrendingUp, School, ShoppingBag, TreePine, ArrowRight } from "lucide-react";
 import Seo from "@/components/Seo";
 import { truncate } from "@/lib/seo";
-import { getRouteParam } from "@/lib/utils";
 
 interface Community {
   id: string;
@@ -41,8 +40,7 @@ interface Property {
 }
 
 const CommunityDetail = () => {
-  const { id: idParam } = useParams();
-  const id = getRouteParam(idParam);
+  const id = useRouteId("community");
   const [community, setCommunity] = useState<Community | null>(null);
   const [otherCommunities, setOtherCommunities] = useState<Community[]>([]);
   const [communityProperties, setCommunityProperties] = useState<Property[]>([]);

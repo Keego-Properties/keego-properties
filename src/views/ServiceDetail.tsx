@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useRouteId } from "@/hooks/use-route-id";
 import { ArrowLeft, Phone, MessageCircle, ChevronRight, Star, Shield, TrendingUp, Clock } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -12,14 +12,12 @@ import { db } from "@/lib/firebase";
 import { defaultServices, iconMap, serviceContentMap, ServiceItem, ServicePageContent } from "@/lib/servicesData";
 import Seo from "@/components/Seo";
 import { truncate } from "@/lib/seo";
-import { getRouteParam } from "@/lib/utils";
 
 const callHref = "tel:+971543912231";
 const whatsappHref = "https://wa.me/971543912231";
 
 const ServiceDetail = () => {
-  const { id: idParam } = useParams();
-  const id = getRouteParam(idParam);
+  const id = useRouteId("services");
   const [services, setServices] = useState<ServiceItem[]>([]);
   const [loading, setLoading] = useState(true);
 

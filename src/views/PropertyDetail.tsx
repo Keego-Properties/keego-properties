@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useRouteId } from "@/hooks/use-route-id";
 import { collection, getDoc, getDocs, query, where, doc, Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import Navbar from "@/components/Navbar";
@@ -14,7 +14,6 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import Seo from "@/components/Seo";
 import { truncate } from "@/lib/seo";
-import { getRouteParam } from "@/lib/utils";
 
 interface Property {
   id: string;
@@ -55,8 +54,7 @@ const amenityIcons: Record<string, React.ReactNode> = {
 };
 
 const PropertyDetail = () => {
-  const { id: idParam } = useParams();
-  const id = getRouteParam(idParam);
+  const id = useRouteId("property");
   const { toast } = useToast();
   const [property, setProperty] = useState<Property | null>(null);
   const [otherProperties, setOtherProperties] = useState<Property[]>([]);

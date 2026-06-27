@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useRouteId } from "@/hooks/use-route-id";
 import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { ArrowLeft, Building2, Globe, Phone, Mail, MapPin } from "lucide-react";
 import Navbar from "@/components/Navbar";
@@ -10,7 +10,6 @@ import Footer from "@/components/Footer";
 import { db } from "@/lib/firebase";
 import Seo from "@/components/Seo";
 import { truncate } from "@/lib/seo";
-import { getRouteParam } from "@/lib/utils";
 
 interface Developer {
   id: string;
@@ -37,8 +36,7 @@ const normalizeHighlights = (value: Developer["highlights"]) => {
 };
 
 const DeveloperDetail = () => {
-  const { id: idParam } = useParams();
-  const id = getRouteParam(idParam);
+  const id = useRouteId("developers");
   const [developer, setDeveloper] = useState<Developer | null>(null);
   const [relatedDevelopers, setRelatedDevelopers] = useState<Developer[]>([]);
   const [loading, setLoading] = useState(true);

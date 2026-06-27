@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useRouteId } from "@/hooks/use-route-id";
 import { collection, getDocs, getDoc, doc, Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import Navbar from "@/components/Navbar";
@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import Seo from "@/components/Seo";
 import { truncate } from "@/lib/seo";
-import { getRouteParam } from "@/lib/utils";
 
 interface NewsPost {
   id: string;
@@ -28,8 +27,7 @@ interface NewsPost {
 }
 
 const NewsDetail = () => {
-  const { id: idParam } = useParams();
-  const id = getRouteParam(idParam);
+  const id = useRouteId("news");
   const { toast } = useToast();
   const [newsPost, setNewsPost] = useState<NewsPost | null>(null);
   const [relatedPosts, setRelatedPosts] = useState<NewsPost[]>([]);
