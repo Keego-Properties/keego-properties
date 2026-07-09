@@ -1,5 +1,5 @@
-import brandLogoImage from "@/assets/keego-logo.svg";
-import brandLogoNavImage from "@/assets/keego-logo-nav.svg";
+import brandLogoImage from "@/assets/keego-logo.png";
+import brandLogoNavImage from "@/assets/keego-logo-nav.png";
 
 export const brandLogo =
   typeof brandLogoImage === "string" ? brandLogoImage : brandLogoImage.src;
