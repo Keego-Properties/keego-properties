@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, Timestamp } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { db, storage } from "@/lib/firebase";
+import { db } from "@/lib/firebase";
+import { uploadOptimizedImage } from "@/lib/imageUpload";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -63,10 +63,7 @@ const DevelopersManager = () => {
       let logoUrl = form.logo;
       if (form.logoFile) {
         setUploading(true);
-        const fileName = `developers/${Date.now()}_${form.logoFile.name}`;
-        const storageRef = ref(storage, fileName);
-        await uploadBytes(storageRef, form.logoFile);
-        logoUrl = await getDownloadURL(storageRef);
+        logoUrl = await uploadOptimizedImage(form.logoFile, "developers", "logo");
         setUploading(false);
       }
 

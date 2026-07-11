@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, Timestamp } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { db, storage } from "@/lib/firebase";
+import { db } from "@/lib/firebase";
+import { uploadOptimizedImage } from "@/lib/imageUpload";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -72,10 +72,7 @@ const SalesStaffManager = () => {
 
       if (form.photoFile) {
         setUploading(true);
-        const fileName = `staff/${Date.now()}_${form.photoFile.name}`;
-        const storageRef = ref(storage, fileName);
-        await uploadBytes(storageRef, form.photoFile);
-        photoUrl = await getDownloadURL(storageRef);
+        photoUrl = await uploadOptimizedImage(form.photoFile, "staff", "logo");
         setUploading(false);
       }
 

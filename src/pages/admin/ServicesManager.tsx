@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, Timestamp } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import {
   Trash2,
   X,
@@ -17,7 +16,8 @@ import {
   FaLandmark,
   FaListUl,
 } from "react-icons/fa6";
-import { db, storage } from "@/lib/firebase";
+import { db } from "@/lib/firebase";
+import { uploadOptimizedImage } from "@/lib/imageUpload";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -126,10 +126,7 @@ const ServicesManager = () => {
       let imageUrl = form.image.trim();
 
       if (form.imageFile) {
-        const fileName = `services/${Date.now()}_${form.imageFile.name}`;
-        const storageRef = ref(storage, fileName);
-        await uploadBytes(storageRef, form.imageFile);
-        imageUrl = await getDownloadURL(storageRef);
+        imageUrl = await uploadOptimizedImage(form.imageFile, "services", "card");
       }
 
       const payload = {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, Timestamp } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { db, storage } from "@/lib/firebase";
+import { db } from "@/lib/firebase";
+import { uploadOptimizedImage } from "@/lib/imageUpload";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -66,10 +66,7 @@ const CommunitiesManager = () => {
 
       if (form.imageFile) {
         setUploading(true);
-        const fileName = `communities/${Date.now()}_${form.imageFile.name}`;
-        const storageRef = ref(storage, fileName);
-        await uploadBytes(storageRef, form.imageFile);
-        imageUrl = await getDownloadURL(storageRef);
+        imageUrl = await uploadOptimizedImage(form.imageFile, "communities", "card");
         setUploading(false);
       }
 
@@ -192,11 +189,11 @@ const CommunitiesManager = () => {
                     setForm({...form, propertyIds: [...form.propertyIds, val]});
                 }}
               >
-                <option value="">â€” Select a property to add â€”</option>
+                <option value="">— Select a property to add —</option>
                 {allProperties
                   .filter(p => !form.propertyIds.includes(p.id))
                   .map(p => (
-                    <option key={p.id} value={p.id}>{p.title}{p.location ? ` Â· ${p.location}` : ""}</option>
+                    <option key={p.id} value={p.id}>{p.title}{p.location ? ` · ${p.location}` : ""}</option>
                   ))}
               </select>
               {form.propertyIds.length > 0 && (
@@ -278,7 +275,7 @@ const CommunitiesManager = () => {
                   <td className="p-3 text-muted-foreground">{c.propertiesCount}</td>
                   <td className="p-3 text-muted-foreground">{c.avgPrice}</td>
                   <td className="p-3">
-                    {c.featured ? <Badge className="bg-amber-100 text-amber-700 border-amber-200">Featured</Badge> : <span className="text-muted-foreground text-xs">â€”</span>}
+                    {c.featured ? <Badge className="bg-amber-100 text-amber-700 border-amber-200">Featured</Badge> : <span className="text-muted-foreground text-xs">—</span>}
                   </td>
                   <td className="p-3 text-right">
                     <div className="flex items-center justify-end gap-1">

@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, Timestamp } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
+import { ref, deleteObject } from "firebase/storage";
 import { db, storage } from "@/lib/firebase";
+import { uploadOptimizedImage, uploadOptimizedImages } from "@/lib/imageUpload";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -84,23 +85,18 @@ const PropertiesManager = () => {
       // Upload primary image if file is selected
       if (form.imageFile) {
         setUploading(true);
-        const fileName = `properties/${Date.now()}_${form.imageFile.name}`;
-        const storageRef = ref(storage, fileName);
-        await uploadBytes(storageRef, form.imageFile);
-        imageUrl = await getDownloadURL(storageRef);
+        imageUrl = await uploadOptimizedImage(form.imageFile, "properties", "card");
       }
 
       // Upload additional images
       let additionalUrls: string[] = [...form.images];
       if (form.imageFiles.length > 0) {
         setUploading(true);
-        const uploadPromises = form.imageFiles.map(async (file) => {
-          const fileName = `properties/${Date.now()}_${Math.random().toString(36).slice(2)}_${file.name}`;
-          const storageRef = ref(storage, fileName);
-          await uploadBytes(storageRef, file);
-          return getDownloadURL(storageRef);
-        });
-        const newUrls = await Promise.all(uploadPromises);
+        const newUrls = await uploadOptimizedImages(
+          form.imageFiles,
+          "properties",
+          "gallery",
+        );
         additionalUrls = [...additionalUrls, ...newUrls];
         setUploading(false);
       }
