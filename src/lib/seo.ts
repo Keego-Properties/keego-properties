@@ -1,4 +1,8 @@
-export const SITE_URL = (import.meta.env.VITE_SITE_URL || "https://keego.ae").replace(/\/$/, "");
+export const SITE_URL = (
+  import.meta.env.VITE_SITE_URL ??
+  import.meta.env.NEXT_PUBLIC_SITE_URL ??
+  "https://keego.ae"
+).replace(/\/$/, "");
 
 export const BRAND_NAME = "KeeGo Properties";
 
