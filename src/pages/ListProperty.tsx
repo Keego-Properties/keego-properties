@@ -169,7 +169,7 @@ const ListProperty = () => {
                   List My Property <ArrowRight className="ml-2 w-4 h-4" />
                 </Button>
               </a>
-              <a href="tel:+971543912231">
+              <a href="tel:+971507001238">
                 <Button variant="outline" className="rounded-full border-gold text-white bg-transparent hover:bg-gold/10 px-8 py-3 h-auto">
                   <Phone className="mr-2 w-4 h-4" /> Call Us
                 </Button>
@@ -245,8 +245,8 @@ const ListProperty = () => {
                   <p className="text-primary-foreground/55 text-sm">Our listing team is available Sun–Thu, 9AM–6PM.</p>
                 </div>
                 <div className="flex flex-col gap-2">
-                  <a href="tel:+971543912231" className="inline-flex items-center gap-2 text-gold text-sm font-medium hover:underline">
-                    <Phone className="w-3.5 h-3.5" /> +971 54 391 2231
+                  <a href="tel:+971507001238" className="inline-flex items-center gap-2 text-gold text-sm font-medium hover:underline">
+                    <Phone className="w-3.5 h-3.5" /> +971 50 700 1238
                   </a>
                   <a href="mailto:info@keegoproperties.com" className="inline-flex items-center gap-2 text-gold text-sm font-medium hover:underline">
                     <Mail className="w-3.5 h-3.5" /> info@keegoproperties.com

@@ -159,7 +159,7 @@ const FirstVisitCallbackPopup = () => {
               value={form.phone}
               onChange={(e) => setForm((prev) => ({ ...prev, phone: e.target.value }))}
               className="h-10 w-full flex-1 rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-800 focus:border-gold focus:outline-none"
-              placeholder="54 391 2231"
+              placeholder="50 700 1238"
             />
             <button
               type="submit"

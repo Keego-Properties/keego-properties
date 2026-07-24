@@ -332,9 +332,9 @@ const Navbar = () => {
                 </Link>
               ))}
             </div>
-              <a href="tel:+971543912231" className="hidden lg:inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors text-sm">
+              <a href="tel:+971507001238" className="hidden lg:inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors text-sm">
                   <Phone className="w-4 h-4" />
-                  +971 54 391 2231
+                  +971 50 700 1238
               </a>
           </div>
         </div>

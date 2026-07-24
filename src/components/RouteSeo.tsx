@@ -9,7 +9,7 @@ const organizationSchema = {
   name: BRAND_NAME,
   url: SITE_URL,
   image: DEFAULT_OG_IMAGE,
-  telephone: "+971543912231",
+  telephone: "+971507001238",
   email: "info@keegoproperties.com",
   address: {
     "@type": "PostalAddress",

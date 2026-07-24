@@ -256,7 +256,7 @@ const HolidayHomes = () => {
                   Get a Free Consultation <ArrowRight className="ml-2 w-4 h-4" />
                 </Button>
               </a>
-              <a href="https://wa.me/971543912231" target="_blank" rel="noopener noreferrer">
+              <a href="https://wa.me/971507001238" target="_blank" rel="noopener noreferrer">
                 <Button className="rounded-full bg-transparent border border-white text-white hover:bg-white/10 font-semibold px-8 h-12 text-base">
                   <MessageCircle className="mr-2 w-4 h-4" /> WhatsApp Us
                 </Button>
@@ -380,12 +380,12 @@ const HolidayHomes = () => {
                 ))}
               </div>
               <div className="flex flex-col sm:flex-row gap-3">
-                <a href="tel:+971543912231">
+                <a href="tel:+971507001238">
                   <Button className="rounded-full bg-gold text-navy-dark font-semibold px-7 h-11 hover:bg-gold/90">
                     <Phone className="mr-2 w-4 h-4" /> Call Now
                   </Button>
                 </a>
-                <a href="https://wa.me/971543912231" target="_blank" rel="noopener noreferrer">
+                <a href="https://wa.me/971507001238" target="_blank" rel="noopener noreferrer">
                   <Button className="rounded-full bg-transparent border border-navy-dark text-navy-dark hover:bg-navy-dark/10 font-semibold px-7 h-11">
                     <MessageCircle className="mr-2 w-4 h-4" /> WhatsApp Us
                   </Button>
@@ -514,7 +514,7 @@ const HolidayHomes = () => {
                 Get a Free Consultation <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
             </a>
-            <a href="https://wa.me/971543912231" target="_blank" rel="noopener noreferrer">
+            <a href="https://wa.me/971507001238" target="_blank" rel="noopener noreferrer">
               <Button className="rounded-full bg-transparent border border-navy-dark text-navy-dark hover:bg-navy-dark/10 font-semibold px-10 h-12 text-base">
                 <MessageCircle className="mr-2 w-4 h-4" /> WhatsApp Us
               </Button>

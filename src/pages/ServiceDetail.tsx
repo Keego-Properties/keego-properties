@@ -10,8 +10,8 @@ import { defaultServices, iconMap, serviceContentMap, ServiceItem, ServicePageCo
 import Seo from "@/components/Seo";
 import { truncate } from "@/lib/seo";
 
-const callHref = "tel:+971543912231";
-const whatsappHref = "https://wa.me/971543912231";
+const callHref = "tel:+971507001238";
+const whatsappHref = "https://wa.me/971507001238";
 
 const ServiceDetail = () => {
   const { id } = useParams();

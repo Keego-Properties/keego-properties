@@ -178,9 +178,9 @@ const PropertyDetail = () => {
   const firstMember = property.assignedStaff?.length
     ? staff.find((s) => s.id === property.assignedStaff![0])
     : null;
-  const contactPhone = (firstMember?.phone || "+971543912231").trim();
+  const contactPhone = (firstMember?.phone || "+971507001238").trim();
   const callHref = `tel:${contactPhone.replace(/\s+/g, "")}`;
-  const whatsappNumber = contactPhone.replace(/[^\d]/g, "") || "971543912231";
+  const whatsappNumber = contactPhone.replace(/[^\d]/g, "") || "971507001238";
   const whatsappHref = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`Hi, I'm interested in ${property.title}`)}`;
 
   const shareProperty = async () => {

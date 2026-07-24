@@ -145,7 +145,7 @@ const sections = [
         body: "If you have any questions about this Privacy Policy, You can contact us:",
         list: [
           { term: "By email", def: "info@keegoproperties.com" },
-          { term: "By phone", def: "+971 54 391 2231" },
+          { term: "By phone", def: "+971 50 700 1238" },
           { term: "By address", def: "Wafi Residence Office Block : LHEU -FF-06, Al Razi Street, Dubai Health Care City, Dubai, UAE" },
         ],
       },

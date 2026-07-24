@@ -178,8 +178,8 @@ const DeveloperDetail = () => {
                 <Phone className="w-5 h-5 text-gold flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-xs text-muted-foreground mb-1">Phone</p>
-                  <a href="tel:+971543912231" className="text-sm font-medium text-foreground hover:text-gold transition-colors">
-                    +971 54 391 2231
+                  <a href="tel:+971507001238" className="text-sm font-medium text-foreground hover:text-gold transition-colors">
+                    +971 50 700 1238
                   </a>
                 </div>
               </div>
